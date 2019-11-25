@@ -11,3 +11,8 @@ name = "universe"
 name = "universe"
 
 [dependencies]
+rocket = "0.4.2"
+env_logger = "0.7.1"
+log = "0.4.8"
+tera = "0.11"
+serde = "1.0.103"
