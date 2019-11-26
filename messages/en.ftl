@@ -1,0 +1,1 @@
+page-title = "Universe {{name}}"
