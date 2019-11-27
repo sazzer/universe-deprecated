@@ -1,5 +1,7 @@
 use super::TemplateRenderer;
 
+use accept_language::parse;
+use log::debug;
 use rocket::{http::ContentType, response::Responder, Request, Response, State};
 use serde::Serialize;
 use std::io::Cursor;
@@ -83,8 +85,17 @@ impl<'r> Responder<'r> for Template {
     /// * TODO: i18n support.
     fn respond_to(self, request: &Request) -> rocket::response::Result<'r> {
         let renderer = request.guard::<State<TemplateRenderer>>().unwrap();
+        let locales = request
+            .headers()
+            .get_one("accept-language")
+            .map(|locales| parse(locales))
+            .unwrap_or(vec![]);
+        debug!(
+            "Rendering template {} with locales {:?}",
+            self.name, locales
+        );
 
-        let rendered = renderer.render(&self.name, self.data).unwrap();
+        let rendered = renderer.render(&self.name, locales, self.data).unwrap();
 
         Response::build()
             .sized_body(Cursor::new(rendered))

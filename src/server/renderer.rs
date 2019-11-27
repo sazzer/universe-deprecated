@@ -45,6 +45,7 @@ impl TemplateRenderer {
     ///
     /// # Arguments
     /// * `template` The name of the template, which must exist as a file found by the glob passed to `new()`
+    /// * `locales` A list of the locales to use for rendering, in preference order
     /// * `context` The context to pass to the template ready for it to be rendered.
     ///
     /// # Returns:
@@ -55,13 +56,18 @@ impl TemplateRenderer {
     /// # use universe::server::TemplateRenderer;
     /// # use tera::Context;
     /// let renderer = TemplateRenderer::new("templates/**/*", "messages", "en");
-    /// renderer.render("index.html", Context::new());
+    /// renderer.render("index.html", vec![], Context::new());
     /// ```
     ///
     /// # To-dos:
     /// * TODO: Error handling
     /// * TODO: i18n support.
-    pub fn render(&self, template: &str, context: Context) -> Result<String, Error> {
+    pub fn render(
+        &self,
+        template: &str,
+        locales: Vec<String>,
+        context: Context,
+    ) -> Result<String, Error> {
         let mut tera = Tera::default();
 
         let messages = self.messages.clone();
@@ -71,7 +77,7 @@ impl TemplateRenderer {
                 let message = args
                     .get("key")
                     .and_then(|v| v.as_str())
-                    .map(|key| messages.lookup(vec!["en"], key))
+                    .map(|key| messages.lookup(locales.clone(), key.to_owned()))
                     .map(|value| to_value(value).unwrap());
 
                 match message {
