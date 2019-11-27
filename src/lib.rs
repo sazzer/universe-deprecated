@@ -4,7 +4,7 @@ pub mod server;
 
 use log::info;
 use rocket::{get, routes};
-use server::{Messages, Template, TemplateRenderer};
+use server::{Template, TemplateRenderer};
 
 #[get("/")]
 fn index() -> &'static str {
@@ -19,8 +19,7 @@ fn templated() -> Template {
 pub fn start() {
     info!("Starting Server");
 
-    let template_renderer = TemplateRenderer::new("templates/**/*");
-    let messages = Messages::new("messages", "en");
+    let template_renderer = TemplateRenderer::new("templates/**/*", "messages", "en");
 
     rocket::ignite()
         .manage(template_renderer)
