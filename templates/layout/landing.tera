@@ -1,0 +1,12 @@
+{% extends "layout/page.tera" %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-12 col-md-4 order-sm-1">
+      {% block content %}{% endblock %}
+    </div>
+    <div class="col-12 col-md-8">
+      <img src="/static/landing.png" class="img-fluid" alt="" />
+    </div>
+  </div>
+{% endblock %}

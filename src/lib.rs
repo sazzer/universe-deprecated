@@ -1,28 +1,14 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+pub mod home;
 pub mod server;
 
 use log::info;
-use rocket::{get, routes};
-use server::{Template, TemplateRenderer};
+use rocket::routes;
+use server::Server;
 
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
+pub fn start() -> Server {
+    info!("Building Server");
 
-#[get("/t")]
-fn templated() -> Template {
-    Template::new("index.tera").with_data("name", "Graham")
-}
-
-pub fn start() {
-    info!("Starting Server");
-
-    let template_renderer = TemplateRenderer::new("templates/**/*", "messages", "en");
-
-    rocket::ignite()
-        .manage(template_renderer)
-        .mount("/", routes![index, templated])
-        .launch();
+    Server::default().with_routes(routes![home::httpadapter::index])
 }

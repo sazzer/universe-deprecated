@@ -92,6 +92,8 @@ impl TemplateRenderer {
         );
         tera.extend(&self.tera).unwrap();
 
+        let _ = tera.full_reload();
+
         tera.render(template, &context)
     }
 }

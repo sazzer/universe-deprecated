@@ -70,6 +70,8 @@ impl Messages {
         }
     }
 
+    pub fn full_reload(&mut self) {}
+
     /// Find the message bundle that contains the specified message key and is the best match for
     /// the list of locales provided.
     ///
