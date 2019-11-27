@@ -1,2 +1,2 @@
 page-title = "Universe {{name}}"
-messageKey = "Hello "
+messageKey = Hello {$name} {$age}

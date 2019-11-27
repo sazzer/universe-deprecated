@@ -1,5 +1,7 @@
-use fluent::{FluentBundle, FluentResource};
+use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use log::{debug, error};
+use serde_json::Value;
+use std::collections::HashMap;
 use std::fs;
 use unic_langid::LanguageIdentifier;
 
@@ -151,25 +153,33 @@ impl Messages {
     /// ## Successful translation
     /// ```
     /// # use universe::server::Messages;
+    /// # use std::collections::HashMap;
     /// let messages = Messages::new("src/server/test_messages", "en");
-    /// let message = messages.lookup(vec!["en"], "hello");
+    /// let message = messages.lookup(vec!["en"], "hello", HashMap::new());
     /// assert_eq!("world", message);
     /// ```
     /// ## Fallback to default locale
     /// ```
     /// # use universe::server::Messages;
+    /// # use std::collections::HashMap;
     /// let messages = Messages::new("src/server/test_messages", "en");
-    /// let message = messages.lookup(vec!["es_ES"], "hello");
+    /// let message = messages.lookup(vec!["es_ES"], "hello", HashMap::new());
     /// assert_eq!("world", message);
     /// ```
     /// ## Unknown message key
     /// ```
     /// # use universe::server::Messages;
+    /// # use std::collections::HashMap;
     /// let messages = Messages::new("src/server/test_messages", "en");
-    /// let message = messages.lookup(vec!["en"], "unknown");
+    /// let message = messages.lookup(vec!["en"], "unknown", HashMap::new());
     /// assert_eq!("!!!unknown!!!", message);
     /// ```
-    pub fn lookup<S: Into<String>>(&self, locales: Vec<S>, message_key: S) -> String {
+    pub fn lookup<S: Into<String>>(
+        &self,
+        locales: Vec<S>,
+        message_key: S,
+        params: HashMap<&str, Value>,
+    ) -> String {
         let desired_message_key: String = message_key.into();
         let desired_locales: Vec<LanguageIdentifier> = locales
             .into_iter()
@@ -199,8 +209,19 @@ impl Messages {
                     .get_message(&desired_message_key)
                     .and_then(|message| message.value)
                     .and_then(|pattern| {
+                        let mut args = FluentArgs::new();
+                        for (key, value) in params {
+                            let fluent_value = match value {
+                                Value::Number(n) => FluentValue::into_number(n),
+                                Value::String(s) => FluentValue::into_number(s),
+                                _ => FluentValue::None,
+                            };
+
+                            args.insert(key, fluent_value);
+                        }
+
                         let mut errors = vec![];
-                        let result = bundle.format_pattern(&pattern, None, &mut errors);
+                        let result = bundle.format_pattern(&pattern, Some(&args), &mut errors);
 
                         if errors.is_empty() {
                             Some(result.into_owned())
@@ -218,6 +239,7 @@ impl Messages {
     }
 }
 
+// TODO: Tests for variable interpolation
 #[cfg(test)]
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
@@ -237,35 +259,35 @@ mod tests {
     #[test]
     fn test_format_simple() {
         let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["en"], "hello");
+        let formatted = messages.lookup(vec!["en"], "hello", HashMap::new());
         assert_eq!("world", formatted);
     }
 
     #[test]
     fn test_format_not_default() {
         let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr"], "hello");
+        let formatted = messages.lookup(vec!["fr"], "hello", HashMap::new());
         assert_eq!("Bonjour", formatted);
     }
 
     #[test]
     fn test_format_fallback_to_default() {
         let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr"], "answer");
+        let formatted = messages.lookup(vec!["fr"], "answer", HashMap::new());
         assert_eq!("42", formatted);
     }
 
     #[test]
     fn test_format_first_locale() {
         let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr_CA", "fr"], "hello");
+        let formatted = messages.lookup(vec!["fr_CA", "fr"], "hello", HashMap::new());
         assert_eq!("Bonjour!", formatted);
     }
 
     #[test]
     fn test_format_fallback_to_second_locale() {
         let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr_CA", "fr"], "goodbye");
+        let formatted = messages.lookup(vec!["fr_CA", "fr"], "goodbye", HashMap::new());
         assert_eq!("Au revoir", formatted);
     }
 }

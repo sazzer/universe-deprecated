@@ -13,7 +13,7 @@ fn index() -> &'static str {
 
 #[get("/t")]
 fn templated() -> Template {
-    Template::new("index.html").with_data("name", "Graham")
+    Template::new("index.tera").with_data("name", "Graham")
 }
 
 pub fn start() {

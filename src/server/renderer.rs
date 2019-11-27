@@ -61,7 +61,6 @@ impl TemplateRenderer {
     ///
     /// # To-dos:
     /// * TODO: Error handling
-    /// * TODO: i18n support.
     pub fn render(
         &self,
         template: &str,
@@ -74,15 +73,20 @@ impl TemplateRenderer {
         tera.register_function(
             "t",
             Box::new(move |args: HashMap<String, Value>| -> tera::Result<Value> {
+                let params: HashMap<&str, Value> = args
+                    .iter()
+                    .map(|(key, value)| (key.as_ref(), value.clone()))
+                    .collect();
+
                 let message = args
                     .get("key")
                     .and_then(|v| v.as_str())
-                    .map(|key| messages.lookup(locales.clone(), key.to_owned()))
+                    .map(|key| messages.lookup(locales.clone(), key.to_owned(), params))
                     .map(|value| to_value(value).unwrap());
 
                 match message {
                     Some(m) => Ok(m),
-                    None => Ok(to_value("Oops").unwrap()),
+                    None => Ok(to_value("!!!!!Oops!!!!!").unwrap()),
                 }
             }),
         );

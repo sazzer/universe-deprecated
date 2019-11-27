@@ -82,7 +82,6 @@ impl<'r> Responder<'r> for Template {
     ///
     /// # To-dos:
     /// * TODO: Error handling
-    /// * TODO: i18n support.
     fn respond_to(self, request: &Request) -> rocket::response::Result<'r> {
         let renderer = request.guard::<State<TemplateRenderer>>().unwrap();
         let locales = request
@@ -99,7 +98,11 @@ impl<'r> Responder<'r> for Template {
 
         Response::build()
             .sized_body(Cursor::new(rendered))
-            .header(ContentType::new("text", "html"))
+            .header(ContentType::with_params(
+                "text",
+                "html",
+                ("charset", "utf-8"),
+            ))
             .ok()
     }
 }
