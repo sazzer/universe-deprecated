@@ -1,7 +1,11 @@
 use crate::server::Template;
-use rocket::get;
+use rocket::{get, routes, Route};
 
 #[get("/")]
-pub fn index() -> Template {
+fn index() -> Template {
     Template::new("index.tera")
+}
+
+pub fn routes() -> Vec<Route> {
+    routes![index]
 }

@@ -1,0 +1,61 @@
+{% extends "layout/landing.tera" %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">{{ t(key="login-title-register") }}</div>
+  <div class="card-body">
+
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <label for="username">{{ t(key="login-username-label") }}</label>
+        <input type="username"
+               class="form-control"
+               id="username"
+               name="username"
+               value="{{username | trim}}"
+               readonly />
+      </div>
+      <div class="form-group">
+        <label for="email">{{ t(key="login-email-label") }}</label>
+        <input type="email"
+               class="form-control"
+               id="email"
+               name="email"
+               value="{{email | default(value="") | trim}}"
+               aria-describedby="emailHelp"
+               autofocus
+               required />
+        <small id="emailHelp" class="form-text text-muted">{{ t(key="login-email-help")}}</small>
+      </div>
+      <div class="form-group">
+        <label for="name">{{ t(key="login-name-label") }}</label>
+        <input type="text"
+               class="form-control"
+               id="name"
+               name="name"
+               value="{{name | default(value="") | trim}}"
+               required />
+      </div>
+      <div class="form-group">
+        <label for="password">{{ t(key="login-password-label") }}</label>
+        <input type="password"
+               class="form-control"
+               id="password"
+               name="password"
+               required />
+      </div>
+      <div class="form-group">
+        <label for="password2">{{ t(key="login-password2-label") }}</label>
+        <input type="password"
+               class="form-control"
+               id="password2"
+               name="password2"
+               required />
+      </div>
+      <button type="submit" class="btn btn-primary">{{ t(key="login-submit-register") }}</button>
+      <a href="/login" class="btn btn-secondary">{{ t(key="login-submit-cancel") }}</a>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

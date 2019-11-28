@@ -1,0 +1,23 @@
+{% extends "layout/landing.tera" %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">{{ t(key="login-title-start") }}</div>
+  <div class="card-body">
+
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <label for="username">{{ t(key="login-username-label") }}</label>
+        <input type="username"
+               class="form-control"
+               id="username"
+               name="username"
+               autofocus
+               required />
+      </div>
+      <button type="submit" class="btn btn-primary">{{ t(key="login-submit-start") }}</button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
