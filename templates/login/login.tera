@@ -6,6 +6,7 @@
   <div class="card-body">
 
     <form action="/login" method="POST">
+      <input type="hidden" name="action" value="login" />
       <div class="form-group">
         <label for="username">{{ t(key="login-username-label") }}</label>
         <input type="username"

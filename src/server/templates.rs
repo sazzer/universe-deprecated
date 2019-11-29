@@ -56,6 +56,16 @@ impl Template {
         self.data.insert(&key.into(), val);
         self
     }
+
+    /// Get the name of the template that is to be rendered
+    pub fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
+    /// Get the entire set of data to bind to the template that is to be rendered
+    pub fn get_data(&self) -> Context {
+        self.data.clone()
+    }
 }
 
 /// Implementation of the `Responder` trait from Rocket so that a Template is able to render itself
