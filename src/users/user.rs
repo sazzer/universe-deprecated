@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 /// Typesafe wrapper around a User ID
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct UserID(Uuid);
+pub struct UserID(pub Uuid);
 
 /// Typesafe wrapper around a username
 #[derive(Debug, Clone, PartialEq, Eq)]

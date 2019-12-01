@@ -1,6 +1,7 @@
-use super::Username;
+use super::{UserEntity, Username};
 use log::debug;
 use mockall::automock;
+use std::boxed::Box;
 
 /// Trait to represent the User Service for interacting with users
 #[automock]
@@ -15,12 +16,29 @@ pub trait UserService: Send + Sync {
     fn username_exists(&self, username: Username) -> bool;
 }
 
+/// Repository that can be used to work with user records in the underlying data store
+#[automock]
+pub trait UserRepository: Send + Sync {
+    /// Load the user from the database with the given username.
+    ///
+    /// # Arguments
+    /// * `username` The username to look for
+    ///
+    /// # Returns
+    /// The user entity if it was found, or `None` if there was no match.
+    fn get_by_username(&self, username: Username) -> Option<UserEntity>;
+}
+
 /// The actual user service implementation
-pub struct UserServiceImpl {}
+pub struct UserServiceImpl {
+    repository: Box<dyn UserRepository>,
+}
 
 impl UserServiceImpl {
-    pub fn new() -> Self {
-        UserServiceImpl {}
+    pub fn new(repository: Box<dyn UserRepository>) -> Self {
+        UserServiceImpl {
+            repository: repository,
+        }
     }
 }
 
@@ -28,9 +46,62 @@ impl UserService for UserServiceImpl {
     fn username_exists(&self, username: Username) -> bool {
         debug!("Looking up username {:?}", username);
 
-        match username.0.as_str() {
-            "sazzer" => true,
-            _ => false,
+        self.repository.get_by_username(username).is_some()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::users::*;
+    use speculate::speculate;
+
+    speculate! {
+        before {
+            let mut user_repository = MockUserRepository::new();
+        }
+
+        describe "username_exists" {
+            it "works when the user doesn't exist" {
+                user_repository
+                    .expect_get_by_username()
+                    .with(mockall::predicate::eq(Username("testuser".to_owned())))
+                    .times(1)
+                    .return_const(None);
+
+                let user_service = UserServiceImpl::new(Box::new(user_repository));
+
+                let result = user_service.username_exists(Username("testuser".to_owned()));
+                assert_eq!(false, result);
+            }
+            it "works when the user does exist" {
+                let user = UserEntity {
+                    identity: crate::entity::Identity {
+                        id: UserID(uuid::Uuid::default()),
+                        version: uuid::Uuid::default(),
+                        created: std::time::Instant::now(),
+                        updated: std::time::Instant::now(),
+                    },
+                    data: UserData {
+                        username: Username("testuser".to_owned()),
+                        display_name: "Test User".to_owned(),
+                        email: "test@example.com".to_owned(),
+                        password: Password::from_hash(""),
+                    }
+                };
+
+                user_repository
+                    .expect_get_by_username()
+                    .with(mockall::predicate::eq(Username("testuser".to_owned())))
+                    .times(1)
+                    .return_const(Some(user));
+
+                let user_service = UserServiceImpl::new(Box::new(user_repository));
+
+                let result = user_service.username_exists(Username("testuser".to_owned()));
+                assert_eq!(true, result);
+            }
+
         }
     }
 }

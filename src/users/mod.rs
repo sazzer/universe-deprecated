@@ -1,4 +1,5 @@
 mod password;
+pub mod postgres_repository;
 pub mod service;
 mod user;
 
