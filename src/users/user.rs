@@ -59,30 +59,48 @@ pub enum ParseUsernameError {
 }
 
 #[cfg(test)]
+impl Default for UserEntity {
+    fn default() -> UserEntity {
+        UserEntity {
+            identity: crate::entity::Identity {
+                id: UserID(uuid::Uuid::default()),
+                version: uuid::Uuid::default(),
+                created: std::time::Instant::now(),
+                updated: std::time::Instant::now(),
+            },
+            data: UserData {
+                username: Username("testuser".to_owned()),
+                display_name: "Test User".to_owned(),
+                email: "test@example.com".to_owned(),
+                password: Password::from_hash(""),
+            },
+        }
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
+    use speculate::speculate;
 
-    #[test]
-    fn test_parse_username() {
-        let username: Username = "testuser".parse().unwrap();
-        assert_eq!(Username("testuser".to_owned()), username);
-    }
-
-    #[test]
-    fn test_parse_username_trimmed() {
-        let username: Username = "  testuser  ".parse().unwrap();
-        assert_eq!(Username("testuser".to_owned()), username);
-    }
-
-    #[test]
-    fn test_parse_username_whitespace_only() {
-        let username: Result<Username, ParseUsernameError> = "   ".parse();
-        assert_eq!(Err(ParseUsernameError::BlankUsername), username);
-    }
-
-    #[test]
-    fn test_parse_username_empty_string() {
-        let username: Result<Username, ParseUsernameError> = "".parse();
-        assert_eq!(Err(ParseUsernameError::BlankUsername), username);
+    speculate! {
+        describe "parse" {
+            it "Parses a simple username" {
+                let username: Username = "testuser".parse().unwrap();
+                assert_eq!(Username("testuser".to_owned()), username);
+            }
+            it "Trims whitespace off of the username" {
+                let username: Username = "  testuser  ".parse().unwrap();
+                assert_eq!(Username("testuser".to_owned()), username);
+            }
+            it "Fails if the username is entirely whitespace" {
+                let username: Result<Username, ParseUsernameError> = "   ".parse();
+                assert_eq!(Err(ParseUsernameError::BlankUsername), username);
+            }
+            it "Fails if the username is the empty string" {
+                let username: Result<Username, ParseUsernameError> = "".parse();
+                assert_eq!(Err(ParseUsernameError::BlankUsername), username);
+            }
+        }
     }
 }

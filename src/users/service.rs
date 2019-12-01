@@ -75,26 +75,11 @@ mod tests {
                 assert_eq!(false, result);
             }
             it "works when the user does exist" {
-                let user = UserEntity {
-                    identity: crate::entity::Identity {
-                        id: UserID(uuid::Uuid::default()),
-                        version: uuid::Uuid::default(),
-                        created: std::time::Instant::now(),
-                        updated: std::time::Instant::now(),
-                    },
-                    data: UserData {
-                        username: Username("testuser".to_owned()),
-                        display_name: "Test User".to_owned(),
-                        email: "test@example.com".to_owned(),
-                        password: Password::from_hash(""),
-                    }
-                };
-
                 user_repository
                     .expect_get_by_username()
                     .with(mockall::predicate::eq(Username("testuser".to_owned())))
                     .times(1)
-                    .return_const(Some(user));
+                    .return_const(Some(UserEntity::default()));
 
                 let user_service = UserServiceImpl::new(Box::new(user_repository));
 

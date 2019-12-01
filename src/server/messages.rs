@@ -246,50 +246,44 @@ impl Messages {
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
+    use speculate::speculate;
 
-    #[test]
-    fn test_new_with_messages() {
-        Messages::new("src/server/test_messages", "en");
-    }
+    speculate! {
+        describe "new" {
+            it "Works correctly with a valid messages directory" {
+                Messages::new("src/server/test_messages", "en");
+            }
 
-    #[test]
-    #[should_panic]
-    fn test_new_with_no_messages() {
-        Messages::new("missing", "en");
-    }
+            #[should_panic]
+            it "Panics with an invalid messages directory" {
+                Messages::new("missing", "en");
+            }
+        }
 
-    #[test]
-    fn test_format_simple() {
-        let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["en"], "hello", HashMap::new());
-        assert_eq!("world", formatted);
-    }
-
-    #[test]
-    fn test_format_not_default() {
-        let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr"], "hello", HashMap::new());
-        assert_eq!("Bonjour", formatted);
-    }
-
-    #[test]
-    fn test_format_fallback_to_default() {
-        let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr"], "answer", HashMap::new());
-        assert_eq!("42", formatted);
-    }
-
-    #[test]
-    fn test_format_first_locale() {
-        let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr_CA", "fr"], "hello", HashMap::new());
-        assert_eq!("Bonjour!", formatted);
-    }
-
-    #[test]
-    fn test_format_fallback_to_second_locale() {
-        let messages = Messages::new("src/server/test_messages", "en");
-        let formatted = messages.lookup(vec!["fr_CA", "fr"], "goodbye", HashMap::new());
-        assert_eq!("Au revoir", formatted);
+        describe "format" {
+            before {
+                let messages = Messages::new("src/server/test_messages", "en");
+            }
+            it "Formats a simple message" {
+                let formatted = messages.lookup(vec!["en"], "hello", HashMap::new());
+                assert_eq!("world", formatted);
+            }
+            it "Uses the specified locale if it is supported" {
+                let formatted = messages.lookup(vec!["fr"], "hello", HashMap::new());
+                assert_eq!("Bonjour", formatted);
+            }
+            it "Uses the default locale if it the specified one isn't supported" {
+                let formatted = messages.lookup(vec!["fr"], "answer", HashMap::new());
+                assert_eq!("42", formatted);
+            }
+            it "Uses the earliest locale that is supported - first one matches" {
+                let formatted = messages.lookup(vec!["fr_CA", "fr"], "hello", HashMap::new());
+                assert_eq!("Bonjour!", formatted);
+            }
+            it "Uses the earliest locale that is supported - second one matches" {
+                let formatted = messages.lookup(vec!["fr_CA", "fr"], "goodbye", HashMap::new());
+                assert_eq!("Au revoir", formatted);
+            }
+        }
     }
 }
