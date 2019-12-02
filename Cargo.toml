@@ -24,6 +24,9 @@ rocket_contrib = "0.4.2"
 dotenv = "0.15.0"
 uuid = "0.8.1"
 mockall = "0.5.2"
+r2d2 = "0.8.7"
+r2d2_postgres = "0.14.0"
+postgres = "0.15.2"
 
 [dev-dependencies]
 speculate = "0.1.2"

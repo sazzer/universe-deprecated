@@ -1,5 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+pub mod database;
 pub mod entity;
 pub mod home;
 pub mod login;
@@ -13,6 +14,13 @@ use std::sync::Arc;
 
 pub fn start() -> Server {
     info!("Building Server");
+
+    let database: Arc<dyn database::Database<_>> =
+        Arc::new(database::postgres::PostgresDatabase::new(
+            "postgres://universe:universe@localhost:45432/universe",
+        ));
+
+    database.client().unwrap().execute("SELECT 1", &[]).unwrap();
 
     let user_repository = Box::new(users::postgres_repository::PostgresUserRepository {});
 
