@@ -1,4 +1,6 @@
+use super::migrate::MigratableDatabase;
 use super::Database;
+use log::info;
 use r2d2::{Error, Pool, PooledConnection};
 use r2d2_postgres::{PostgresConnectionManager, TlsMode};
 
@@ -29,11 +31,14 @@ impl PostgresDatabase {
 }
 
 impl Database<PostgresConnectionManager> for PostgresDatabase {
-    /// Get a client connection to the database for us to use
-    ///
-    /// # Returns
-    /// The connection to use to interact with the database
     fn client(&self) -> Result<PooledConnection<PostgresConnectionManager>, Error> {
         self.pool.get()
+    }
+}
+
+impl MigratableDatabase for PostgresDatabase {
+    fn migrate(&self) -> Result<(), ()> {
+        info!("Migrating database to latest version");
+        Ok(())
     }
 }
