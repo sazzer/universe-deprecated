@@ -1,5 +1,5 @@
-use crate::server::Template;
 use rocket::{get, routes, Route};
+use universe_templates::Template;
 
 #[get("/")]
 fn index() -> Template {

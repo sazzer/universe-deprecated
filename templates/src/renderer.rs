@@ -1,4 +1,4 @@
-use super::Messages;
+use crate::messages::Messages;
 use serde_json::{to_value, Value};
 use std::collections::HashMap;
 use std::result::Result;
@@ -19,12 +19,6 @@ impl TemplateRenderer {
     ///
     /// # Arguments
     /// * `templates` The glob defining where the templates should be loaded from
-    ///
-    /// # Examples
-    /// ```
-    /// # use universe::server::TemplateRenderer;
-    /// TemplateRenderer::new("templates/**/*", "messages", "en");
-    /// ```
     pub fn new<S: Into<&'static str>>(
         templates: S,
         messages: S,
@@ -50,14 +44,6 @@ impl TemplateRenderer {
     ///
     /// # Returns:
     /// The results of rendering the template
-    ///
-    /// # Examples
-    /// ```
-    /// # use universe::server::TemplateRenderer;
-    /// # use tera::Context;
-    /// let renderer = TemplateRenderer::new("templates/**/*", "messages", "en");
-    /// renderer.render("index.html", vec![], Context::new());
-    /// ```
     ///
     /// # To-dos:
     /// * TODO: Error handling

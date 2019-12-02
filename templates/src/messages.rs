@@ -27,12 +27,6 @@ impl Messages {
     ///
     /// # Returns
     /// A `Messages` instance that we can use for looking up messages
-    ///
-    /// # Examples
-    /// ```
-    /// # use universe::server::Messages;
-    /// Messages::new("./messages", "en");
-    /// ```
     pub fn new<S: Into<String>>(messages: S, default_locale: S) -> Self {
         let mut bundles: Vec<Bundle> = Vec::new();
 
@@ -69,8 +63,6 @@ impl Messages {
             default_locale: default_locale.into().parse().unwrap(),
         }
     }
-
-    pub fn full_reload(&mut self) {}
 
     /// Find the message bundle that contains the specified message key and is the best match for
     /// the list of locales provided.
@@ -150,32 +142,6 @@ impl Messages {
     /// # Returns
     /// The translated message. If we couldn't find a message that matches, or performing the translation
     /// fails for any reason when instead we return a special message `!!!{message_key}!!!`
-    ///
-    /// # Examples
-    /// ## Successful translation
-    /// ```
-    /// # use universe::server::Messages;
-    /// # use std::collections::HashMap;
-    /// let messages = Messages::new("src/server/test_messages", "en");
-    /// let message = messages.lookup(vec!["en"], "hello", HashMap::new());
-    /// assert_eq!("world", message);
-    /// ```
-    /// ## Fallback to default locale
-    /// ```
-    /// # use universe::server::Messages;
-    /// # use std::collections::HashMap;
-    /// let messages = Messages::new("src/server/test_messages", "en");
-    /// let message = messages.lookup(vec!["es_ES"], "hello", HashMap::new());
-    /// assert_eq!("world", message);
-    /// ```
-    /// ## Unknown message key
-    /// ```
-    /// # use universe::server::Messages;
-    /// # use std::collections::HashMap;
-    /// let messages = Messages::new("src/server/test_messages", "en");
-    /// let message = messages.lookup(vec!["en"], "unknown", HashMap::new());
-    /// assert_eq!("!!!unknown!!!", message);
-    /// ```
     pub fn lookup<S: Into<String>>(
         &self,
         locales: Vec<S>,
@@ -251,7 +217,7 @@ mod tests {
     speculate! {
         describe "new" {
             it "Works correctly with a valid messages directory" {
-                Messages::new("src/server/test_messages", "en");
+                Messages::new("src/test_messages", "en");
             }
 
             #[should_panic]
@@ -262,7 +228,7 @@ mod tests {
 
         describe "format" {
             before {
-                let messages = Messages::new("src/server/test_messages", "en");
+                let messages = Messages::new("src/test_messages", "en");
             }
             it "Formats a simple message" {
                 let formatted = messages.lookup(vec!["en"], "hello", HashMap::new());

@@ -1,5 +1,4 @@
-use super::TemplateRenderer;
-
+use crate::renderer::TemplateRenderer;
 use accept_language::parse;
 use log::debug;
 use rocket::{http::ContentType, response::Responder, Request, Response, State};
@@ -20,12 +19,6 @@ impl Template {
     ///
     /// # Arguments
     /// `template` The name of the template to render
-    ///
-    /// # Examples
-    /// ```
-    /// # use universe::server::Template;
-    /// Template::new("index.html");
-    /// ```
     pub fn new<S: Into<String>>(template: S) -> Template {
         Template {
             name: template.into(),
@@ -38,16 +31,6 @@ impl Template {
     /// # Arguments
     /// `key` The key for the piece of data, as expected inside the template
     /// `val` The value for the piece of data
-    ///
-    /// # Examples
-    /// ```
-    /// # use universe::server::Template;
-    /// let name = "Graham";
-    /// let age = 37;
-    /// Template::new("index.html")
-    ///    .with_data("name", name)
-    ///    .with_data("age", &age);
-    /// ```
     pub fn with_data<T: Serialize + ?Sized, S: Into<String>>(
         mut self,
         key: S,

@@ -1,10 +1,10 @@
-use crate::server::Template;
 use crate::users::{ParseUsernameError, UserService, Username};
 use log::info;
 use rocket::{get, post, request::LenientForm, routes, FromForm, Route, State};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::Arc;
+use universe_templates::Template;
 
 /// Handler to display the initial login form
 #[get("/login")]

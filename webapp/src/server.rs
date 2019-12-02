@@ -1,6 +1,6 @@
-use super::TemplateRenderer;
 use rocket::{Rocket, Route};
 use rocket_contrib::serve::StaticFiles;
+use universe_templates::TemplateRenderer;
 
 /// Representation of the server to actually work with
 pub struct Server {

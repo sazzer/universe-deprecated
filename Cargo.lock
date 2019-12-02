@@ -1562,10 +1562,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "universe"
 version = "0.1.0"
 dependencies = [
- "accept-language 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "fluent 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "mockall 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "postgres 0.15.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1576,9 +1574,23 @@ dependencies = [
  "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)",
  "speculate 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "universe_templates 0.1.0",
+ "uuid 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "universe_templates"
+version = "0.1.0"
+dependencies = [
+ "accept-language 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fluent 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rocket 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)",
+ "speculate 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tera 0.11.20 (registry+https://github.com/rust-lang/crates.io-index)",
  "unic-langid 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "uuid 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
