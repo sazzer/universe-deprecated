@@ -3,6 +3,7 @@ use super::Database;
 use log::info;
 use r2d2::{Error, Pool, PooledConnection};
 use r2d2_postgres::{PostgresConnectionManager, TlsMode};
+use universe_migrations::Migrations;
 
 /// Wrapper around the database connection
 pub struct PostgresDatabase {
@@ -39,6 +40,12 @@ impl Database<PostgresConnectionManager> for PostgresDatabase {
 impl MigratableDatabase for PostgresDatabase {
     fn migrate(&self) -> Result<(), ()> {
         info!("Migrating database to latest version");
+
+        Migrations::new(self.pool.get().unwrap(), "migrations")
+            .unwrap()
+            .migrate()
+            .unwrap();
+
         Ok(())
     }
 }

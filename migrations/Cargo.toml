@@ -1,0 +1,16 @@
+[package]
+name = "universe_migrations"
+version = "0.1.0"
+authors = ["Graham Cox <graham@grahamcox.co.uk>"]
+edition = "2018"
+
+[dependencies]
+log = "0.4.8"
+r2d2 = "0.8.7"
+r2d2_postgres = "0.14.0"
+postgres = "0.15.2"
+
+[dev-dependencies]
+speculate = "0.1.2"
+testcontainers = "0.8.1"
+env_logger = "0.7.1"

@@ -24,6 +24,7 @@ r2d2 = "0.8.7"
 r2d2_postgres = "0.14.0"
 postgres = "0.15.2"
 universe_templates = { path = "../templates" }
+universe_migrations = { path = "../migrations" }
 
 [dev-dependencies]
 speculate = "0.1.2"

@@ -1,0 +1,1 @@
+CREATE TABLE people(id BIGINT PRIMARY KEY, name TEXT);
