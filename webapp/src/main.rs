@@ -4,5 +4,5 @@ fn main() {
     dotenv::dotenv().ok();
     env_logger::init();
 
-    universe::start().run();
+    universe::build().unwrap().run();
 }

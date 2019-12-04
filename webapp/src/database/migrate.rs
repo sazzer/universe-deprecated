@@ -2,7 +2,10 @@
 pub trait MigratableDatabase {
     /// Migrate the database to the latest schema version
     ///
+    /// # Arguments
+    /// # `migrations` The directory containing the migrations
+    ///
     /// # Returns
     /// The result of migrating the database
-    fn migrate(&self) -> Result<(), ()>;
+    fn migrate<S: Into<String>>(&self, migrations: S) -> Result<u32, String>;
 }

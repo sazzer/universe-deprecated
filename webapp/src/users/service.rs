@@ -12,7 +12,7 @@ pub trait UserService: Send + Sync {
     /// * `username` The username to look for
     ///
     /// # Returns
-    /// True if the username is already known to the system. False if it's new.
+    /// True if the username is already known to the system. False if it's unknown.
     fn username_exists(&self, username: Username) -> bool;
 }
 
@@ -35,6 +35,13 @@ pub struct UserServiceImpl {
 }
 
 impl UserServiceImpl {
+    /// Create a new User Service
+    ///
+    /// # Arguments
+    /// * `repository` The user repostory to use to access data
+    ///
+    /// # Returns
+    /// The user service to work with
     pub fn new(repository: Box<dyn UserRepository>) -> Self {
         UserServiceImpl {
             repository: repository,

@@ -38,12 +38,6 @@ impl FromStr for Username {
     /// The result of parsing the string into a Username object.
     /// If the input was either empty or only whitespace characters then this is an error.
     /// Otherwise we will trim the username and use that.
-    ///
-    /// # Examples
-    /// ```
-    /// # use universe::users::Username;
-    /// let username: Username = "testuser".parse().unwrap();
-    /// ```
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.trim() {
             "" => Err(ParseUsernameError::BlankUsername),

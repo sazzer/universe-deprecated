@@ -41,6 +41,8 @@ fn start_login(username: Username, user_service: &dyn UserService) -> Template {
 ///
 /// # Arguments
 /// * `body` The form submission that we are processing
+/// * `username` The username that we are registering as
+/// * `user_service` The user service to work with
 ///
 /// TODO: Implement
 fn perform_register(
@@ -155,10 +157,6 @@ mod tests {
         }
 
         describe "POST /login" {
-            before {
-                let mut user_service = MockUserService::new();
-            }
-
             describe "With no action provided" {
                 it "Shows the initial login form if no username was provided" {
                     let data = LoginForm {
@@ -170,6 +168,7 @@ mod tests {
                         password2: None,
                     };
 
+                    let user_service = MockUserService::new();
                     let rocket = rocket::ignite().manage(Arc::new(user_service) as Arc<dyn UserService>);
                     let result = continue_login(LenientForm(data), rocket::State::from(&rocket).unwrap());
 
@@ -187,6 +186,7 @@ mod tests {
                         password2: None,
                     };
 
+                    let mut user_service = MockUserService::new();
                     user_service
                         .expect_username_exists()
                         .with(mockall::predicate::eq(Username("testuser".to_owned())))
@@ -215,6 +215,7 @@ mod tests {
                         password2: None,
                     };
 
+                    let mut user_service = MockUserService::new();
                     user_service
                         .expect_username_exists()
                         .with(mockall::predicate::eq(Username("testuser".to_owned())))
@@ -245,6 +246,7 @@ mod tests {
                         password2: Some("".to_owned()),
                     };
 
+                    let user_service = MockUserService::new();
                     let rocket = rocket::ignite().manage(Arc::new(user_service) as Arc<dyn UserService>);
                     let result = continue_login(LenientForm(data), rocket::State::from(&rocket).unwrap());
 
@@ -274,6 +276,7 @@ mod tests {
                         password2: Some("Pa55word".to_owned()),
                     };
 
+                    let user_service = MockUserService::new();
                     let rocket = rocket::ignite().manage(Arc::new(user_service) as Arc<dyn UserService>);
                     let result = continue_login(LenientForm(data), rocket::State::from(&rocket).unwrap());
 

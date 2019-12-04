@@ -1,7 +1,7 @@
 use super::migrate::MigratableDatabase;
-use super::Database;
-use log::info;
-use r2d2::{Error, Pool, PooledConnection};
+use super::{Database, Error};
+use log::{error, info};
+use r2d2::{Pool, PooledConnection};
 use r2d2_postgres::{PostgresConnectionManager, TlsMode};
 use universe_migrations::Migrations;
 
@@ -20,32 +20,42 @@ impl PostgresDatabase {
     /// The database connection wrapper
     ///
     /// # Todo
-    /// TODO: Error Handling
     /// TODO: TLS Support
-    pub fn new<S: Into<String>>(url: S) -> Self {
-        let manager = PostgresConnectionManager::new(url.into(), TlsMode::None).unwrap();
+    pub fn new<S: Into<String>>(url: S) -> Result<Self, Error> {
+        let manager = PostgresConnectionManager::new(url.into(), TlsMode::None).map_err(|e| {
+            error!("Failed to create connection: {:?}", e);
+            Error::InstantiationError
+        })?;
 
-        let pool = Pool::new(manager).unwrap();
+        let pool = Pool::new(manager).map_err(|e| {
+            error!("Failed to create connection pool: {:?}", e);
+            Error::InstantiationError
+        })?;
 
-        PostgresDatabase { pool: pool }
+        Ok(PostgresDatabase { pool: pool })
     }
 }
 
 impl Database<PostgresConnectionManager> for PostgresDatabase {
     fn client(&self) -> Result<PooledConnection<PostgresConnectionManager>, Error> {
-        self.pool.get()
+        let conn = self.pool.get().map_err(|e| {
+            error!("Failed to check out connection: {:?}", e);
+            Error::CheckoutError
+        })?;
+
+        Ok(conn)
     }
 }
 
 impl MigratableDatabase for PostgresDatabase {
-    fn migrate(&self) -> Result<(), ()> {
+    fn migrate<S: Into<String>>(&self, migrations: S) -> Result<u32, String> {
         info!("Migrating database to latest version");
 
-        Migrations::new(self.pool.get().unwrap(), "migrations")
-            .unwrap()
+        let count = Migrations::new(self.pool.get().unwrap(), migrations)
+            .map_err(|e| format!("Failed to load migrations: {:?}", e))?
             .migrate()
-            .unwrap();
+            .map_err(|e| format!("Failed to migrate database: {:?}", e))?;
 
-        Ok(())
+        Ok(count)
     }
 }

@@ -7,18 +7,30 @@ pub struct Server {
     rocket: Rocket,
 }
 
-impl Default for Server {
-    fn default() -> Self {
-        let template_renderer = TemplateRenderer::new("templates/**/*", "messages", "en");
+impl Server {
+    /// Construct a new HTTP server that we can start configuring
+    ///
+    /// # Arguments
+    /// * `templates` The glob with which to find templates
+    /// * `messages` The directory in which to find message bundles
+    /// * `default_locale` The default locale for the message bundles
+    ///
+    /// # Returns
+    /// The server for us to use
+    pub fn new<S: Into<&'static str>>(
+        templates: S,
+        messages: S,
+        default_locale: S,
+    ) -> Result<Self, ()> {
+        let template_renderer = TemplateRenderer::new(templates, messages, default_locale);
 
         let rocket = rocket::ignite()
             .manage(template_renderer)
             .mount("/static", StaticFiles::from("static"));
 
-        Server { rocket: rocket }
+        Ok(Server { rocket: rocket })
     }
-}
-impl Server {
+
     /// Register some routes onto the server for us to serve up
     ///
     /// # Arguments
