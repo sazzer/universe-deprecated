@@ -1,5 +1,7 @@
 use super::Password;
 use crate::entity::Entity;
+#[cfg(test)]
+use chrono::{TimeZone, Utc};
 use std::str::FromStr;
 use uuid::Uuid;
 
@@ -59,8 +61,8 @@ impl Default for UserEntity {
             identity: crate::entity::Identity {
                 id: UserID(uuid::Uuid::default()),
                 version: uuid::Uuid::default(),
-                created: std::time::Instant::now(),
-                updated: std::time::Instant::now(),
+                created: Utc.ymd(2018, 1, 26).and_hms_micro(18, 30, 9, 453_829),
+                updated: Utc.ymd(2018, 1, 26).and_hms_micro(18, 30, 9, 453_829),
             },
             data: UserData {
                 username: Username("testuser".to_owned()),

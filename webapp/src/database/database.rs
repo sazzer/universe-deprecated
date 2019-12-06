@@ -7,7 +7,7 @@ pub enum Error {
 }
 
 /// Trait representing everything we can do with a database connection
-pub trait Database<M>
+pub trait Database<M>: Send + Sync
 where
     M: ManageConnection,
 {

@@ -26,7 +26,9 @@ pub fn build() -> Result<Server, String> {
         .migrate("migrations")
         .map_err(|_| "Failed to migrate database")?;
 
-    let user_repository = Box::new(users::postgres_repository::PostgresUserRepository {});
+    let user_repository = Box::new(users::postgres_repository::PostgresUserRepository::new(
+        database,
+    ));
 
     let user_service: Arc<dyn users::UserService> =
         Arc::new(users::service::UserServiceImpl::new(user_repository));

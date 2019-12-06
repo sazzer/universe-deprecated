@@ -1,4 +1,4 @@
-use std::time::Instant;
+use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 /// Base generic type to represent the identity of some entity
@@ -6,8 +6,8 @@ use uuid::Uuid;
 pub struct Identity<ID> {
     pub id: ID,
     pub version: Uuid,
-    pub created: Instant,
-    pub updated: Instant,
+    pub created: DateTime<Utc>,
+    pub updated: DateTime<Utc>,
 }
 
 /// Base generic type to represent some entity
