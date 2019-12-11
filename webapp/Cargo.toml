@@ -26,6 +26,7 @@ postgres = { version = "0.15.2", features = ["with-uuid", "with-chrono"] }
 universe_templates = { path = "../templates" }
 universe_migrations = { path = "../migrations" }
 chrono = "0.4.10"
+bcrypt = "0.6.1"
 
 [dev-dependencies]
 speculate = "0.1.2"
