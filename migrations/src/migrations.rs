@@ -1,5 +1,6 @@
 use log::info;
 use r2d2::{ManageConnection, PooledConnection};
+use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;
 
@@ -43,6 +44,7 @@ where
             .map_err(|_| MigrationsError::UnknownDirectory)?
             .filter(|res| res.as_ref().unwrap().file_type().unwrap().is_file())
             .map(|res| res.map(|e| e.path()))
+            .filter(|res| res.as_ref().unwrap().extension().and_then(OsStr::to_str) == Some("sql"))
             .collect::<Result<Vec<_>, std::io::Error>>()
             .unwrap();
         files.sort();

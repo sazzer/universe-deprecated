@@ -24,11 +24,11 @@ speculate! {
     describe "new" {
         test "Empty migrations directory" {
             let result = universe_migrations::Migrations::new(conn, "tests/migrations/empty");
-            assert!(result.is_ok());
+            assert_eq!(None, result.err());
         }
         test "Populated migrations directory" {
             let result = universe_migrations::Migrations::new(conn, "tests/migrations/working");
-            assert!(result.is_ok());
+            assert_eq!(None, result.err());
         }
         test "Unknown migrations directory" {
             let result = universe_migrations::Migrations::new(conn, "tests/migrations/unknown");
