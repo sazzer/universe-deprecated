@@ -32,14 +32,31 @@ speculate! {
         }
         test "Unknown migrations directory" {
             let result = universe_migrations::Migrations::new(conn, "tests/migrations/unknown");
-            assert!(result.is_err());
-            assert_eq!(Some(universe_migrations::MigrationsError::UnknownDirectory), result.err());
+            assert_eq!(None, result.err());
         }
     }
 
     describe "migrate" {
         test "Empty migrations directory" {
             let result = universe_migrations::Migrations::new(conn, "tests/migrations/empty").unwrap();
+
+            let applied = result.migrate();
+            assert_eq!(Some(0), applied.ok());
+
+            let new_conn = pool.get().unwrap();
+            let applied_migrations: Vec<String> = new_conn
+                .query("SELECT migration_file FROM __migrations ORDER BY sequence ASC", &[])
+                .unwrap()
+                .iter()
+                .map(|row| {
+                    let value: String = row.get("migration_file");
+                    value
+                })
+                .collect::<Vec<String>>();
+            assert_eq!(0, applied_migrations.len());
+        }
+        test "Unknown migrations directory" {
+            let result = universe_migrations::Migrations::new(conn, "tests/migrations/unknown").unwrap();
 
             let applied = result.migrate();
             assert_eq!(Some(0), applied.ok());
@@ -108,7 +125,7 @@ speculate! {
 
             let applied = result.migrate();
             assert_eq!(
-                Some(universe_migrations::MigrationsError::MigrationError("database error: ERROR: relation \"peoples\" does not exist".to_owned())),
+                Some(universe_migrations::MigrationsError::DatabaseError("database error: ERROR: relation \"peoples\" does not exist".into())),
                 applied.err());
 
             let new_conn = pool.get().unwrap();

@@ -1,7 +1,7 @@
-use log::info;
+use glob::glob;
+use log::{error, info, warn};
 use r2d2::{ManageConnection, PooledConnection};
-use std::ffi::OsStr;
-use std::fs;
+use std::borrow::Cow;
 use std::path::PathBuf;
 
 /// Struct that represents the ability to migrate a database to the latest version of the schema
@@ -15,10 +15,23 @@ where
 
 /// Possible errors that can occur from the migrations
 #[derive(Debug, PartialEq)]
-pub enum MigrationsError {
-    UnknownDirectory,
-    DatabaseError(String),
-    MigrationError(String),
+pub enum MigrationsError<'a> {
+    IoError(Cow<'a, str>),
+    DatabaseError(Cow<'a, str>),
+}
+
+impl From<std::io::Error> for MigrationsError<'_> {
+    fn from(err: std::io::Error) -> Self {
+        error!("IO Error: {:?}", err);
+        MigrationsError::IoError(err.to_string().into())
+    }
+}
+
+impl From<glob::PatternError> for MigrationsError<'_> {
+    fn from(err: glob::PatternError) -> Self {
+        error!("Error listing files: {:?}", err);
+        MigrationsError::IoError(err.to_string().into())
+    }
 }
 
 impl<M> Migrations<M>
@@ -36,19 +49,19 @@ where
     ///
     /// # Returns
     /// the migrations instance to actually use to run the migrations
-    pub fn new<S: Into<String>>(
+    pub fn new<'a, S: Into<String>>(
         conn: PooledConnection<M>,
         migrations_dir: S,
-    ) -> Result<Self, MigrationsError> {
-        let mut files: Vec<PathBuf> = fs::read_dir(migrations_dir.into())
-            .map_err(|_| MigrationsError::UnknownDirectory)?
-            .filter(|res| res.as_ref().unwrap().file_type().unwrap().is_file())
-            .map(|res| res.map(|e| e.path()))
-            .filter(|res| res.as_ref().unwrap().extension().and_then(OsStr::to_str) == Some("sql"))
-            .collect::<Result<Vec<_>, std::io::Error>>()
-            .unwrap();
+    ) -> Result<Self, MigrationsError<'a>> {
+        let glob_path = format!("{}/**/*.sql", migrations_dir.into());
+        let mut files: Vec<PathBuf> = glob(&glob_path)?.filter_map(Result::ok).collect();
         files.sort();
-        info!("Migrations to apply: {:?}", files);
+
+        if files.is_empty() {
+            warn!("No migrations found to apply in directory: {}", glob_path);
+        } else {
+            info!("Migrations to apply: {:?}", files);
+        }
 
         Ok(Self {
             files: files,
