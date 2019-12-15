@@ -1,8 +1,10 @@
 use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
-use log::{debug, error};
+use glob::glob;
+use log::{debug, error, warn};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::fs;
+use std::path::PathBuf;
 use unic_langid::LanguageIdentifier;
 
 /// Type abbreviation for a bundle of messages for a single locale
@@ -30,32 +32,41 @@ impl Messages {
     pub fn new<S: Into<String>>(messages: S, default_locale: S) -> Self {
         let mut bundles: Vec<Bundle> = Vec::new();
 
-        let files = fs::read_dir(messages.into()).unwrap();
-        for entry in files {
-            let entry = entry.unwrap();
-            if !entry.file_type().unwrap().is_file() {
-                continue;
-            }
+        let glob_path = format!("{}/**/*.ftl", messages.into());
+        let files: Vec<PathBuf> = glob(&glob_path).unwrap().filter_map(Result::ok).collect();
 
+        for entry in files {
             debug!("Processing file: {:?}", entry);
 
-            let path = entry.path();
-            let locale: LanguageIdentifier = path
+            let locale: Result<LanguageIdentifier, _> = entry
                 .file_stem()
-                .expect("file on disk has no name")
-                .to_str()
-                .unwrap()
-                .parse()
-                .unwrap();
-            debug!("Locale for file {:?}: {}", entry, locale);
+                .and_then(|file| file.to_str())
+                .ok_or("Unexpected Error")
+                .and_then(|file| file.parse().map_err(|_| "Invalid Locale"));
+            debug!("Locale for file {:?}: {:?}", entry, locale);
 
-            let source = fs::read_to_string(&path).unwrap();
-            let resource = FluentResource::try_new(source).unwrap();
+            if let Ok(parsed_locale) = locale {
+                let bundle = fs::read_to_string(&entry)
+                    .map_err(|_| "Failed to read file")
+                    .and_then(|source| {
+                        FluentResource::try_new(source).map_err(|err| {
+                            warn!("Error building resource: {:?}", err.1);
+                            "Failed to build resource"
+                        })
+                    })
+                    .and_then(|resource| {
+                        let mut bundle = FluentBundle::new(&[parsed_locale]);
+                        bundle
+                            .add_resource(resource)
+                            .map_err(|_| "Failed to add resource to bundle")?;
+                        Ok(bundle)
+                    });
 
-            let mut bundle = FluentBundle::new(&[locale]);
-            bundle.add_resource(resource).unwrap();
-
-            bundles.push(bundle);
+                match bundle {
+                    Ok(bundle) => bundles.push(bundle),
+                    Err(err) => warn!("Error building bundle {:?}: {}", entry, err),
+                }
+            }
         }
 
         Messages {
@@ -92,10 +103,7 @@ impl Messages {
             .collect();
 
         // Build the actual list of locales to match against, including the default
-        let mut desired_locales: Vec<&LanguageIdentifier> = Vec::new();
-        for locale in locales.iter() {
-            desired_locales.push(&locale);
-        }
+        let mut desired_locales: Vec<&LanguageIdentifier> = locales.iter().collect();
         desired_locales.push(&self.default_locale);
 
         // Iterate over each Locale, trying to find a bundle that matches
@@ -146,7 +154,7 @@ impl Messages {
         &self,
         locales: Vec<S>,
         message_key: S,
-        params: HashMap<&str, Value>,
+        params: HashMap<String, Value>,
     ) -> String {
         let desired_message_key: String = message_key.into();
         let desired_locales: Vec<LanguageIdentifier> = locales
@@ -178,14 +186,14 @@ impl Messages {
                     .and_then(|message| message.value)
                     .and_then(|pattern| {
                         let mut args = FluentArgs::new();
-                        for (key, value) in params {
+                        for (key, value) in &params {
                             let fluent_value = match value {
                                 Value::Number(n) => FluentValue::into_number(n),
                                 Value::String(s) => FluentValue::into_number(s),
                                 _ => FluentValue::None,
                             };
 
-                            args.insert(key, fluent_value);
+                            args.insert(&key, fluent_value);
                         }
 
                         let mut errors = vec![];
@@ -215,20 +223,24 @@ mod tests {
     use speculate::speculate;
 
     speculate! {
+        before {
+            let _ = env_logger::try_init();
+        }
         describe "new" {
             it "Works correctly with a valid messages directory" {
-                Messages::new("src/test_messages", "en");
+                Messages::new("src/test_messages/working", "en");
             }
-
-            #[should_panic]
-            it "Panics with an invalid messages directory" {
-                Messages::new("missing", "en");
+            it "Works with an unknown messages directory" {
+                Messages::new("src/test_messages/missing", "en");
+            }
+            it "Works with an invalid messages directory" {
+                Messages::new("src/test_messages/invalid", "en");
             }
         }
 
         describe "format" {
             before {
-                let messages = Messages::new("src/test_messages", "en");
+                let messages = Messages::new("src/test_messages/working", "en");
             }
             it "Formats a simple message" {
                 let formatted = messages.lookup(vec!["en"], "hello", HashMap::new());

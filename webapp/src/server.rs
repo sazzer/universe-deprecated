@@ -17,11 +17,7 @@ impl Server {
     ///
     /// # Returns
     /// The server for us to use
-    pub fn new<S: Into<&'static str>>(
-        templates: S,
-        messages: S,
-        default_locale: S,
-    ) -> Result<Self, ()> {
+    pub fn new<S: Into<String>>(templates: S, messages: S, default_locale: S) -> Result<Self, ()> {
         let template_renderer = TemplateRenderer::new(templates, messages, default_locale);
 
         let rocket = rocket::ignite()

@@ -19,15 +19,11 @@ impl TemplateRenderer {
     ///
     /// # Arguments
     /// * `templates` The glob defining where the templates should be loaded from
-    pub fn new<S: Into<&'static str>>(
-        templates: S,
-        messages: S,
-        default_locale: S,
-    ) -> TemplateRenderer {
-        let mut tera = compile_templates!(templates.into());
+    pub fn new<S: Into<String>>(templates: S, messages: S, default_locale: S) -> TemplateRenderer {
+        let mut tera = compile_templates!(&templates.into());
         tera.autoescape_on(vec![]);
 
-        let messages = Messages::new(messages.into(), default_locale.into());
+        let messages = Messages::new(messages, default_locale);
 
         TemplateRenderer {
             tera: tera,
@@ -59,10 +55,7 @@ impl TemplateRenderer {
         tera.register_function(
             "t",
             Box::new(move |args: HashMap<String, Value>| -> tera::Result<Value> {
-                let params: HashMap<&str, Value> = args
-                    .iter()
-                    .map(|(key, value)| (key.as_ref(), value.clone()))
-                    .collect();
+                let params = args.clone();
 
                 let message = args
                     .get("key")
