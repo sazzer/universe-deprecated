@@ -9,5 +9,5 @@ pub fn start_login(username: Username, user_service: &dyn UserService) -> Templa
         true => "login/login.tera",
     };
 
-    Template::new(template).with_data("username", &username.0)
+    Template::new(template).with_data("username", username.as_ref())
 }

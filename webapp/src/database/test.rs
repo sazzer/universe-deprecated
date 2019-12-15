@@ -11,6 +11,7 @@ lazy_static! {
 /// Wrapper around the database for test purposes
 pub struct TestDatabase<'a> {
     pub database: Arc<PostgresDatabase>,
+    #[allow(dead_code)]
     container: testcontainers::core::Container<'a, clients::Cli, images::postgres::Postgres>,
 }
 

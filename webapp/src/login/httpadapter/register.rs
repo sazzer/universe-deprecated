@@ -55,7 +55,7 @@ pub fn perform_register(
 
     info!("Errors processing registration form: {:?}", errors);
     Template::new("login/register.tera")
-        .with_data("username", &username.0)
+        .with_data("username", username.as_ref())
         .with_data("email", body.email.as_ref().unwrap_or(&"".to_owned()))
         .with_data("name", body.name.as_ref().unwrap_or(&"".to_owned()))
         .with_data("errors", &errors)

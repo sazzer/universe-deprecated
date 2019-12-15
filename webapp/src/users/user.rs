@@ -2,6 +2,7 @@ use super::Password;
 use crate::entity::Entity;
 #[cfg(test)]
 use chrono::{TimeZone, Utc};
+use std::convert::AsRef;
 use std::str::FromStr;
 use uuid::Uuid;
 
@@ -45,6 +46,12 @@ impl FromStr for Username {
             "" => Err(ParseUsernameError::BlankUsername),
             username => Ok(Username(username.to_owned())),
         }
+    }
+}
+
+impl AsRef<str> for Username {
+    fn as_ref(&self) -> &str {
+        &self.0
     }
 }
 

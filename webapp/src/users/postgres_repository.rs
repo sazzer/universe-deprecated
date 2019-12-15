@@ -21,7 +21,10 @@ impl UserRepository for PostgresUserRepository {
 
         let client = self.database.client().ok()?;
         let result: postgres::rows::Rows = client
-            .query("SELECT * FROM users WHERE username = $1", &[&username.0])
+            .query(
+                &"SELECT * FROM users WHERE username = $1".to_owned(),
+                &[username.as_ref()],
+            )
             .ok()?;
 
         if result.is_empty() {

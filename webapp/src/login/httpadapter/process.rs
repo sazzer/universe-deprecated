@@ -34,12 +34,11 @@ pub fn continue_login(
     match username {
         Ok(username) => {
             let user_service = user_service.inner().as_ref();
-            if body.action == Some("login".to_owned()) {
-                start_login(username, user_service)
-            } else if body.action == Some("register".to_owned()) {
-                perform_register(body, username, user_service)
-            } else {
-                start_login(username, user_service)
+
+            match body.get_action().as_ref() {
+                "login" => start_login(username, user_service),
+                "register" => perform_register(body, username, user_service),
+                _ => start_login(username, user_service),
             }
         }
         Err(_) => get_login_form(),

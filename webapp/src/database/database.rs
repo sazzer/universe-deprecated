@@ -1,10 +1,7 @@
 use r2d2::{ManageConnection, PooledConnection};
 
 #[derive(Debug, PartialEq)]
-pub enum Error {
-    InstantiationError,
-    CheckoutError,
-}
+pub struct Error(pub String);
 
 /// Trait representing everything we can do with a database connection
 pub trait Database<M>: Send + Sync

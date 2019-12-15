@@ -14,3 +14,12 @@ pub struct LoginForm {
     pub password: Option<String>,
     pub password2: Option<String>,
 }
+
+impl LoginForm {
+    pub fn get_action(&self) -> String {
+        match &self.action {
+            Some(a) => a.to_string(),
+            None => "".to_owned(),
+        }
+    }
+}
