@@ -113,12 +113,11 @@ impl<'de> Deserialize<'de> for Username {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use log::info;
-    use postgres::{Client, Error, NoTls};
+    use crate::database::test::TestDatabase;
+    use postgres::Error;
     use serde_json::json;
     use spectral::prelude::*;
     use speculate::speculate;
-    use testcontainers::*;
 
     speculate! {
         before {
@@ -184,14 +183,8 @@ mod tests {
 
         describe "postgres" {
             before {
-                let docker = clients::Cli::default();
-                let node = docker.run(images::postgres::Postgres::default());
-
-                let host_port = node.get_host_port(5432).unwrap();
-                let url = format!("postgres://postgres:postgres@localhost:{}", host_port);
-                info!("Running postgres on {}", url);
-
-                let mut client = Client::connect(&url, NoTls).unwrap();
+                let database = TestDatabase::new();
+                let mut client = database.client();
             }
 
             describe "ToSql" {

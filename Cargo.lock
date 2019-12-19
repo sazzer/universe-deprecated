@@ -1126,6 +1126,7 @@ dependencies = [
  "bytes",
  "chrono",
  "env_logger",
+ "lazy_static",
  "log",
  "postgres",
  "serde",
