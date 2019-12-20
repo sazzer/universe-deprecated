@@ -35,6 +35,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "base64"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b41b7ea54a0c9d92199de89e20e58d49f02f8e699814ef3fdf266f6f748d15c7"
+
+[[package]]
+name = "bcrypt"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28dff1c1a22f9401213d983f6c309e807e72c33d5dc5514fe5005b0205c46e8f"
+dependencies = [
+ "base64 0.11.0",
+ "blowfish",
+ "byteorder",
+ "lazy_static",
+ "rand 0.7.2",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -53,12 +72,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "block-cipher-trait"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1c924d49bd09e7c06003acda26cd9742e796e34282ec6c1189404dee0c1f4774"
+dependencies = [
+ "generic-array 0.12.3",
+]
+
+[[package]]
 name = "block-padding"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fa79dedbb091f449f1f39e53edf88d5dbe95f895dae6135a8d7b881fb5af73f5"
 dependencies = [
  "byte-tools",
+]
+
+[[package]]
+name = "blowfish"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6aeb80d00f2688459b8542068abd974cfb101e7a82182414a99b5026c0d85cc3"
+dependencies = [
+ "block-cipher-trait",
+ "byteorder",
+ "opaque-debug",
 ]
 
 [[package]]
@@ -646,7 +685,7 @@ version = "0.5.0-alpha.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03b400f720e2838de4d4b07c3b87c7934d9ed8b1d1656452209e888106a8f701"
 dependencies = [
- "base64",
+ "base64 0.10.1",
  "byteorder",
  "bytes",
  "fallible-iterator",
@@ -1123,6 +1162,7 @@ checksum = "826e7639553986605ec5979c7dd957c7895e93eabed50ab2ffa7f6128a75097c"
 name = "universe"
 version = "0.1.0"
 dependencies = [
+ "bcrypt",
  "bytes",
  "chrono",
  "env_logger",

@@ -19,6 +19,7 @@ log = "0.4.10"
 env_logger = "0.7.1"
 uuid = "0.8.1"
 chrono = "0.4.10"
+bcrypt = "0.6.1"
 
 [dev-dependencies]
 speculate = "0.1.2"
