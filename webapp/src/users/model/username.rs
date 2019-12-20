@@ -65,7 +65,7 @@ impl ToSql for Username {
 /// outputs without needing to construct it explicitly. Instead the Postgres crate will do so for us.
 impl<'a> FromSql<'a> for Username {
     fn from_sql(t: &Type, raw: &'a [u8]) -> Result<Self, Box<dyn Error + Sync + Send>> {
-        String::from_sql(t, raw).map(|u| Username(u))
+        String::from_sql(t, raw).map(Username)
     }
     accepts!(VARCHAR, TEXT);
 }

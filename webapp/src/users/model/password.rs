@@ -104,7 +104,7 @@ impl ToSql for Password {
 /// outputs without needing to construct it explicitly. Instead the Postgres crate will do so for us.
 impl<'a> FromSql<'a> for Password {
     fn from_sql(t: &Type, raw: &'a [u8]) -> Result<Self, Box<dyn Error + Sync + Send>> {
-        String::from_sql(t, raw).map(|u| Password(u))
+        String::from_sql(t, raw).map(Password)
     }
     accepts!(VARCHAR, TEXT);
 }
