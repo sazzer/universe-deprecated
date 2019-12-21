@@ -1,18 +1,13 @@
 use bytes::BytesMut;
 use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
-use serde::{
-    de,
-    de::{Deserialize, Deserializer, Visitor},
-    Serialize, Serializer,
-};
+use serde::Serialize;
 use std::error::Error;
-use std::fmt;
 use std::str::FromStr;
 
 /// Representation of a username of some user in the system.
 ///
 /// A username is any valid UTF-8 string, but must not have any whitespace padding to either end.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct Username(String);
 
 /// Errors that can happen when parsing a string into a username.
@@ -70,46 +65,6 @@ impl<'a> FromSql<'a> for Username {
     accepts!(VARCHAR, TEXT);
 }
 
-/// Allow us to serialize `Username` objects into Serde structures, so that they can be provided to
-/// anything that works as such - for example, Tera - without needing to extract the value from inside.
-impl Serialize for Username {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&self.0)
-    }
-}
-
-/// Serde Visitor to allow us to parse a String value into a Username object.
-struct UsernameVisitor {}
-impl<'de> Visitor<'de> for UsernameVisitor {
-    type Value = Username;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "a non-blank string")
-    }
-
-    fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        s.parse()
-            .map_err(|_| de::Error::invalid_value(de::Unexpected::Str(s), &self))
-    }
-}
-
-/// Allow us to deserialize `Username` objects from Serde structures, should we ever need to do so.
-impl<'de> Deserialize<'de> for Username {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let visitor = UsernameVisitor {};
-        deserializer.deserialize_string(visitor)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -157,41 +112,6 @@ mod tests {
         assert_that(&serialized)
             .is_ok()
             .is_equal_to(json!("testuser"));
-    }
-
-    #[test]
-    fn test_deserialize_valid_username() {
-        let result: Result<Username, _> = serde_json::from_value(json!("testuser"));
-        assert_that(&result)
-            .is_ok()
-            .is_equal_to(Username("testuser".parse().unwrap()));
-    }
-    #[test]
-    fn test_deserialize_padded_username() {
-        let result: Result<Username, _> = serde_json::from_value(json!("  testuser  "));
-        assert_that(&result)
-            .is_ok()
-            .is_equal_to(Username("testuser".parse().unwrap()));
-    }
-    #[test]
-    fn test_deserialize_empty_username() {
-        let result: Result<Username, serde_json::Error> = serde_json::from_value(json!(""));
-        assert_that(&result).is_err();
-
-        let err = result.unwrap_err();
-        let err_msg = format!("{}", err);
-        assert_that(&err_msg)
-            .is_equal_to("invalid value: string \"\", expected a non-blank string".to_owned());
-    }
-    #[test]
-    fn test_deserialize_blank_username() {
-        let result: Result<Username, serde_json::Error> = serde_json::from_value(json!("    "));
-        assert_that(&result).is_err();
-
-        let err = result.unwrap_err();
-        let err_msg = format!("{}", err);
-        assert_that(&err_msg)
-            .is_equal_to("invalid value: string \"    \", expected a non-blank string".to_owned());
     }
 
     #[test]

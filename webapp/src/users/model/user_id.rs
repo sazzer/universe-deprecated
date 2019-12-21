@@ -1,19 +1,14 @@
 use bytes::BytesMut;
 use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
-use serde::{
-    de,
-    de::{Deserialize, Deserializer, Visitor},
-    Serialize, Serializer,
-};
+use serde::Serialize;
 use std::error::Error;
-use std::fmt;
 use std::str::FromStr;
 use uuid::Uuid;
 
 /// Representation of a User ID of some user in the system.
 ///
 /// A User ID is any valid UUID.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
@@ -70,46 +65,6 @@ impl<'a> FromSql<'a> for UserID {
         Uuid::from_sql(t, raw).map(UserID)
     }
     accepts!(UUID);
-}
-
-/// Allow us to serialize `UserID` objects into Serde structures, so that they can be provided to
-/// anything that works as such - for example, Tera - without needing to extract the value from inside.
-impl Serialize for UserID {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&format!("{}", self.0))
-    }
-}
-
-/// Serde Visitor to allow us to parse a String value into a UserID object.
-struct UserIDVisitor {}
-impl<'de> Visitor<'de> for UserIDVisitor {
-    type Value = UserID;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "a non-blank string")
-    }
-
-    fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        s.parse()
-            .map_err(|_| de::Error::invalid_value(de::Unexpected::Str(s), &self))
-    }
-}
-
-/// Allow us to deserialize `UserID` objects from Serde structures, should we ever need to do so.
-impl<'de> Deserialize<'de> for UserID {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let visitor = UserIDVisitor {};
-        deserializer.deserialize_string(visitor)
-    }
 }
 
 #[cfg(test)]
@@ -175,53 +130,6 @@ mod tests {
         assert_that(&serialized)
             .is_ok()
             .is_equal_to(json!("f2c55656-d7a1-4e41-a311-fe653b9b15de"));
-    }
-    #[test]
-    fn test_deserialize_valid_user_id() {
-        let result: Result<UserID, _> =
-            serde_json::from_value(json!("f2c55656-d7a1-4e41-a311-fe653b9b15de"));
-        assert_that(&result).is_ok().is_equal_to(UserID(
-            "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap(),
-        ));
-    }
-    #[test]
-    fn test_deserialize_padded_user_id() {
-        let result: Result<UserID, _> =
-            serde_json::from_value(json!("  f2c55656-d7a1-4e41-a311-fe653b9b15de  "));
-        assert_that(&result).is_ok().is_equal_to(UserID(
-            "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap(),
-        ));
-    }
-    #[test]
-    fn test_deserialize_empty_user_id() {
-        let result: Result<UserID, serde_json::Error> = serde_json::from_value(json!(""));
-        assert_that(&result).is_err();
-
-        let err = result.unwrap_err();
-        let err_msg = format!("{}", err);
-        assert_that(&err_msg)
-            .is_equal_to("invalid value: string \"\", expected a non-blank string".to_owned());
-    }
-    #[test]
-    fn test_deserialize_blank_user_id() {
-        let result: Result<UserID, serde_json::Error> = serde_json::from_value(json!("    "));
-        assert_that(&result).is_err();
-
-        let err = result.unwrap_err();
-        let err_msg = format!("{}", err);
-        assert_that(&err_msg)
-            .is_equal_to("invalid value: string \"    \", expected a non-blank string".to_owned());
-    }
-    #[test]
-    fn test_deserialize_invalud_user_id() {
-        let result: Result<UserID, serde_json::Error> = serde_json::from_value(json!("invalid"));
-        assert_that(&result).is_err();
-
-        let err = result.unwrap_err();
-        let err_msg = format!("{}", err);
-        assert_that(&err_msg).is_equal_to(
-            "invalid value: string \"invalid\", expected a non-blank string".to_owned(),
-        );
     }
 
     #[test]

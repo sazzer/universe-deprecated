@@ -2,7 +2,6 @@ use bcrypt::{hash, verify, BcryptError, DEFAULT_COST};
 use bytes::BytesMut;
 use log::warn;
 use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
-use serde::{Serialize, Serializer};
 use std::error::Error;
 
 /// Representation of a password that has been securely hashed
@@ -69,19 +68,6 @@ impl Password {
                 false
             }
         }
-    }
-}
-
-/// Allow us to serialize `Password` objects into Serde structures.
-///
-/// This always outputs `null` regardless of the password, so that we can never accidentally leak
-/// hashed passwords out to clients.
-impl Serialize for Password {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_none()
     }
 }
 
@@ -161,16 +147,6 @@ mod tests {
         let password = Password::from_hash("password_hash");
         let result = password.verify("password_hash");
         assert_that(&result).is_equal_to(false);
-    }
-
-    #[test]
-    fn test_serde_serialize() {
-        let password = Password::from_hash("password_hash");
-
-        let serialized = serde_json::to_value(password);
-        assert_that(&serialized)
-            .is_ok()
-            .is_equal_to(serde_json::Value::Null);
     }
 
     #[test]
