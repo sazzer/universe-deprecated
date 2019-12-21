@@ -22,7 +22,6 @@ chrono = "0.4.10"
 bcrypt = "0.6.1"
 
 [dev-dependencies]
-speculate = "0.1.2"
 spectral = "0.6.0"
 testcontainers = "0.8.1"
 lazy_static = "1.4.0"

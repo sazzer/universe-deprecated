@@ -119,110 +119,145 @@ mod tests {
     use postgres::Error;
     use serde_json::json;
     use spectral::prelude::*;
-    use speculate::speculate;
 
-    speculate! {
-        before {
-            let _ = env_logger::try_init();
-        }
+    #[test]
+    fn test_parse_valid_user_id() {
+        let user_id: Result<UserID, UserIDParseError> =
+            "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse();
 
-        describe "FromStr" {
-            test "Parsing a valid user ID" {
-                let user_id: Result<UserID, UserIDParseError> = "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse();
+        assert_that(&user_id).is_ok().is_equal_to(UserID(
+            "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap(),
+        ));
+    }
 
-                assert_that(&user_id).is_ok().is_equal_to(UserID("f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap()));
-            }
+    #[test]
+    fn test_parse_padded_user_id() {
+        let user_id: Result<UserID, UserIDParseError> =
+            "  f2c55656-d7a1-4e41-a311-fe653b9b15de    ".parse();
 
-            test "Parsing a padded user ID" {
-                let user_id: Result<UserID, UserIDParseError> = "  f2c55656-d7a1-4e41-a311-fe653b9b15de    ".parse();
+        assert_that(&user_id).is_ok().is_equal_to(UserID(
+            "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap(),
+        ));
+    }
 
-                assert_that(&user_id).is_ok().is_equal_to(UserID("f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap()));
-            }
+    #[test]
+    fn test_parse_empty_string() {
+        let user_id: Result<UserID, UserIDParseError> = "".parse();
 
-            test "Parsing an empty string" {
-                let user_id: Result<UserID, UserIDParseError> = "".parse();
+        assert_that(&user_id)
+            .is_err()
+            .is_equal_to(UserIDParseError::InvalidUUID);
+    }
 
-                assert_that(&user_id).is_err().is_equal_to(UserIDParseError::InvalidUUID);
-            }
-            test "Parsing a whitespace-only string" {
-                let user_id: Result<UserID, UserIDParseError> = "   ".parse();
+    #[test]
+    fn test_parse_blank_string() {
+        let user_id: Result<UserID, UserIDParseError> = "     ".parse();
 
-                assert_that(&user_id).is_err().is_equal_to(UserIDParseError::InvalidUUID);
-            }
-            test "Parsing a non-UUID string" {
-                let user_id: Result<UserID, UserIDParseError> = "some-string".parse();
+        assert_that(&user_id)
+            .is_err()
+            .is_equal_to(UserIDParseError::InvalidUUID);
+    }
 
-                assert_that(&user_id).is_err().is_equal_to(UserIDParseError::InvalidUUID);
-            }
-        }
+    #[test]
+    fn test_parse_invalid_string() {
+        let user_id: Result<UserID, UserIDParseError> = "non-uuid".parse();
 
-        describe "serde" {
-            describe "Serialize" {
-                test "Serializing a valid user ID" {
-                    let user_id = UserID("f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap());
+        assert_that(&user_id)
+            .is_err()
+            .is_equal_to(UserIDParseError::InvalidUUID);
+    }
 
-                    let serialized = serde_json::to_value(user_id);
-                    assert_that(&serialized).is_ok().is_equal_to(json!("f2c55656-d7a1-4e41-a311-fe653b9b15de"));
-                }
-            }
+    #[test]
+    fn test_serialize_valid_user_id() {
+        let user_id = UserID("f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap());
 
-            describe "Deserialize" {
-                test "Deserializing a valid user ID" {
-                    let result: Result<UserID, _> = serde_json::from_value(json!("f2c55656-d7a1-4e41-a311-fe653b9b15de"));
-                    assert_that(&result).is_ok().is_equal_to(UserID("f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap()));
-                }
-                test "Deserializing a padded user ID" {
-                    let result: Result<UserID, _> = serde_json::from_value(json!("  f2c55656-d7a1-4e41-a311-fe653b9b15de  "));
-                    assert_that(&result).is_ok().is_equal_to(UserID("f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap()));
-                }
-                test "Deserializing a blank user ID" {
-                    let result: Result<UserID, serde_json::Error> = serde_json::from_value(json!("    "));
-                    assert_that(&result).is_err();
+        let serialized = serde_json::to_value(user_id);
+        assert_that(&serialized)
+            .is_ok()
+            .is_equal_to(json!("f2c55656-d7a1-4e41-a311-fe653b9b15de"));
+    }
+    #[test]
+    fn test_deserialize_valid_user_id() {
+        let result: Result<UserID, _> =
+            serde_json::from_value(json!("f2c55656-d7a1-4e41-a311-fe653b9b15de"));
+        assert_that(&result).is_ok().is_equal_to(UserID(
+            "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap(),
+        ));
+    }
+    #[test]
+    fn test_deserialize_padded_user_id() {
+        let result: Result<UserID, _> =
+            serde_json::from_value(json!("  f2c55656-d7a1-4e41-a311-fe653b9b15de  "));
+        assert_that(&result).is_ok().is_equal_to(UserID(
+            "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap(),
+        ));
+    }
+    #[test]
+    fn test_deserialize_empty_user_id() {
+        let result: Result<UserID, serde_json::Error> = serde_json::from_value(json!(""));
+        assert_that(&result).is_err();
 
-                    let err = result.unwrap_err();
-                    let err_msg = format!("{}", err);
-                    assert_that(&err_msg)
-                        .is_equal_to("invalid value: string \"    \", expected a non-blank string".to_owned());
-                }
-            }
-        }
-        describe "postgres" {
-            before {
-                let database = TestDatabase::new();
-                let mut client = database.client();
-            }
-            describe "ToSql" {
-                test "Using a valid UserID in a query" {
-                    let uuid: Uuid = "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap();
-                    let user_id = UserID(uuid);
-                    let result = client.query("SELECT $1::uuid", &[&user_id]);
-                    let rows = result.unwrap();
-                    assert_that(&rows.len()).is_equal_to(1);
-                    let row = rows.get(0).unwrap();
-                    assert_that(&row.len()).is_equal_to(1);
-                    let output_value: Uuid = rows.get(0).unwrap().get(0);
-                    assert_that(&output_value).is_equal_to(uuid);
-                }
-            }
-            describe "FromSql" {
-                test "Fetching a valid UserID from a query" {
-                    let uuid: Uuid = "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap();
-                    let result = client.query("SELECT $1::uuid", &[&uuid]);
-                    let rows = result.unwrap();
-                    assert_that(&rows.len()).is_equal_to(1);
-                    let row = rows.get(0).unwrap();
-                    assert_that(&row.len()).is_equal_to(1);
-                    let output_value: UserID = rows.get(0).unwrap().get(0);
-                    assert_that(&output_value).is_equal_to(UserID(uuid));
-                }
-                test "Fetching a number from a query" {
-                    let result = client.query("SELECT $1", &[&1]);
-                    let err: Error = result.err().unwrap();
-                    let err_msg = format!("{}", err);
-                    assert_that(&err_msg)
-                        .is_equal_to("error serializing parameter 0: cannot convert between the Rust type `i32` and the Postgres type `text`".to_owned());
-                }
-            }
-        }
+        let err = result.unwrap_err();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg)
+            .is_equal_to("invalid value: string \"\", expected a non-blank string".to_owned());
+    }
+    #[test]
+    fn test_deserialize_blank_user_id() {
+        let result: Result<UserID, serde_json::Error> = serde_json::from_value(json!("    "));
+        assert_that(&result).is_err();
+
+        let err = result.unwrap_err();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg)
+            .is_equal_to("invalid value: string \"    \", expected a non-blank string".to_owned());
+    }
+    #[test]
+    fn test_deserialize_invalud_user_id() {
+        let result: Result<UserID, serde_json::Error> = serde_json::from_value(json!("invalid"));
+        assert_that(&result).is_err();
+
+        let err = result.unwrap_err();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg).is_equal_to(
+            "invalid value: string \"invalid\", expected a non-blank string".to_owned(),
+        );
+    }
+
+    #[test]
+    fn test_postgres_to_sql() {
+        let database = TestDatabase::new();
+        let uuid: Uuid = "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap();
+        let user_id = UserID(uuid);
+        let result = database.client().query("SELECT $1::uuid", &[&user_id]);
+        let rows = result.unwrap();
+        assert_that(&rows.len()).is_equal_to(1);
+        let row = rows.get(0).unwrap();
+        assert_that(&row.len()).is_equal_to(1);
+        let output_value: Uuid = rows.get(0).unwrap().get(0);
+        assert_that(&output_value).is_equal_to(uuid);
+    }
+
+    #[test]
+    fn test_postgres_from_sql_valid_type() {
+        let database = TestDatabase::new();
+        let uuid: Uuid = "f2c55656-d7a1-4e41-a311-fe653b9b15de".parse().unwrap();
+        let result = database.client().query("SELECT $1::uuid", &[&uuid]);
+        let rows = result.unwrap();
+        assert_that(&rows.len()).is_equal_to(1);
+        let row = rows.get(0).unwrap();
+        assert_that(&row.len()).is_equal_to(1);
+        let output_value: UserID = rows.get(0).unwrap().get(0);
+        assert_that(&output_value).is_equal_to(UserID(uuid));
+    }
+
+    #[test]
+    fn test_postgres_from_sql_invalid_type() {
+        let database = TestDatabase::new();
+        let result = database.client().query("SELECT $1", &[&1]);
+        let err: Error = result.err().unwrap();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg)
+                    .is_equal_to("error serializing parameter 0: cannot convert between the Rust type `i32` and the Postgres type `text`".to_owned());
     }
 }

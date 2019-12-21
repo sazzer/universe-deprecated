@@ -117,115 +117,121 @@ mod tests {
     use postgres::Error;
     use serde_json::json;
     use spectral::prelude::*;
-    use speculate::speculate;
 
-    speculate! {
-        before {
-            let _ = env_logger::try_init();
-        }
+    #[test]
+    fn test_parse_valid_username() {
+        let username: Result<Username, UsernameParseError> = "testuser".parse();
+        assert_that(&username)
+            .is_ok()
+            .is_equal_to(Username("testuser".to_owned()));
+    }
+    #[test]
+    fn test_parse_padded_username() {
+        let username: Result<Username, UsernameParseError> = "  testuser  ".parse();
+        assert_that(&username)
+            .is_ok()
+            .is_equal_to(Username("testuser".to_owned()));
+    }
+    #[test]
+    fn test_parse_blank_username() {
+        let username: Result<Username, UsernameParseError> = "   ".parse();
 
-        describe "FromStr" {
-            test "Parsing a valid username" {
-                let username: Result<Username, UsernameParseError> = "testuser".parse();
+        assert_that(&username)
+            .is_err()
+            .is_equal_to(UsernameParseError::BlankUsername);
+    }
+    #[test]
+    fn test_parse_empty_username() {
+        let username: Result<Username, UsernameParseError> = "".parse();
 
-                assert_that(&username).is_ok().is_equal_to(Username("testuser".to_owned()));
-            }
+        assert_that(&username)
+            .is_err()
+            .is_equal_to(UsernameParseError::BlankUsername);
+    }
 
-            test "Parsing a padded username" {
-                let username: Result<Username, UsernameParseError> = "  testuser    ".parse();
+    #[test]
+    fn test_serialize_valid_username() {
+        let username = Username("testuser".parse().unwrap());
 
-                assert_that(&username).is_ok().is_equal_to(Username("testuser".to_owned()));
-            }
+        let serialized = serde_json::to_value(username);
+        assert_that(&serialized)
+            .is_ok()
+            .is_equal_to(json!("testuser"));
+    }
 
-            test "Parsing an empty string" {
-                let username: Result<Username, UsernameParseError> = "".parse();
+    #[test]
+    fn test_deserialize_valid_username() {
+        let result: Result<Username, _> = serde_json::from_value(json!("testuser"));
+        assert_that(&result)
+            .is_ok()
+            .is_equal_to(Username("testuser".parse().unwrap()));
+    }
+    #[test]
+    fn test_deserialize_padded_username() {
+        let result: Result<Username, _> = serde_json::from_value(json!("  testuser  "));
+        assert_that(&result)
+            .is_ok()
+            .is_equal_to(Username("testuser".parse().unwrap()));
+    }
+    #[test]
+    fn test_deserialize_empty_username() {
+        let result: Result<Username, serde_json::Error> = serde_json::from_value(json!(""));
+        assert_that(&result).is_err();
 
-                assert_that(&username).is_err().is_equal_to(UsernameParseError::BlankUsername);
-            }
+        let err = result.unwrap_err();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg)
+            .is_equal_to("invalid value: string \"\", expected a non-blank string".to_owned());
+    }
+    #[test]
+    fn test_deserialize_blank_username() {
+        let result: Result<Username, serde_json::Error> = serde_json::from_value(json!("    "));
+        assert_that(&result).is_err();
 
-            test "Parsing a whitespace-only string" {
-                let username: Result<Username, UsernameParseError> = "   ".parse();
+        let err = result.unwrap_err();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg)
+            .is_equal_to("invalid value: string \"    \", expected a non-blank string".to_owned());
+    }
 
-                assert_that(&username).is_err().is_equal_to(UsernameParseError::BlankUsername);
-            }
-        }
+    #[test]
+    fn test_postgres_to_sql() {
+        let database = TestDatabase::new();
+        let username = Username("testuser".to_owned());
+        let result = database.client().query("SELECT $1", &[&username]);
 
-        describe "serde" {
-            describe "Serialize" {
-                test "Serializing a valid username" {
-                    let username = Username("testuser".to_owned());
+        let rows = result.unwrap();
+        assert_that(&rows.len()).is_equal_to(1);
 
-                    let serialized = serde_json::to_value(username);
-                    assert_that(&serialized).is_ok().is_equal_to(json!("testuser"));
-                }
-            }
+        let row = rows.get(0).unwrap();
+        assert_that(&row.len()).is_equal_to(1);
 
-            describe "Deserialize" {
-                test "Deserializing a valid username" {
-                    let result: Result<Username, _> = serde_json::from_value(json!("testuser"));
-                    assert_that(&result).is_ok().is_equal_to(Username("testuser".to_owned()));
-                }
-                test "Deserializing a padded username" {
-                    let result: Result<Username, _> = serde_json::from_value(json!("  testuser  "));
-                    assert_that(&result).is_ok().is_equal_to(Username("testuser".to_owned()));
-                }
-                test "Deserializing a blank username" {
-                    let result: Result<Username, serde_json::Error> = serde_json::from_value(json!("    "));
-                    assert_that(&result).is_err();
+        let output_value: &str = rows.get(0).unwrap().get(0);
+        assert_that(&output_value).is_equal_to("testuser");
+    }
 
-                    let err = result.unwrap_err();
-                    let err_msg = format!("{}", err);
-                    assert_that(&err_msg)
-                        .is_equal_to("invalid value: string \"    \", expected a non-blank string".to_owned());
-                }
-            }
-        }
+    #[test]
+    fn test_postgres_from_sql_valid_type() {
+        let database = TestDatabase::new();
+        let result = database.client().query("SELECT $1", &[&"testuser"]);
 
-        describe "postgres" {
-            before {
-                let database = TestDatabase::new();
-                let mut client = database.client();
-            }
+        let rows = result.unwrap();
+        assert_that(&rows.len()).is_equal_to(1);
 
-            describe "ToSql" {
-                test "Using a valid Username in a query" {
-                    let username = Username("testuser".to_owned());
-                    let result = client.query("SELECT $1", &[&username]);
+        let row = rows.get(0).unwrap();
+        assert_that(&row.len()).is_equal_to(1);
 
-                    let rows = result.unwrap();
-                    assert_that(&rows.len()).is_equal_to(1);
+        let output_value: Username = rows.get(0).unwrap().get(0);
+        assert_that(&output_value).is_equal_to(Username("testuser".to_owned()));
+    }
 
-                    let row = rows.get(0).unwrap();
-                    assert_that(&row.len()).is_equal_to(1);
-
-                    let output_value: &str = rows.get(0).unwrap().get(0);
-                    assert_that(&output_value).is_equal_to("testuser");
-                }
-            }
-
-            describe "FromSql" {
-                test "Fetching a valid Username from a query" {
-                    let result = client.query("SELECT $1", &[&"testuser"]);
-
-                    let rows = result.unwrap();
-                    assert_that(&rows.len()).is_equal_to(1);
-
-                    let row = rows.get(0).unwrap();
-                    assert_that(&row.len()).is_equal_to(1);
-
-                    let output_value: Username = rows.get(0).unwrap().get(0);
-                    assert_that(&output_value).is_equal_to(Username("testuser".to_owned()));
-                }
-
-                test "Fetching a number from a query" {
-                    let result = client.query("SELECT $1", &[&1]);
-
-                    let err: Error = result.err().unwrap();
-                    let err_msg = format!("{}", err);
-                    assert_that(&err_msg)
+    #[test]
+    fn test_postgres_from_sql_invalid_type() {
+        let database = TestDatabase::new();
+        let result = database.client().query("SELECT $1", &[&1]);
+        let err: Error = result.err().unwrap();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg)
                         .is_equal_to("error serializing parameter 0: cannot convert between the Rust type `i32` and the Postgres type `text`".to_owned());
-                }
-            }
-        }
     }
 }

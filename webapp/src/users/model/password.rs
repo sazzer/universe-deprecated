@@ -115,112 +115,106 @@ mod tests {
     use crate::database::test::TestDatabase;
     use postgres::Error;
     use spectral::prelude::*;
-    use speculate::speculate;
 
-    speculate! {
-        before {
-            let _ = env_logger::try_init();
-        }
+    #[test]
+    fn test_hashing_simple_password() {
+        let password = Password::from_plaintext("password");
 
-        describe "from_plaintext" {
-            test "Hashing a simple password" {
-                let password = Password::from_plaintext("password");
+        assert_that(&password)
+            .is_ok()
+            .is_not_equal_to(Password::from_hash("password"));
+    }
 
-                assert_that(&password).is_ok().is_not_equal_to(Password::from_hash("password"));
-            }
+    #[test]
+    fn test_hashing_invalid_password() {
+        let plaintext = std::str::from_utf8(&[65u8, 66u8, 0u8, 67u8, 68u8]).unwrap();
+        let password = Password::from_plaintext(plaintext);
 
-            test "Hashing an invalid password - null bytes not allowed" {
-                let plaintext = std::str::from_utf8(&[65u8, 66u8, 0u8, 67u8, 68u8]).unwrap();
-                let password = Password::from_plaintext(plaintext);
+        assert_that(&password)
+            .is_err()
+            .is_equal_to(PasswordHashError::HashError);
+    }
 
-                assert_that(&password).is_err().is_equal_to(PasswordHashError::HashError);
-            }
-        }
+    #[test]
+    fn test_verify_valid_password() {
+        let password = Password::from_plaintext("password").unwrap();
+        let result = password.verify("password");
+        assert_that(&result).is_equal_to(true);
+    }
 
-        describe "verify" {
-            describe "With a valid hash" {
-                before {
-                    let password = Password::from_plaintext("password").unwrap();
-                }
-                test "With the correct password" {
-                    let result = password.verify("password");
-                    assert_that(&result).is_equal_to(true);
-                }
+    #[test]
+    fn test_verify_wrong_password() {
+        let password = Password::from_plaintext("password").unwrap();
+        let result = password.verify("wrong");
+        assert_that(&result).is_equal_to(false);
+    }
 
-                test "With the wrong password" {
-                    let result = password.verify("wrong");
-                    assert_that(&result).is_equal_to(false);
-                }
+    #[test]
+    fn test_verify_wrong_case() {
+        let password = Password::from_plaintext("password").unwrap();
+        let result = password.verify("Password");
+        assert_that(&result).is_equal_to(false);
+    }
 
-                test "With the wrong password case" {
-                    let result = password.verify("Password");
-                    assert_that(&result).is_equal_to(false);
-                }
-            }
+    #[test]
+    fn test_verify_invalid_hash() {
+        let password = Password::from_hash("password_hash");
+        let result = password.verify("password_hash");
+        assert_that(&result).is_equal_to(false);
+    }
 
-            test "With an invalid hash" {
-                let password = Password::from_hash("password_hash");
-                let result = password.verify("password_hash");
-                assert_that(&result).is_equal_to(false);
-            }
-        }
+    #[test]
+    fn test_serde_serialize() {
+        let password = Password::from_hash("password_hash");
 
-        describe "serde" {
-            describe "Serialize" {
-                test "Serializing a password always returns null" {
-                    let password = Password::from_hash("password_hash");
+        let serialized = serde_json::to_value(password);
+        assert_that(&serialized)
+            .is_ok()
+            .is_equal_to(serde_json::Value::Null);
+    }
 
-                    let serialized = serde_json::to_value(password);
-                    assert_that(&serialized).is_ok().is_equal_to(serde_json::Value::Null);
-                }
-            }
-        }
+    #[test]
+    fn test_postgres_to_sql() {
+        let database = TestDatabase::new();
 
-        describe "postgres" {
-            before {
-                let database = TestDatabase::new();
-                let mut client = database.client();
-            }
+        let password = Password::from_hash("password_hash");
+        let result = database.client().query("SELECT $1", &[&password]);
 
-            describe "ToSql" {
-                test "Using a valid Username in a query" {
-                    let password = Password::from_hash("password_hash");
-                    let result = client.query("SELECT $1", &[&password]);
+        let rows = result.unwrap();
+        assert_that(&rows.len()).is_equal_to(1);
 
-                    let rows = result.unwrap();
-                    assert_that(&rows.len()).is_equal_to(1);
+        let row = rows.get(0).unwrap();
+        assert_that(&row.len()).is_equal_to(1);
 
-                    let row = rows.get(0).unwrap();
-                    assert_that(&row.len()).is_equal_to(1);
+        let output_value: &str = rows.get(0).unwrap().get(0);
+        assert_that(&output_value).is_equal_to("password_hash");
+    }
 
-                    let output_value: &str = rows.get(0).unwrap().get(0);
-                    assert_that(&output_value).is_equal_to("password_hash");
-                }
-            }
+    #[test]
+    fn test_postgres_from_sql_valid_type() {
+        let database = TestDatabase::new();
 
-            describe "FromSql" {
-                test "Fetching a valid Username from a query" {
-                    let result = client.query("SELECT $1", &[&"password_hash"]);
+        let result = database.client().query("SELECT $1", &[&"password_hash"]);
 
-                    let rows = result.unwrap();
-                    assert_that(&rows.len()).is_equal_to(1);
+        let rows = result.unwrap();
+        assert_that(&rows.len()).is_equal_to(1);
 
-                    let row = rows.get(0).unwrap();
-                    assert_that(&row.len()).is_equal_to(1);
+        let row = rows.get(0).unwrap();
+        assert_that(&row.len()).is_equal_to(1);
 
-                    let output_value: Password = rows.get(0).unwrap().get(0);
-                    assert_that(&output_value).is_equal_to(Password::from_hash("password_hash"));
-                }
+        let output_value: Password = rows.get(0).unwrap().get(0);
+        assert_that(&output_value).is_equal_to(Password::from_hash("password_hash"));
+    }
 
-                test "Fetching a number from a query" {
-                    let result = client.query("SELECT $1", &[&1]);
+    #[test]
+    fn test_postgres_from_sql_invalid_type() {
+        let database = TestDatabase::new();
 
-                    let err: Error = result.err().unwrap();
-                    let err_msg = format!("{}", err);
-                    assert_that(&err_msg)
-                        .is_equal_to("error serializing parameter 0: cannot convert between the Rust type `i32` and the Postgres type `text`".to_owned());
-                }
-            }
-        }
+        let result = database.client().query("SELECT $1", &[&1]);
+
+        let err: Error = result.err().unwrap();
+        let err_msg = format!("{}", err);
+        assert_that(&err_msg)
+                    .is_equal_to("error serializing parameter 0: cannot convert between the Rust type `i32` and the Postgres type `text`".to_owned());
     }
 }
