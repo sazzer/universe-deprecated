@@ -680,6 +680,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "postgres-derive"
+version = "0.4.0-alpha.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a52f6113e5e1171bc1e64d198bca8e13e69efec3bc1a18cd35d7d050f53ba88a"
+dependencies = [
+ "proc-macro2 1.0.6",
+ "quote 1.0.2",
+ "syn 1.0.11",
+]
+
+[[package]]
 name = "postgres-protocol"
 version = "0.5.0-alpha.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -706,6 +717,7 @@ checksum = "e0547f59b9769e15ef18747600a0f8f109fddc08d848f7772218a125f5b9d5b4"
 dependencies = [
  "bytes",
  "fallible-iterator",
+ "postgres-derive",
  "postgres-protocol",
  "uuid",
 ]
@@ -1146,6 +1158,7 @@ dependencies = [
  "lazy_static",
  "log",
  "postgres",
+ "postgres-types",
  "serde",
  "serde_json",
  "spectral",
@@ -1158,6 +1171,9 @@ name = "uuid"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9fde2f6a4bea1d6e007c4ad38c6839fa71cbb63b6dbf5b595aa38dc9b1093c11"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "wasi"

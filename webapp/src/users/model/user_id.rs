@@ -8,7 +8,7 @@ use uuid::Uuid;
 /// Representation of a User ID of some user in the system.
 ///
 /// A User ID is any valid UUID.
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, FromSql)]
 pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
@@ -54,17 +54,6 @@ impl ToSql for UserID {
 
     accepts!(UUID);
     to_sql_checked!();
-}
-
-/// Allow us to retrieve `UserID` objects from Postgres as part of executing a database query.
-///
-/// The implementation of this trait allows objects of this type to be read directly as database
-/// outputs without needing to construct it explicitly. Instead the Postgres crate will do so for us.
-impl<'a> FromSql<'a> for UserID {
-    fn from_sql(t: &Type, raw: &'a [u8]) -> Result<Self, Box<dyn Error + Sync + Send>> {
-        Uuid::from_sql(t, raw).map(UserID)
-    }
-    accepts!(UUID);
 }
 
 #[cfg(test)]
@@ -162,10 +151,17 @@ mod tests {
     #[test]
     fn test_postgres_from_sql_invalid_type() {
         let database = TestDatabase::new();
-        let result = database.client().query("SELECT $1", &[&1]);
-        let err: Error = result.err().unwrap();
-        let err_msg = format!("{}", err);
+        let result = database.client().query("SELECT 1", &[]);
+        let rows = result.unwrap();
+        assert_that(&rows.len()).is_equal_to(1);
+
+        let row = rows.get(0).unwrap();
+        assert_that(&row.len()).is_equal_to(1);
+
+        let output_value: Result<UserID, Error> = row.try_get(0);
+        assert_that(&output_value).is_err();
+        let err_msg = format!("{}", output_value.unwrap_err());
         assert_that(&err_msg)
-                    .is_equal_to("error serializing parameter 0: cannot convert between the Rust type `i32` and the Postgres type `text`".to_owned());
+                        .is_equal_to("error deserializing column 0: cannot convert between the Rust type `universe::users::model::user_id::UserID` and the Postgres type `int4`".to_owned());
     }
 }

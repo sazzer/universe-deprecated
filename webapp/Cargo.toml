@@ -20,6 +20,7 @@ env_logger = "0.7.1"
 uuid = {version = "0.8.1", features=["serde"] }
 chrono = "0.4.10"
 bcrypt = "0.6.1"
+postgres-types = { version="0.1.0-alpha.2", features=["derive", "with-uuid-0_8"] }
 
 [dev-dependencies]
 spectral = "0.6.0"
