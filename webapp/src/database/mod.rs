@@ -1,2 +1,19 @@
+use postgres::NoTls;
+use r2d2::PooledConnection;
+use r2d2_postgres::PostgresConnectionManager;
+
 #[cfg(test)]
-pub(crate) mod test;
+pub mod test;
+
+pub mod database;
+
+/// Possible errors from working with the database
+#[derive(Debug, PartialEq)]
+pub enum DatabaseError {
+    CheckoutError,
+}
+
+pub trait Database {
+    /// Check out a database client that can be used to query the database
+    fn client(&self) -> Result<PooledConnection<PostgresConnectionManager<NoTls>>, DatabaseError>;
+}

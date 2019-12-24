@@ -10,18 +10,19 @@ lazy_static! {
 pub struct TestDatabase<'d> {
     #[allow(dead_code)]
     node: Container<'d, Cli, Postgres>,
-    url: String,
+    pub port: u32,
+    pub url: String,
 }
 
 impl<'d> TestDatabase<'d> {
     pub fn new() -> Self {
         let node = DOCKER.run(Postgres::default());
 
-        let host_port = node.get_host_port(5432).unwrap();
-        let url = format!("postgres://postgres:postgres@localhost:{}", host_port);
+        let port = node.get_host_port(5432).unwrap();
+        let url = format!("postgres://postgres:postgres@localhost:{}", port);
         info!("Running postgres on {}", url);
 
-        TestDatabase { node, url }
+        TestDatabase { node, port, url }
     }
 
     pub fn client(&self) -> Client {

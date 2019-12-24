@@ -27,15 +27,6 @@ checksum = "1d49d90015b3c36167a20fe2810c5cd875ad504b39cff3d4eae7977e6b7c1cb2"
 
 [[package]]
 name = "base64"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b25d992356d2eb0ed82172f5248873db5560c4721f564b13cb5193bda5e668e"
-dependencies = [
- "byteorder",
-]
-
-[[package]]
-name = "base64"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b41b7ea54a0c9d92199de89e20e58d49f02f8e699814ef3fdf266f6f748d15c7"
@@ -46,7 +37,7 @@ version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28dff1c1a22f9401213d983f6c309e807e72c33d5dc5514fe5005b0205c46e8f"
 dependencies = [
- "base64 0.11.0",
+ "base64",
  "blowfish",
  "byteorder",
  "lazy_static",
@@ -351,15 +342,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hermit-abi"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "307c3c9f937f38e3534b1d6447ecf090cafcc9744e4a6360e8b037b2cf5af120"
-dependencies = [
- "libc",
-]
-
-[[package]]
 name = "hex"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -447,9 +429,9 @@ checksum = "7ffc5c5338469d4d3ea17d269fa8ea3512ad247247c30bd2df69e68309ed0a08"
 
 [[package]]
 name = "md5"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e6bcd6433cff03a4bfc3d9834d504467db1f1cf6d0ea765d37d330249ed629d"
+checksum = "490cc448043f947bae3cbee9c203358d62dbee0db12107a74be5c30ccfd09771"
 
 [[package]]
 name = "memchr"
@@ -589,16 +571,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "num_cpus"
-version = "1.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76dac5ed2a876980778b8b85f75a71b6cbf0db0b1232ee12f826bccb00d09d72"
-dependencies = [
- "hermit-abi",
- "libc",
-]
-
-[[package]]
 name = "opaque-debug"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -666,14 +638,13 @@ checksum = "5894c618ce612a3fa23881b152b608bafb8c56cfc22f434a3ba3120b40f7b587"
 
 [[package]]
 name = "postgres"
-version = "0.17.0-alpha.2"
+version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64229998d4e09fe347044b70388fef5839783b9a1f5234baf5fca5c077de50a7"
+checksum = "96dd5c8eddec65a5497798ebde2e5c74a93ef8b66782c1b09eeab9bb8538aebc"
 dependencies = [
  "bytes",
  "fallible-iterator",
  "futures",
- "lazy_static",
  "log",
  "tokio",
  "tokio-postgres",
@@ -681,9 +652,9 @@ dependencies = [
 
 [[package]]
 name = "postgres-derive"
-version = "0.4.0-alpha.1"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a52f6113e5e1171bc1e64d198bca8e13e69efec3bc1a18cd35d7d050f53ba88a"
+checksum = "c857dd221cb0e7d8414b894a0ce29eae44d453dda0baa132447878e75e701477"
 dependencies = [
  "proc-macro2 1.0.6",
  "quote 1.0.2",
@@ -692,11 +663,11 @@ dependencies = [
 
 [[package]]
 name = "postgres-protocol"
-version = "0.5.0-alpha.2"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03b400f720e2838de4d4b07c3b87c7934d9ed8b1d1656452209e888106a8f701"
+checksum = "a30f0e172ae0fb0653dbf777ad10a74b8e58d6de95a892f2e1d3e94a9df9a844"
 dependencies = [
- "base64 0.10.1",
+ "base64",
  "byteorder",
  "bytes",
  "fallible-iterator",
@@ -711,9 +682,9 @@ dependencies = [
 
 [[package]]
 name = "postgres-types"
-version = "0.1.0-alpha.2"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0547f59b9769e15ef18747600a0f8f109fddc08d848f7772218a125f5b9d5b4"
+checksum = "eab1dd99401779ab03bc3872f196fb02c420e76f416c850be494a6f2d67287ad"
 dependencies = [
  "bytes",
  "fallible-iterator",
@@ -785,6 +756,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "053a8c8bcc71fcce321828dc897a98ab9760bef03a4fc36693c231e5b3216cfe"
 dependencies = [
  "proc-macro2 1.0.6",
+]
+
+[[package]]
+name = "r2d2"
+version = "0.8.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22b5c5fc5fba064373f03887337b412e0e1562d63023393db77251146cb75553"
+dependencies = [
+ "log",
+ "parking_lot",
+ "scheduled-thread-pool",
+]
+
+[[package]]
+name = "r2d2_postgres"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "707d27f66f43bac1081141f6d9611fffcce7da2841ae97c7ac53619d098efe8f"
+dependencies = [
+ "postgres",
+ "r2d2",
 ]
 
 [[package]]
@@ -900,6 +892,15 @@ name = "ryu"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfa8506c1de11c9c4e4c38863ccbe02a305c8188e85a05a784c9e11e1c3910c8"
+
+[[package]]
+name = "scheduled-thread-pool"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5de7bc31f28f8e6c28df5e1bf3d10610f5fdc14cc95f272853512c70a2bd779"
+dependencies = [
+ "parking_lot",
+]
 
 [[package]]
 name = "scopeguard"
@@ -1072,17 +1073,17 @@ dependencies = [
  "memchr",
  "mio",
  "mio-uds",
- "num_cpus",
  "pin-project-lite",
  "slab",
 ]
 
 [[package]]
 name = "tokio-postgres"
-version = "0.5.0-alpha.2"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58704838bb0030fb3e3314f5e4ff62edc87472ff7bd00196457e9a8c2d428d93"
+checksum = "5f31cca60df523aa7feb386e4450c27c36b6ac27f55ad91bf591a4d27270c6bb"
 dependencies = [
+ "byteorder",
  "bytes",
  "fallible-iterator",
  "futures",
@@ -1159,6 +1160,8 @@ dependencies = [
  "log",
  "postgres",
  "postgres-types",
+ "r2d2",
+ "r2d2_postgres",
  "serde",
  "serde_json",
  "spectral",
