@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 /// Standard implementation of the User Service
 pub struct UserServiceImpl {
+    #[allow(dead_code)]
     repository: Arc<dyn UserRepository>,
 }
 

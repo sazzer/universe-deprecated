@@ -2,10 +2,10 @@ use postgres::NoTls;
 use r2d2::PooledConnection;
 use r2d2_postgres::PostgresConnectionManager;
 
+pub mod database;
+
 #[cfg(test)]
 pub mod test;
-
-pub mod database;
 
 /// Possible errors from working with the database
 #[derive(Debug, PartialEq)]
