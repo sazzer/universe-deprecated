@@ -55,7 +55,7 @@ impl PostgresDatabase {
         let manager = PostgresConnectionManager::new(real_url.parse()?, NoTls);
         let pool = Pool::new(manager)?;
 
-        Ok(PostgresDatabase { pool: pool })
+        Ok(PostgresDatabase { pool })
     }
 }
 
@@ -68,8 +68,8 @@ impl Database for PostgresDatabase {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use spectral::prelude::*;
     use crate::database::test::TestDatabase;
+    use spectral::prelude::*;
 
     #[test]
     fn test_connect_success() {

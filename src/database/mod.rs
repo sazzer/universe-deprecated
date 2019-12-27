@@ -1,8 +1,8 @@
-use postgres::NoTls;
+use ::postgres::NoTls;
 use r2d2::PooledConnection;
 use r2d2_postgres::PostgresConnectionManager;
 
-pub mod database;
+pub mod postgres;
 
 #[cfg(test)]
 pub mod test;
