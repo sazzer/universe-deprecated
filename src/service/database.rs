@@ -32,6 +32,6 @@ impl From<MigrationError> for ServiceCreationError {
 pub fn new(database_url: String) -> Result<Arc<dyn Database>, ServiceCreationError> {
     let database: Arc<dyn Database> = Arc::new(PostgresDatabase::new(database_url)?);
 
-    migrate(database.clone(), "migrations")?;
+    migrate(database.clone(), "migrations/**/*.sql")?;
     Ok(database)
 }

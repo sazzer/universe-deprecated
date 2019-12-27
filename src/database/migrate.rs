@@ -1,7 +1,7 @@
 use super::Database;
+use glob::glob;
 use log::{debug, error, info};
 use postgres::Transaction;
-use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -16,15 +16,15 @@ pub struct MigrationError {
 ///
 /// # Arguments
 /// * `database` The database to migrate
-/// * `migrations_dir` The migration files to apply
+/// * `migrations` The migration files to apply
 ///
 /// # Returns
 /// If an error occurred then the error is returned. If not then no return value
-pub fn migrate<S>(database: Arc<dyn Database>, migrations_dir: S) -> Result<(), MigrationError>
+pub fn migrate<S>(database: Arc<dyn Database>, migrations: S) -> Result<(), MigrationError>
 where
     S: Into<String>,
 {
-    let files = list_migration_files(migrations_dir.into())?;
+    let files = list_migration_files(migrations.into())?;
     info!("Migrations to apply: {:?}", files);
 
     if files.len() > 0 {
@@ -42,18 +42,12 @@ where
 /// Generate a list of the migration files that we want to apply
 ///
 /// # Arguments
-/// * `migrations_dir` The migration files to apply
+/// * `migrations` The migration files to apply
 ///
 /// # Returns
 /// The list of files, in order, that we want to apply
-fn list_migration_files(migrations_dir: String) -> Result<Vec<PathBuf>, MigrationError> {
-    let mut files: Vec<PathBuf> = fs::read_dir(migrations_dir)?
-        .filter_map(|res| res.ok())
-        .filter(|res| res.file_type().map(|ft| ft.is_file()).unwrap_or(false))
-        .map(|res| res.path())
-        .filter(|res| res.extension().and_then(OsStr::to_str) == Some("sql"))
-        .collect();
-
+fn list_migration_files(migrations: String) -> Result<Vec<PathBuf>, MigrationError> {
+    let mut files: Vec<PathBuf> = glob(&migrations)?.filter_map(|res| res.ok()).collect();
     files.sort();
 
     Ok(files)
@@ -147,6 +141,14 @@ impl std::error::Error for MigrationError {}
 impl From<std::io::Error> for MigrationError {
     fn from(e: std::io::Error) -> Self {
         let message = format!("IO Error performing database migration: {}", e);
+        error!("{}", message);
+        MigrationError { message }
+    }
+}
+
+impl From<glob::PatternError> for MigrationError {
+    fn from(e: glob::PatternError) -> Self {
+        let message = format!("Invalid glob pattern listing files: {}", e);
         error!("{}", message);
         MigrationError { message }
     }
