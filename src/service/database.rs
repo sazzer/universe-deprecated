@@ -6,8 +6,10 @@ use crate::database::{
 use std::sync::Arc;
 
 impl From<PostgresDatabaseError> for ServiceCreationError {
-    fn from(_: PostgresDatabaseError) -> Self {
-        Self {}
+    fn from(e: PostgresDatabaseError) -> Self {
+        Self {
+            message: format!("Error connecting to database: {}", e),
+        }
     }
 }
 

@@ -6,7 +6,17 @@ pub struct Service {}
 
 /// Error that indicates that the creation of the service failed
 #[derive(Debug, PartialEq)]
-pub struct ServiceCreationError {}
+pub struct ServiceCreationError {
+    message: String,
+}
+
+impl std::fmt::Display for ServiceCreationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl std::error::Error for ServiceCreationError {}
 
 impl Service {
     /// Construct the service to work with

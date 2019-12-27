@@ -13,13 +13,19 @@ pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
 #[derive(Debug, PartialEq, Clone)]
-pub enum UserIDParseError {
-    InvalidUUID,
+pub struct UserIDParseError {}
+
+impl std::fmt::Display for UserIDParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Error parsing User ID")
+    }
 }
+
+impl std::error::Error for UserIDParseError {}
 
 impl From<uuid::Error> for UserIDParseError {
     fn from(_: uuid::Error) -> Self {
-        UserIDParseError::InvalidUUID
+        UserIDParseError {}
     }
 }
 
@@ -90,7 +96,7 @@ mod tests {
 
         assert_that(&user_id)
             .is_err()
-            .is_equal_to(UserIDParseError::InvalidUUID);
+            .is_equal_to(UserIDParseError {});
     }
 
     #[test]
@@ -99,7 +105,7 @@ mod tests {
 
         assert_that(&user_id)
             .is_err()
-            .is_equal_to(UserIDParseError::InvalidUUID);
+            .is_equal_to(UserIDParseError {});
     }
 
     #[test]
@@ -108,7 +114,7 @@ mod tests {
 
         assert_that(&user_id)
             .is_err()
-            .is_equal_to(UserIDParseError::InvalidUUID);
+            .is_equal_to(UserIDParseError {});
     }
 
     #[test]

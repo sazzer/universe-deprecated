@@ -6,9 +6,17 @@ use r2d2_postgres::PostgresConnectionManager;
 
 /// Errors that can be returned when creating a Postgres Database wrapper
 #[derive(Debug, PartialEq)]
-pub enum PostgresDatabaseError {
-    InstantiationError,
+pub struct PostgresDatabaseError {
+    message: String,
 }
+
+impl std::fmt::Display for PostgresDatabaseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl std::error::Error for PostgresDatabaseError {}
 
 /// Wrapper around a connection to the Postgres database
 #[derive(Debug)]
@@ -18,22 +26,25 @@ pub struct PostgresDatabase {
 
 impl From<postgres::Error> for PostgresDatabaseError {
     fn from(e: postgres::Error) -> Self {
-        error!("Failed to create connection: {:?}", e);
-        PostgresDatabaseError::InstantiationError
+        let message = format!("Failed to create connection: {}", e);
+        error!("{}", message);
+        PostgresDatabaseError { message }
     }
 }
 
 impl From<r2d2::Error> for PostgresDatabaseError {
     fn from(e: r2d2::Error) -> Self {
-        error!("Failed to create connection pool: {:?}", e);
-        PostgresDatabaseError::InstantiationError
+        let message = format!("Failed to create connection pool: {}", e);
+        error!("{}", message);
+        PostgresDatabaseError { message }
     }
 }
 
 impl From<r2d2::Error> for DatabaseError {
     fn from(e: r2d2::Error) -> Self {
-        error!("Failed to check out connection: {:?}", e);
-        DatabaseError::CheckoutError
+        let message = format!("Failed to check out connection: {}", e);
+        error!("{}", message);
+        DatabaseError { message }
     }
 }
 
@@ -89,7 +100,9 @@ mod tests {
         let postgres = PostgresDatabase::new(url);
         assert_that(&postgres)
             .is_err()
-            .is_equal_to(PostgresDatabaseError::InstantiationError);
+            .is_equal_to(PostgresDatabaseError {
+                message: "Failed to create connection pool: timed out waiting for connection: db error: FATAL: role \"invalid\" does not exist".to_owned(),
+            });
     }
 
     #[test]

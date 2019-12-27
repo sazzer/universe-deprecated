@@ -10,13 +10,19 @@ pub struct Password(String);
 
 /// Enumeration of errors that can occur when hashing a password
 #[derive(Debug, PartialEq)]
-pub enum PasswordHashError {
-    HashError,
+pub struct PasswordHashError {}
+
+impl std::fmt::Display for PasswordHashError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Error hashing password")
+    }
 }
+
+impl std::error::Error for PasswordHashError {}
 
 impl From<BcryptError> for PasswordHashError {
     fn from(_: BcryptError) -> Self {
-        PasswordHashError::HashError
+        PasswordHashError {}
     }
 }
 
@@ -107,7 +113,7 @@ mod tests {
 
         assert_that(&password)
             .is_err()
-            .is_equal_to(PasswordHashError::HashError);
+            .is_equal_to(PasswordHashError {});
     }
 
     #[test]
