@@ -1,3 +1,5 @@
+use log::info;
+
 mod database;
 mod users;
 
@@ -26,8 +28,13 @@ impl Service {
     ///
     /// # Returns
     /// The constructed service
-    pub fn new(database_url: String) -> Result<Service, ServiceCreationError> {
-        let database = database::new(database_url)?;
+    pub fn new<S>(database_url: S) -> Result<Service, ServiceCreationError>
+    where
+        S: Into<String>,
+    {
+        info!("Building universe...");
+
+        let database = database::new(database_url.into())?;
         let _user_service = users::new(database)?;
 
         Ok(Service {})

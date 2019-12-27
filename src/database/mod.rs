@@ -2,6 +2,7 @@ use ::postgres::NoTls;
 use r2d2::PooledConnection;
 use r2d2_postgres::PostgresConnectionManager;
 
+pub mod migrate;
 pub mod postgres;
 
 #[cfg(test)]
