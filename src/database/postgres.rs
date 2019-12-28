@@ -81,10 +81,10 @@ mod tests {
     use super::*;
     use crate::database::test::TestDatabase;
     use spectral::prelude::*;
+    use test_env_log::test;
 
     #[test]
     fn test_connect_success() {
-        let _ = env_logger::builder().is_test(true).try_init();
         let database = TestDatabase::new();
 
         let postgres = PostgresDatabase::new(database.url);
@@ -93,7 +93,6 @@ mod tests {
 
     #[test]
     fn test_connect_bad_credentials() {
-        let _ = env_logger::builder().is_test(true).try_init();
         let database = TestDatabase::new();
 
         let url = format!("postgres://invalid:invalid@localhost:{}", database.port);
@@ -107,7 +106,6 @@ mod tests {
 
     #[test]
     fn test_client() {
-        let _ = env_logger::builder().is_test(true).try_init();
         let database = TestDatabase::new();
 
         let postgres = PostgresDatabase::new(database.url).unwrap();

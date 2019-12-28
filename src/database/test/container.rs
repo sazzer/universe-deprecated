@@ -28,6 +28,4 @@ impl<'d> TestDatabase<'d> {
     pub fn client(&self) -> Client {
         Client::connect(&self.url, NoTls).unwrap()
     }
-
-    pub fn migrate(&self) {}
 }

@@ -24,6 +24,7 @@ impl<'d> TestDatabaseWrapper<'d> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test_env_log::test;
 
     #[test]
     fn test_wrapper() {

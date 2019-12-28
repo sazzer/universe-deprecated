@@ -176,6 +176,7 @@ mod tests {
     use super::*;
     use crate::database::{postgres::PostgresDatabase, test::container::TestDatabase};
     use spectral::prelude::*;
+    use test_env_log::test;
 
     #[test]
     fn test_invalid_migrations_glob() {
