@@ -20,23 +20,24 @@ pub struct MigrationError {
 ///
 /// # Returns
 /// If an error occurred then the error is returned. If not then no return value
-pub fn migrate<S>(database: Arc<dyn Database>, migrations: S) -> Result<(), MigrationError>
+pub fn migrate<S>(database: Arc<dyn Database>, migrations: S) -> Result<u32, MigrationError>
 where
     S: Into<String>,
 {
     let files = list_migration_files(migrations.into())?;
     info!("Migrations to apply: {:?}", files);
 
+    let mut applied = 0;
     if files.len() > 0 {
         let mut client = database.client()?;
         let mut transaction = client.transaction()?;
 
         ensure_migrations_table(&mut transaction)?;
-        apply_migrations(files, &mut transaction)?;
+        applied = apply_migrations(files, &mut transaction)?;
 
         transaction.commit()?;
     }
-    Ok(())
+    Ok(applied)
 }
 
 /// Generate a list of the migration files that we want to apply
@@ -167,5 +168,257 @@ impl From<postgres::Error> for MigrationError {
         let message = format!("Database Error performing database migration: {}", e);
         error!("{}", message);
         MigrationError { message }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::database::{postgres::PostgresDatabase, test::TestDatabase};
+    use spectral::prelude::*;
+
+    #[test]
+    fn test_invalid_migrations_glob() {
+        let database = TestDatabase::new();
+        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+
+        let result = migrate(wrapper.clone(), "****");
+
+        assert_that(&result).is_err_containing(MigrationError {
+            message: "Invalid glob pattern listing files: Pattern syntax error near position 2: wildcards are either regular `*` or recursive `**`".to_owned(),
+        });
+
+        let tables = wrapper
+                        .client().unwrap()
+                        .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap();
+
+        assert_that(&tables).is_empty();
+    }
+
+    #[test]
+    fn test_no_migrations_directory() {
+        let database = TestDatabase::new();
+        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+
+        let result = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/missing/**/*.sql",
+        );
+
+        assert_that(&result).is_ok_containing(0);
+        let tables = wrapper
+                        .client().unwrap()
+                        .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap();
+
+        assert_that(&tables).is_empty();
+    }
+
+    #[test]
+    fn test_no_migrations() {
+        let database = TestDatabase::new();
+        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+
+        let result = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/empty/**/*.sql",
+        );
+
+        assert_that(&result).is_ok_containing(0);
+        let tables: Vec<String> = wrapper
+                            .client().unwrap()
+                            .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap()
+                            .into_iter()
+                            .map(|row| row.get::<&str, String>("table_name"))
+                            .collect();
+
+        assert_that(&tables).is_empty();
+    }
+
+    #[test]
+    fn test_some_migrations() {
+        let database = TestDatabase::new();
+        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+
+        let result = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/full/**/*.sql",
+        );
+
+        assert_that(&result).is_ok_containing(2);
+        let tables: Vec<String> = wrapper
+                                .client().unwrap()
+                                .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap()
+                                .into_iter()
+                                .map(|row| row.get::<&str, String>("table_name"))
+                                .collect();
+
+        assert_that(&tables).has_length(3);
+        assert_that(&tables).contains("__migrations".to_owned());
+        assert_that(&tables).contains("first".to_owned());
+        assert_that(&tables).contains("second".to_owned());
+
+        let migrations: Vec<String> = wrapper
+            .client()
+            .unwrap()
+            .query(
+                "SELECT migration_file FROM __migrations ORDER BY sequence ASC",
+                &[],
+            )
+            .unwrap()
+            .into_iter()
+            .map(|row| row.get::<&str, String>("migration_file"))
+            .collect();
+
+        assert_that(&migrations).is_equal_to(vec![
+            "src/database/test_migrations/full/00001-first.sql".to_owned(),
+            "src/database/test_migrations/full/00002-second.sql".to_owned(),
+        ]);
+    }
+
+    #[test]
+    fn test_some_migrations_again() {
+        let database = TestDatabase::new();
+        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+
+        let result = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/full/**/*.sql",
+        );
+
+        assert_that(&result).is_ok_containing(2);
+
+        let result2 = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/full/**/*.sql",
+        );
+
+        assert_that(&result2).is_ok_containing(0);
+
+        let tables: Vec<String> = wrapper
+                                    .client().unwrap()
+                                    .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap()
+                                    .into_iter()
+                                    .map(|row| row.get::<&str, String>("table_name"))
+                                    .collect();
+
+        assert_that(&tables).has_length(3);
+        assert_that(&tables).contains("__migrations".to_owned());
+        assert_that(&tables).contains("first".to_owned());
+        assert_that(&tables).contains("second".to_owned());
+
+        let migrations: Vec<String> = wrapper
+            .client()
+            .unwrap()
+            .query(
+                "SELECT migration_file FROM __migrations ORDER BY sequence ASC",
+                &[],
+            )
+            .unwrap()
+            .into_iter()
+            .map(|row| row.get::<&str, String>("migration_file"))
+            .collect();
+
+        assert_that(&migrations).is_equal_to(vec![
+            "src/database/test_migrations/full/00001-first.sql".to_owned(),
+            "src/database/test_migrations/full/00002-second.sql".to_owned(),
+        ]);
+    }
+
+    #[test]
+    fn test_additional_migrations() {
+        let database = TestDatabase::new();
+        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+
+        let result = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/full/00001-first.sql",
+        );
+
+        assert_that(&result).is_ok_containing(1);
+
+        let tables: Vec<String> = wrapper
+                                            .client().unwrap()
+                                            .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap()
+                                            .into_iter()
+                                            .map(|row| row.get::<&str, String>("table_name"))
+                                            .collect();
+
+        assert_that(&tables).has_length(2);
+        assert_that(&tables).contains("__migrations".to_owned());
+        assert_that(&tables).contains("first".to_owned());
+
+        let migrations: Vec<String> = wrapper
+            .client()
+            .unwrap()
+            .query(
+                "SELECT migration_file FROM __migrations ORDER BY sequence ASC",
+                &[],
+            )
+            .unwrap()
+            .into_iter()
+            .map(|row| row.get::<&str, String>("migration_file"))
+            .collect();
+
+        assert_that(&migrations).is_equal_to(vec![
+            "src/database/test_migrations/full/00001-first.sql".to_owned(),
+        ]);
+
+        // Now run the rest of the files
+        let result2 = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/full/**/*.sql",
+        );
+
+        assert_that(&result2).is_ok_containing(1);
+
+        let tables: Vec<String> = wrapper
+                                    .client().unwrap()
+                                    .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap()
+                                    .into_iter()
+                                    .map(|row| row.get::<&str, String>("table_name"))
+                                    .collect();
+
+        assert_that(&tables).has_length(3);
+        assert_that(&tables).contains("__migrations".to_owned());
+        assert_that(&tables).contains("first".to_owned());
+        assert_that(&tables).contains("second".to_owned());
+
+        let migrations: Vec<String> = wrapper
+            .client()
+            .unwrap()
+            .query(
+                "SELECT migration_file FROM __migrations ORDER BY sequence ASC",
+                &[],
+            )
+            .unwrap()
+            .into_iter()
+            .map(|row| row.get::<&str, String>("migration_file"))
+            .collect();
+
+        assert_that(&migrations).is_equal_to(vec![
+            "src/database/test_migrations/full/00001-first.sql".to_owned(),
+            "src/database/test_migrations/full/00002-second.sql".to_owned(),
+        ]);
+    }
+
+    #[test]
+    fn test_invalid_migrations() {
+        let database = TestDatabase::new();
+        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+
+        let result = migrate(
+            wrapper.clone(),
+            "src/database/test_migrations/invalid/**/*.sql",
+        );
+
+        assert_that(&result).is_err_containing(MigrationError {
+                message: "Database Error performing database migration: db error: ERROR: syntax error at or near \"IM\"".to_owned(),
+            });
+
+        let tables = wrapper
+                            .client().unwrap()
+                            .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap();
+
+        assert_that(&tables).is_empty();
     }
 }
