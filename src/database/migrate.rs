@@ -174,7 +174,7 @@ impl From<postgres::Error> for MigrationError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database::{postgres::PostgresDatabase, test::TestDatabase};
+    use crate::database::{postgres::PostgresDatabase, test::container::TestDatabase};
     use spectral::prelude::*;
 
     #[test]
