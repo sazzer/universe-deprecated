@@ -29,7 +29,9 @@ where
 
     let mut applied = 0;
     if files.len() > 0 {
-        let mut client = database.client()?;
+        let mut client = database.client().ok_or(MigrationError {
+            message: "Failed to get database connection".to_owned(),
+        })?;
         let mut transaction = client.transaction()?;
 
         ensure_migrations_table(&mut transaction)?;
@@ -150,14 +152,6 @@ impl From<std::io::Error> for MigrationError {
 impl From<glob::PatternError> for MigrationError {
     fn from(e: glob::PatternError) -> Self {
         let message = format!("Invalid glob pattern listing files: {}", e);
-        error!("{}", message);
-        MigrationError { message }
-    }
-}
-
-impl From<super::DatabaseError> for MigrationError {
-    fn from(e: super::DatabaseError) -> Self {
-        let message = format!("Database Error performing database migration: {}", e);
         error!("{}", message);
         MigrationError { message }
     }

@@ -1,4 +1,4 @@
-use super::{Database, DatabaseError};
+use super::Database;
 use log::{debug, error};
 use postgres::NoTls;
 use r2d2::{Pool, PooledConnection};
@@ -40,14 +40,6 @@ impl From<r2d2::Error> for PostgresDatabaseError {
     }
 }
 
-impl From<r2d2::Error> for DatabaseError {
-    fn from(e: r2d2::Error) -> Self {
-        let message = format!("Failed to check out connection: {}", e);
-        error!("{}", message);
-        DatabaseError { message }
-    }
-}
-
 impl PostgresDatabase {
     /// Create a new wrapper around the postgres database
     ///
@@ -71,8 +63,14 @@ impl PostgresDatabase {
 }
 
 impl Database for PostgresDatabase {
-    fn client(&self) -> Result<PooledConnection<PostgresConnectionManager<NoTls>>, DatabaseError> {
-        Ok(self.pool.get()?)
+    fn client(&self) -> Option<PooledConnection<PostgresConnectionManager<NoTls>>> {
+        self.pool
+            .get()
+            .map_err(|e| {
+                error!("Failed to check out connection: {}", e);
+                e
+            })
+            .ok()
     }
 }
 

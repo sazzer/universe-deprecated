@@ -24,15 +24,15 @@ impl PostgresUserRepository {
 
     /// Helper to get a single user record using the given query and binds.
     fn get_single_user(&self, query: &str, params: &[&(dyn ToSql + Sync)]) -> Option<UserEntity> {
-        let row = self.database.client().ok()?.query_one(query, params);
-
-        match row {
-            Err(e) => {
+        self.database
+            .client()?
+            .query_one(query, params)
+            .map_err(|e| {
                 warn!("Failed to get user: {}", e);
-                None
-            }
-            Ok(row) => Some(row.into()),
-        }
+                e
+            })
+            .ok()
+            .map(|row| row.into())
     }
 }
 
