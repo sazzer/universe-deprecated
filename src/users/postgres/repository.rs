@@ -1,21 +1,28 @@
 use crate::database::Database;
-use crate::entity::Identity;
 use crate::users::repository::UserRepository;
-use crate::users::{UserData, UserEntity, UserID, Username};
+use crate::users::{UserEntity, UserID, Username};
 use log::warn;
 use postgres::types::ToSql;
 use std::sync::Arc;
 
+/// User Repository that works in terms of the Postgres database
 pub struct PostgresUserRepository {
-    #[allow(dead_code)]
     database: Arc<dyn Database>,
 }
 
 impl PostgresUserRepository {
+    /// Construct a new Postgres User repository
+    ///
+    /// # Arguments
+    /// * `database` The database connection to use
+    ///
+    /// # Returns
+    /// The User Repository
     pub fn new(database: Arc<dyn Database>) -> Self {
         Self { database }
     }
 
+    /// Helper to get a single user record using the given query and binds.
     fn get_single_user(&self, query: &str, params: &[&(dyn ToSql + Sync)]) -> Option<UserEntity> {
         let row = self.database.client().ok()?.query_one(query, params);
 
@@ -41,33 +48,18 @@ impl UserRepository for PostgresUserRepository {
     }
 }
 
-impl From<postgres::Row> for UserEntity {
-    fn from(row: postgres::Row) -> Self {
-        UserEntity {
-            identity: Identity {
-                id: row.get("user_id"),
-                version: row.get("version"),
-                created: row.get("created"),
-                updated: row.get("updated"),
-            },
-            data: UserData {
-                username: row.get("username"),
-                email: row.get("email"),
-                display_name: row.get("display_name"),
-                password: row.get("password"),
-            },
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database::test::TestDatabaseWrapper;
-    use crate::users::postgres::testdata;
+    use crate::{
+        database::test::TestDatabaseWrapper,
+        entity::Identity,
+        users::{postgres::testdata, UserData},
+    };
     use spectral::prelude::*;
     use test_env_log::test;
     use uuid::Uuid;
+
     #[test]
     fn test_find_unknown_user_by_id() {
         let database = TestDatabaseWrapper::new();

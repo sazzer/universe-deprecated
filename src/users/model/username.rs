@@ -62,8 +62,6 @@ impl ToSql for Username {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database::test::TestDatabase;
-    use postgres::Error;
     use serde_json::json;
     use spectral::prelude::*;
     use test_env_log::test;
@@ -107,53 +105,5 @@ mod tests {
         assert_that(&serialized)
             .is_ok()
             .is_equal_to(json!("testuser"));
-    }
-
-    #[test]
-    fn test_postgres_to_sql() {
-        let database = TestDatabase::new();
-        let username = Username("testuser".to_owned());
-        let result = database.client().query("SELECT $1", &[&username]);
-
-        let rows = result.unwrap();
-        assert_that(&rows.len()).is_equal_to(1);
-
-        let row = rows.get(0).unwrap();
-        assert_that(&row.len()).is_equal_to(1);
-
-        let output_value: &str = rows.get(0).unwrap().get(0);
-        assert_that(&output_value).is_equal_to("testuser");
-    }
-
-    #[test]
-    fn test_postgres_from_sql_valid_type() {
-        let database = TestDatabase::new();
-        let result = database.client().query("SELECT 'testuser'", &[]);
-
-        let rows = result.unwrap();
-        assert_that(&rows.len()).is_equal_to(1);
-
-        let row = rows.get(0).unwrap();
-        assert_that(&row.len()).is_equal_to(1);
-
-        let output_value: Username = row.get(0);
-        assert_that(&output_value).is_equal_to(Username("testuser".to_owned()));
-    }
-
-    #[test]
-    fn test_postgres_from_sql_invalid_type() {
-        let database = TestDatabase::new();
-        let result = database.client().query("SELECT 1", &[]);
-        let rows = result.unwrap();
-        assert_that(&rows.len()).is_equal_to(1);
-
-        let row = rows.get(0).unwrap();
-        assert_that(&row.len()).is_equal_to(1);
-
-        let output_value: Result<Username, Error> = row.try_get(0);
-        assert_that(&output_value).is_err();
-        let err_msg = format!("{}", output_value.unwrap_err());
-        assert_that(&err_msg)
-                        .is_equal_to("error deserializing column 0: cannot convert between the Rust type `universe::users::model::username::Username` and the Postgres type `int4`".to_owned());
     }
 }

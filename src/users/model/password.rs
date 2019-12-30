@@ -93,8 +93,6 @@ impl ToSql for Password {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database::test::TestDatabase;
-    use postgres::Error;
     use spectral::prelude::*;
     use test_env_log::test;
 
@@ -143,55 +141,5 @@ mod tests {
         let password = Password::from_hash("password_hash");
         let result = password.verify("password_hash");
         assert_that(&result).is_equal_to(false);
-    }
-
-    #[test]
-    fn test_postgres_to_sql() {
-        let database = TestDatabase::new();
-
-        let password = Password::from_hash("password_hash");
-        let result = database.client().query("SELECT $1", &[&password]);
-
-        let rows = result.unwrap();
-        assert_that(&rows.len()).is_equal_to(1);
-
-        let row = rows.get(0).unwrap();
-        assert_that(&row.len()).is_equal_to(1);
-
-        let output_value: &str = rows.get(0).unwrap().get(0);
-        assert_that(&output_value).is_equal_to("password_hash");
-    }
-
-    #[test]
-    fn test_postgres_from_sql_valid_type() {
-        let database = TestDatabase::new();
-
-        let result = database.client().query("SELECT 'password_hash'", &[]);
-
-        let rows = result.unwrap();
-        assert_that(&rows.len()).is_equal_to(1);
-
-        let row = rows.get(0).unwrap();
-        assert_that(&row.len()).is_equal_to(1);
-
-        let output_value: Password = rows.get(0).unwrap().get(0);
-        assert_that(&output_value).is_equal_to(Password::from_hash("password_hash"));
-    }
-
-    #[test]
-    fn test_postgres_from_sql_invalid_type() {
-        let database = TestDatabase::new();
-        let result = database.client().query("SELECT 1", &[]);
-        let rows = result.unwrap();
-        assert_that(&rows.len()).is_equal_to(1);
-
-        let row = rows.get(0).unwrap();
-        assert_that(&row.len()).is_equal_to(1);
-
-        let output_value: Result<Password, Error> = row.try_get(0);
-        assert_that(&output_value).is_err();
-        let err_msg = format!("{}", output_value.unwrap_err());
-        assert_that(&err_msg)
-                        .is_equal_to("error deserializing column 0: cannot convert between the Rust type `universe::users::model::password::Password` and the Postgres type `int4`".to_owned());
     }
 }
