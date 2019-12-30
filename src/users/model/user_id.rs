@@ -29,6 +29,18 @@ impl From<uuid::Error> for UserIDParseError {
     }
 }
 
+impl UserID {
+    /// Construct a User ID from a UUID value
+    ///
+    /// # Arguments
+    /// * `uuid` The UUID to use
+    ///
+    /// # Returns
+    /// The User ID
+    pub fn from_uuid(uuid: Uuid) -> Self {
+        UserID(uuid)
+    }
+}
 /// Implementation of the standard `FromStr` trait to allow us to parse any String into a `UserID` object
 impl FromStr for UserID {
     type Err = UserIDParseError;

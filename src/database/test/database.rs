@@ -9,6 +9,14 @@ pub struct TestDatabaseWrapper<'d> {
     pub wrapper: Arc<dyn Database>,
 }
 
+pub trait TestData {
+    /// Generate the SQL needed to insert this test data into the database
+    fn sql(&self) -> String;
+
+    /// Generate the binds that go with the SQL
+    fn binds(&self) -> Vec<&(dyn postgres::types::ToSql + Sync)>;
+}
+
 impl<'d> TestDatabaseWrapper<'d> {
     /// Create a new Test Database Wrapper
     pub fn new() -> Self {
@@ -18,6 +26,21 @@ impl<'d> TestDatabaseWrapper<'d> {
         migrate(wrapper.clone(), "migrations/**/*.sql").unwrap();
 
         Self { container, wrapper }
+    }
+
+    /// Seed the database with the provided test data, all inserted in the provided order and in the
+    /// same database transaction
+    pub fn seed(&self, data: Vec<&dyn TestData>) {
+        let mut client = self.wrapper.client().unwrap();
+        let mut transaction = client.transaction().unwrap();
+
+        for d in data.iter() {
+            transaction
+                .query(d.sql().as_str(), &(d.binds()[..]))
+                .unwrap();
+        }
+
+        transaction.commit().unwrap();
     }
 }
 

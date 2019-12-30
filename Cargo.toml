@@ -16,12 +16,12 @@ bytes = "0.5.3"
 chrono = "0.4.10"
 lazy_static = "1.4.0"
 log = "0.4.8"
-postgres = { version="0.17.0", features=["with-uuid-0_8"] }
-postgres-types = { version="0.1.0", features=["derive", "with-uuid-0_8"] }
+postgres = { version="0.17.0", features=["with-uuid-0_8", "with-chrono-0_4"] }
+postgres-types = { version="0.1.0", features=["derive", "with-uuid-0_8", "with-chrono-0_4"] }
 r2d2 = "0.8.7"
 r2d2_postgres = "0.16.0"
 serde = {version = "1.0.103", features=["derive"] }
-uuid = {version = "0.8.1", features=["serde"] }
+uuid = {version = "0.8.1", features=["serde", "v4"] }
 dotenv = "0.15.0"
 env_logger = "0.7.1"
 glob = "0.3.0"
