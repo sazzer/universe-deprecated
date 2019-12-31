@@ -25,6 +25,7 @@ uuid = {version = "0.8.1", features=["serde", "v4"] }
 dotenv = "0.15.0"
 env_logger = "0.7.1"
 glob = "0.3.0"
+mockall = "0.6.0"
 
 [dev-dependencies]
 serde_json = "1.0.44"

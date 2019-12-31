@@ -51,11 +51,7 @@ impl UserRepository for PostgresUserRepository {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        database::test::TestDatabaseWrapper,
-        entity::Identity,
-        users::{postgres::testdata, UserData},
-    };
+    use crate::{database::test::TestDatabaseWrapper, users::testdata};
     use spectral::prelude::*;
     use test_env_log::test;
     use uuid::Uuid;
@@ -123,19 +119,8 @@ mod tests {
     }
 
     fn assert_user(testuser: testdata::User, user: Option<UserEntity>) {
-        assert_that(&user).is_some().is_equal_to(UserEntity {
-            identity: Identity {
-                id: testuser.user_id,
-                version: testuser.version,
-                created: testuser.created,
-                updated: testuser.updated,
-            },
-            data: UserData {
-                username: testuser.username,
-                email: testuser.email,
-                display_name: testuser.display_name,
-                password: testuser.password,
-            },
-        });
+        assert_that(&user)
+            .is_some()
+            .is_equal_to(UserEntity::from(testuser));
     }
 }

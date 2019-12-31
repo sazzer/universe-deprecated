@@ -1,8 +1,11 @@
 use crate::database::test::TestData;
-use crate::users::{Password, UserID, Username};
+use crate::entity::Identity;
+use crate::users::{Password, UserData, UserEntity, UserID, Username};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+/// User representation for test purposes
+#[derive(Debug, Clone)]
 pub struct User {
     pub user_id: UserID,
     pub version: Uuid,
@@ -15,6 +18,7 @@ pub struct User {
 }
 
 impl Default for User {
+    /// Generate a default set of values for the test User structure
     fn default() -> Self {
         Self {
             user_id: UserID::from_uuid(Uuid::new_v4()),
@@ -25,6 +29,26 @@ impl Default for User {
             email: "test@example.com".to_owned(),
             display_name: "Test User".to_owned(),
             password: Password::from_plaintext("password").unwrap(),
+        }
+    }
+}
+
+impl From<User> for UserEntity {
+    /// Convert the test User structure into the User Entity
+    fn from(user: User) -> Self {
+        UserEntity {
+            identity: Identity {
+                id: user.user_id,
+                version: user.version,
+                created: user.created,
+                updated: user.updated,
+            },
+            data: UserData {
+                username: user.username,
+                email: user.email,
+                display_name: user.display_name,
+                password: user.password,
+            },
         }
     }
 }

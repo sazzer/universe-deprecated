@@ -1,6 +1,8 @@
 use crate::users::{UserEntity, UserID, Username};
+use mockall::automock;
 
 /// Trait defining the ways that we can interact with user entities in the database
+#[automock]
 pub trait UserRepository {
     /// Find the user that has the given ID
     ///
