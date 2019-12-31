@@ -8,7 +8,7 @@ pub mod postgres;
 #[cfg(test)]
 pub mod test;
 
-pub trait Database {
+pub trait Database: Send + Sync {
     /// Check out a database client that can be used to query the database
     fn client(&self) -> Option<PooledConnection<PostgresConnectionManager<NoTls>>>;
 }

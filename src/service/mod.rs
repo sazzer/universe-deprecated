@@ -1,10 +1,13 @@
 use log::info;
+use rocket::Rocket;
 
 mod database;
 mod users;
 
 /// The actual service that we are working with
-pub struct Service {}
+pub struct Service {
+    rocket: Rocket,
+}
 
 /// Error that indicates that the creation of the service failed
 #[derive(Debug, PartialEq)]
@@ -35,8 +38,14 @@ impl Service {
         info!("Building universe...");
 
         let database = database::new(database_url.into())?;
-        let _user_service = users::new(database)?;
 
-        Ok(Service {})
+        let rocket = rocket::ignite().manage(users::new(database)?);
+
+        Ok(Service { rocket })
+    }
+
+    /// Actually launch the server
+    pub fn launch(self) {
+        self.rocket.launch();
     }
 }

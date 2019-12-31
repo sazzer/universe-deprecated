@@ -3,7 +3,7 @@ use mockall::automock;
 
 /// Trait defining the ways that we can interact with user entities in the database
 #[automock]
-pub trait UserRepository {
+pub trait UserRepository: Send + Sync {
     /// Find the user that has the given ID
     ///
     /// # Arguments
