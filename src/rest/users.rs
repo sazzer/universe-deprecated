@@ -1,5 +1,5 @@
 use super::problem::Problem;
-use crate::users::{UserEntity, UserID, UserIDParseError, UserService, Username};
+use crate::users::{UserEntity, UserID, UserService, Username};
 use log::debug;
 use rocket::{get, State};
 use rocket_contrib::json::Json;
@@ -19,15 +19,6 @@ pub struct UserModel {
     username: Username,
     display_name: String,
     email: String,
-}
-
-impl From<UserIDParseError> for Problem {
-    /// Handle converting an error from parsing a User ID as if the user itself couldn't be found.
-    /// This then means we treat an invalid User ID as if it was a valid one for a user that doesn't exist.
-    fn from(_: UserIDParseError) -> Self {
-        debug!("Failed to parse an invalid User ID, so acting as if the user doesn't exist");
-        user_not_found()
-    }
 }
 
 impl From<UserEntity> for UserModel {
@@ -52,7 +43,13 @@ pub fn get_user_by_id(
     id: String,
     user_service: State<Arc<dyn UserService>>,
 ) -> Result<Json<UserModel>, Problem> {
-    let user_id: UserID = id.parse()?;
+    let user_id: UserID = id.parse().map_err(|e| {
+        debug!(
+            "Failed to parse an invalid User ID, so acting as if the user doesn't exist: {}",
+            e
+        );
+        user_not_found()
+    })?;
 
     let user = user_service.get_user_by_id(user_id).ok_or_else(|| {
         debug!("Failed to find user with ID {}", user_id.clone());
@@ -62,6 +59,7 @@ pub fn get_user_by_id(
     Ok(Json(user.into()))
 }
 
+/// Build a Problem to represent a failure to find a user
 fn user_not_found() -> Problem {
     Problem {
         r#type: "tag:universe,2019:problems/users/not-found".to_owned(),

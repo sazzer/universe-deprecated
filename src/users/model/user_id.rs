@@ -13,19 +13,23 @@ pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
 #[derive(Debug, PartialEq, Clone)]
-pub struct UserIDParseError {}
+pub struct UserIDParseError {
+    message: String,
+}
 
 impl std::fmt::Display for UserIDParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error parsing User ID")
+        write!(f, "{}", self.message)
     }
 }
 
 impl std::error::Error for UserIDParseError {}
 
 impl From<uuid::Error> for UserIDParseError {
-    fn from(_: uuid::Error) -> Self {
-        UserIDParseError {}
+    fn from(e: uuid::Error) -> Self {
+        UserIDParseError {
+            message: format!("Error parsing User ID: {}", e),
+        }
     }
 }
 
@@ -114,7 +118,10 @@ mod tests {
 
         assert_that(&user_id)
             .is_err()
-            .is_equal_to(UserIDParseError {});
+            .is_equal_to(UserIDParseError {
+                message: "Error parsing User ID: invalid length: expected one of [36, 32], found 0"
+                    .to_owned(),
+            });
     }
 
     #[test]
@@ -123,16 +130,35 @@ mod tests {
 
         assert_that(&user_id)
             .is_err()
-            .is_equal_to(UserIDParseError {});
+            .is_equal_to(UserIDParseError {
+                message: "Error parsing User ID: invalid length: expected one of [36, 32], found 0"
+                    .to_owned(),
+            });
     }
 
     #[test]
-    fn test_parse_invalid_string() {
+    fn test_parse_invalid_string_bad_length() {
         let user_id: Result<UserID, UserIDParseError> = "non-uuid".parse();
 
         assert_that(&user_id)
             .is_err()
-            .is_equal_to(UserIDParseError {});
+            .is_equal_to(UserIDParseError {
+                message: "Error parsing User ID: invalid length: expected one of [36, 32], found 8"
+                    .to_owned(),
+            });
+    }
+
+    #[test]
+    fn test_parse_invalid_string_bad_character() {
+        let user_id: Result<UserID, UserIDParseError> =
+            "C37837C7-3E8C-4235-8A00-0845F598D12Z".parse();
+
+        assert_that(&user_id)
+            .is_err()
+            .is_equal_to(UserIDParseError {
+                message: "Error parsing User ID: invalid character: expected an optional prefix of `urn:uuid:` followed by 0123456789abcdefABCDEF-, found Z at 35"
+                    .to_owned(),
+            });
     }
 
     #[test]
