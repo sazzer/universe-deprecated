@@ -8,7 +8,7 @@ use uuid::Uuid;
 /// Representation of a User ID of some user in the system.
 ///
 /// A User ID is any valid UUID.
-#[derive(Debug, PartialEq, Clone, Serialize, FromSql)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, FromSql)]
 pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
@@ -41,6 +41,13 @@ impl UserID {
         UserID(uuid)
     }
 }
+
+impl std::fmt::Display for UserID {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 /// Implementation of the standard `FromStr` trait to allow us to parse any String into a `UserID` object
 impl FromStr for UserID {
     type Err = UserIDParseError;

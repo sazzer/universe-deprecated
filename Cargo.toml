@@ -27,9 +27,11 @@ env_logger = "0.7.1"
 glob = "0.3.0"
 mockall = "0.6.0"
 rocket = "0.4.2"
+rocket_contrib = "0.4.2"
+http = "0.2.0"
+serde_json = "1.0.44"
 
 [dev-dependencies]
-serde_json = "1.0.44"
 spectral = "0.6.0"
 testcontainers = "0.8.1"
 test-env-log = "0.2.0"
