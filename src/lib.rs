@@ -5,5 +5,6 @@ mod entity;
 mod rest;
 mod service;
 mod users;
+mod webapp;
 
 pub use service::*;

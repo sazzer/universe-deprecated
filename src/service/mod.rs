@@ -41,6 +41,7 @@ impl Service {
 
         let rocket = rocket::ignite()
             .manage(users::new(database)?)
+            .mount("/", crate::webapp::routes())
             .mount("/api", crate::rest::routes());
 
         Ok(Service { rocket })
