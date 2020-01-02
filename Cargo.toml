@@ -30,6 +30,7 @@ rocket = "0.4.2"
 rocket_contrib = "0.4.2"
 http = "0.2.0"
 serde_json = "1.0.44"
+config = "0.10.1"
 
 [dev-dependencies]
 spectral = "0.6.0"

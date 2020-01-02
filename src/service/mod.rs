@@ -28,10 +28,11 @@ impl Service {
     ///
     /// # Arguments
     /// # `database_url` The connection URL for the database
+    /// # `port` The port to listen on
     ///
     /// # Returns
     /// The constructed service
-    pub fn new<S>(database_url: S) -> Result<Service, ServiceCreationError>
+    pub fn new<S>(database_url: S, port: Option<u16>) -> Result<Service, ServiceCreationError>
     where
         S: Into<String>,
     {
@@ -39,7 +40,12 @@ impl Service {
 
         let database = database::new(database_url.into())?;
 
-        let rocket = rocket::ignite()
+        let mut config = rocket::Config::active().unwrap();
+        if let Some(port_number) = port {
+            config.port = port_number;
+        }
+
+        let rocket = rocket::custom(config)
             .manage(users::new(database)?)
             .mount("/", crate::webapp::routes())
             .mount("/api", crate::rest::routes());

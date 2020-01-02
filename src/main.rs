@@ -1,10 +1,15 @@
 use dotenv::dotenv;
 use universe::Service;
 
+mod settings;
+
 fn main() {
     dotenv().ok();
     env_logger::init();
 
-    let service = Service::new("postgres://universe:universe@localhost:45432/universe").unwrap();
+    let settings = settings::Settings::new().unwrap();
+
+    let service = Service::new(settings.database_url, settings.port).unwrap();
+
     service.launch();
 }
