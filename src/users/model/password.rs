@@ -34,6 +34,7 @@ impl Password {
     ///
     /// # Returns
     /// The `Password` to wrap the hash
+    #[allow(unused)]
     pub fn from_hash<S>(hash: S) -> Password
     where
         S: Into<String>,
@@ -48,6 +49,7 @@ impl Password {
     ///
     /// # Returns
     /// The hashed `Password` representing the provided plaintext
+    #[allow(unused)]
     pub fn from_plaintext<S>(plaintext: S) -> Result<Password, PasswordHashError>
     where
         S: Into<String>,
@@ -63,6 +65,7 @@ impl Password {
     ///
     /// # returns
     /// True if the provided plaintext is consistent. False if not.
+    #[allow(unused)]
     pub fn verify<S>(&self, plaintext: S) -> bool
     where
         S: Into<String>,

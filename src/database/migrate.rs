@@ -28,7 +28,7 @@ where
     info!("Migrations to apply: {:?}", files);
 
     let mut applied = 0;
-    if files.len() > 0 {
+    if !files.is_empty() {
         let mut client = database.client().ok_or(MigrationError {
             message: "Failed to get database connection".to_owned(),
         })?;

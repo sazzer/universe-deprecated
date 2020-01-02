@@ -1,9 +1,9 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-pub mod database;
-pub mod entity;
-pub mod rest;
-pub mod service;
-pub mod users;
+mod database;
+mod entity;
+mod rest;
+mod service;
+mod users;
 
 pub use service::*;

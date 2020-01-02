@@ -41,6 +41,7 @@ impl UserID {
     ///
     /// # Returns
     /// The User ID
+    #[allow(unused)]
     pub fn from_uuid(uuid: Uuid) -> Self {
         UserID(uuid)
     }
