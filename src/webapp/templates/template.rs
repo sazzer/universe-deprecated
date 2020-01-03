@@ -89,7 +89,7 @@ impl<'r> Responder<'r> for Template {
             .headers()
             .get_one("accept-language")
             .map(|locales| parse(locales))
-            .unwrap_or(vec![]);
+            .unwrap_or_else(|| vec![]);
         debug!(
             "Rendering template {} with locales {:?}",
             self.name, locales

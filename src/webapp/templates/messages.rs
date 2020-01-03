@@ -105,11 +105,11 @@ impl Messages {
     ///
     /// # Returns
     /// The bundle that matches our request, or `None` if we couldn't find one.
-    fn find_bundle(&self, locales: &Vec<LanguageIdentifier>, message_key: &str) -> Option<&Bundle> {
+    fn find_bundle(&self, locales: &[LanguageIdentifier], message_key: &str) -> Option<&Bundle> {
         // Filter down to all the bundles containing our message
         let bundles = &self.bundles;
         let bundles_with_message: Vec<&Bundle> = bundles
-            .into_iter()
+            .iter()
             .filter(|bundle| bundle.has_message(message_key))
             .collect();
 
