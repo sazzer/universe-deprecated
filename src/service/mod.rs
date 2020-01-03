@@ -3,6 +3,7 @@ use rocket::Rocket;
 use rocket_contrib::serve::StaticFiles;
 
 mod database;
+mod templates;
 mod users;
 
 /// The actual service that we are working with
@@ -48,6 +49,7 @@ impl Service {
 
         let rocket = rocket::custom(config)
             .manage(users::new(database)?)
+            .manage(templates::new()?)
             .mount("/public", StaticFiles::from("./static"))
             .mount("/", crate::webapp::routes())
             .mount("/api", crate::rest::routes());
