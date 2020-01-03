@@ -1,8 +1,10 @@
 use super::ServiceCreationError;
-use crate::webapp::templates::TemplateRenderer;
+use crate::webapp::templates::{Messages, TemplateRenderer};
 
 /// Create the new Template Renderer fully ready to use
 pub fn new() -> Result<TemplateRenderer, ServiceCreationError> {
-    let renderer = TemplateRenderer::new("templates/**/*.tera");
+    let messages = Messages::new("messages/**/*.ftl", "en").unwrap();
+
+    let renderer = TemplateRenderer::new("templates/**/*.tera", messages);
     Ok(renderer)
 }

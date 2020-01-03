@@ -1,5 +1,7 @@
+use super::Messages;
 use serde_json::{to_value, Value};
 use std::collections::HashMap;
+use std::sync::Arc;
 use tera::{Context, Error, Tera};
 
 /// The means to render a template into a string for sending to a client.
@@ -8,10 +10,14 @@ use tera::{Context, Error, Tera};
 /// function `t` to the template rendering context that allows for string translations to occur.
 pub struct TemplateRenderer {
     tera: Tera,
+    messages: Arc<Messages>,
 }
 
 /// Tera function for looking up a message key
-struct MessageLookup {}
+struct MessageLookup {
+    messages: Arc<Messages>,
+    locales: Vec<String>,
+}
 
 impl tera::Function for MessageLookup {
     /// Look up the message key identified by the argument "key", providing any other values to
@@ -20,17 +26,14 @@ impl tera::Function for MessageLookup {
     /// This will work according to the requested locale of the client, will fallback to the default
     /// as appropriate
     fn call(&self, args: &HashMap<String, Value>) -> Result<Value, Error> {
-        let message: Option<String> = None;
-
         let message_key = args
             .get("key")
             .and_then(|v| v.as_str())
             .unwrap_or("no-key-present");
 
-        let value = match message {
-            Some(m) => m,
-            None => format!("!!!!!{}!!!!!", message_key),
-        };
+        let value =
+            self.messages
+                .lookup(self.locales.clone(), message_key.to_owned(), args.clone());
 
         to_value(value).map_err(|_e| Error::msg("Oops"))
     }
@@ -41,12 +44,15 @@ impl TemplateRenderer {
     ///
     /// # Arguments
     /// * `templates` The glob defining where the templates should be loaded from
-    pub fn new<S>(templates: S) -> TemplateRenderer
+    pub fn new<S>(templates: S, messages: Messages) -> TemplateRenderer
     where
         S: Into<String>,
     {
         let tera = Tera::new(templates.into().as_str()).unwrap();
-        TemplateRenderer { tera }
+        TemplateRenderer {
+            tera,
+            messages: Arc::new(messages),
+        }
     }
 
     /// Render a template with a set of bind values.
@@ -64,12 +70,15 @@ impl TemplateRenderer {
     pub fn render(
         &self,
         template: &str,
-        _locales: Vec<String>,
+        locales: Vec<String>,
         context: Context,
     ) -> Result<String, Error> {
         let mut tera = Tera::default();
 
-        let message_lookup = MessageLookup {};
+        let message_lookup = MessageLookup {
+            messages: self.messages.clone(),
+            locales,
+        };
         tera.register_function("t", message_lookup);
 
         tera.extend(&self.tera)?;
