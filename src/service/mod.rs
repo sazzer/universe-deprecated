@@ -1,5 +1,6 @@
 use log::info;
 use rocket::Rocket;
+use rocket_contrib::serve::StaticFiles;
 
 mod database;
 mod users;
@@ -47,6 +48,7 @@ impl Service {
 
         let rocket = rocket::custom(config)
             .manage(users::new(database)?)
+            .mount("/public", StaticFiles::from("./static"))
             .mount("/", crate::webapp::routes())
             .mount("/api", crate::rest::routes());
 
