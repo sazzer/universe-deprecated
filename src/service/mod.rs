@@ -50,6 +50,7 @@ impl Service {
         let rocket = rocket::custom(config)
             .manage(users::new(database)?)
             .manage(templates::new()?)
+            .attach(crate::server::request_id::RequestIdFairing {})
             .mount("/public", StaticFiles::from("./static"))
             .mount("/", crate::server::webapp::routes())
             .mount("/api", crate::server::rest::routes());

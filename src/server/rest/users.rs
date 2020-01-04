@@ -1,10 +1,11 @@
 use super::problem::Problem;
+use crate::server::request_id::RequestId;
 use crate::users::{UserEntity, UserID, UserService, Username};
-use tracing::debug;
 use rocket::{get, State};
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use std::sync::Arc;
+use tracing::debug;
 use uuid::Uuid;
 
 /// Shape of a User as returned by the REST API
@@ -43,6 +44,7 @@ impl From<UserEntity> for UserModel {
 pub fn get_user_by_id(
     id: String,
     user_service: State<Arc<dyn UserService>>,
+    _request_id: RequestId,
 ) -> Result<Json<UserModel>, Problem> {
     let user_id: UserID = id.parse().map_err(|e| {
         debug!(
