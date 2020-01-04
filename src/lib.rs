@@ -2,9 +2,8 @@
 
 mod database;
 mod entity;
-mod rest;
+mod server;
 mod service;
 mod users;
-mod webapp;
 
 pub use service::*;

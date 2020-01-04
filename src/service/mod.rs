@@ -1,6 +1,6 @@
-use tracing::info;
 use rocket::Rocket;
 use rocket_contrib::serve::StaticFiles;
+use tracing::info;
 
 mod database;
 mod templates;
@@ -51,8 +51,8 @@ impl Service {
             .manage(users::new(database)?)
             .manage(templates::new()?)
             .mount("/public", StaticFiles::from("./static"))
-            .mount("/", crate::webapp::routes())
-            .mount("/api", crate::rest::routes());
+            .mount("/", crate::server::webapp::routes())
+            .mount("/api", crate::server::rest::routes());
 
         Ok(Service { rocket })
     }
