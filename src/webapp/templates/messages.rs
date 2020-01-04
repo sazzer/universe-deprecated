@@ -1,6 +1,6 @@
 use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use glob::glob;
-use log::{debug, warn};
+use tracing::{debug, warn};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::path::PathBuf;

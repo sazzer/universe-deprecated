@@ -1,5 +1,5 @@
 use super::Database;
-use log::{debug, error};
+use tracing::{debug, error};
 use postgres::NoTls;
 use r2d2::{Pool, PooledConnection};
 use r2d2_postgres::PostgresConnectionManager;

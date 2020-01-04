@@ -1,4 +1,4 @@
-use log::info;
+use tracing::info;
 use rocket::Rocket;
 use rocket_contrib::serve::StaticFiles;
 

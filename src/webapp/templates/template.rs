@@ -1,6 +1,6 @@
 use super::renderer::TemplateRenderer;
 use accept_language::parse;
-use log::{debug, error};
+use tracing::{debug, error};
 use rocket::{
     http::{ContentType, Status},
     response::{Responder, Result},
@@ -13,6 +13,7 @@ use tera::Context;
 /// Representation of a template that we want to render so that we can send it to a client.
 ///
 /// This contains the name of the template and any data inserts that it needs to render correctly.
+#[derive(Debug)]
 pub struct Template {
     name: String,
     data: Context,
@@ -79,6 +80,7 @@ impl<'r> Responder<'r> for Template {
     ///
     /// # To-dos:
     /// * TODO: Error handling
+    #[tracing::instrument(skip(request))]
     fn respond_to(self, request: &Request) -> Result<'r> {
         let renderer: State<TemplateRenderer> = request.guard().succeeded().ok_or_else(|| {
             error!("Template Renderer not available");

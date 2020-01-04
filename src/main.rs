@@ -5,7 +5,7 @@ mod settings;
 
 fn main() {
     dotenv().ok();
-    env_logger::init();
+    tracing_subscriber::fmt::init();
 
     let settings = settings::Settings::new().unwrap();
 

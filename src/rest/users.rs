@@ -1,6 +1,6 @@
 use super::problem::Problem;
 use crate::users::{UserEntity, UserID, UserService, Username};
-use log::debug;
+use tracing::debug;
 use rocket::{get, State};
 use rocket_contrib::json::Json;
 use serde::Serialize;
@@ -38,6 +38,7 @@ impl From<UserEntity> for UserModel {
 }
 
 /// Actual handler to get a User by their unique ID
+#[tracing::instrument(skip(user_service))]
 #[get("/users/<id>")]
 pub fn get_user_by_id(
     id: String,

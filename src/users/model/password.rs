@@ -1,6 +1,6 @@
 use bcrypt::{hash, verify, BcryptError, DEFAULT_COST};
 use bytes::BytesMut;
-use log::warn;
+use tracing::warn;
 use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
 use std::error::Error;
 

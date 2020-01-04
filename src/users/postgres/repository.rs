@@ -1,7 +1,7 @@
 use crate::database::Database;
 use crate::users::repository::UserRepository;
 use crate::users::{UserEntity, UserID, Username};
-use log::warn;
+use tracing::warn;
 use postgres::types::ToSql;
 use std::sync::Arc;
 

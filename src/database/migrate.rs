@@ -1,6 +1,6 @@
 use super::Database;
 use glob::glob;
-use log::{debug, error, info};
+use tracing::{debug, error, info};
 use postgres::Transaction;
 use std::fs;
 use std::path::PathBuf;

@@ -1,5 +1,5 @@
 use lazy_static::lazy_static;
-use log::info;
+use tracing::info;
 use postgres::{Client, NoTls};
 use testcontainers::{clients::Cli, images::postgres::Postgres, Container, Docker};
 

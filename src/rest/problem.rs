@@ -1,4 +1,4 @@
-use log::error;
+use tracing::error;
 use rocket::{
     http::{ContentType, Status},
     response::{Responder, Response},
