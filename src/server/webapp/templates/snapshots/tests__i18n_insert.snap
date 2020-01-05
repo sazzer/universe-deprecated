@@ -1,0 +1,7 @@
+---
+source: src/server/webapp/templates/renderer.rs
+expression: rendered
+---
+Ok(
+    "Hello, \u{2068}Graham\u{2069}\n",
+)

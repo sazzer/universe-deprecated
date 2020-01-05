@@ -1,0 +1,12 @@
+---
+source: src/server/webapp/templates/renderer.rs
+expression: rendered
+---
+Err(
+    Error {
+        kind: TemplateNotFound(
+            "hello.tera",
+        ),
+        source: None,
+    },
+)

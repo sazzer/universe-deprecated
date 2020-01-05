@@ -86,3 +86,109 @@ impl TemplateRenderer {
         tera.render(template, &context)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use insta::assert_debug_snapshot;
+
+    #[test]
+    fn test_no_templates() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let renderer = TemplateRenderer::new(
+            "src/server/webapp/templates/test_templates/empty/**/*.tera",
+            messages,
+        );
+
+        let rendered = renderer.render("hello.tera", vec![], Context::new());
+        assert_debug_snapshot!(rendered);
+    }
+
+    #[test]
+    fn test_simple_template() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let renderer = TemplateRenderer::new(
+            "src/server/webapp/templates/test_templates/full/**/*.tera",
+            messages,
+        );
+
+        let rendered = renderer.render("simple.tera", vec![], Context::new());
+        assert_debug_snapshot!(rendered);
+    }
+
+    #[test]
+    fn test_template_inserts() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let renderer = TemplateRenderer::new(
+            "src/server/webapp/templates/test_templates/full/**/*.tera",
+            messages,
+        );
+
+        let mut context = Context::new();
+        context.insert("name", "Graham");
+        let rendered = renderer.render("inserts.tera", vec![], context);
+        assert_debug_snapshot!(rendered);
+    }
+
+    #[test]
+    fn test_i18n() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let renderer = TemplateRenderer::new(
+            "src/server/webapp/templates/test_templates/full/**/*.tera",
+            messages,
+        );
+
+        let rendered = renderer.render("i18n.tera", vec![], Context::new());
+        assert_debug_snapshot!(rendered);
+    }
+
+    #[test]
+    fn test_i18n_override() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let renderer = TemplateRenderer::new(
+            "src/server/webapp/templates/test_templates/full/**/*.tera",
+            messages,
+        );
+
+        let rendered = renderer.render("i18n.tera", vec!["en_US".to_owned()], Context::new());
+        assert_debug_snapshot!(rendered);
+    }
+
+    #[test]
+    fn test_i18n_insert() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let renderer = TemplateRenderer::new(
+            "src/server/webapp/templates/test_templates/full/**/*.tera",
+            messages,
+        );
+
+        let mut context = Context::new();
+        context.insert("name", "Graham");
+        let rendered = renderer.render("i18n_inserts.tera", vec![], context);
+        assert_debug_snapshot!(rendered);
+    }
+}
