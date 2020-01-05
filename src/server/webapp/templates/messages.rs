@@ -1,9 +1,9 @@
 use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use glob::glob;
-use tracing::{debug, warn};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::path::PathBuf;
+use tracing::{debug, warn};
 use unic_langid::LanguageIdentifier;
 
 /// Type abbreviation for a bundle of messages for a single locale
@@ -120,8 +120,8 @@ impl Messages {
 
         // Iterate over each Locale, trying to find a bundle that matches
         // This looks for an exact match first, and then a partial match otherwise
-        for bundle in bundles_with_message.iter() {
-            for locale in desired_locales.iter() {
+        for locale in desired_locales.iter() {
+            for bundle in bundles_with_message.iter() {
                 // Check every bundle for an exact match first
                 for bundle_locale in bundle.locales.iter() {
                     if locale.matches(bundle_locale, false, false) {
@@ -133,7 +133,7 @@ impl Messages {
                     }
                 }
             }
-            for locale in desired_locales.iter() {
+            for bundle in bundles_with_message.iter() {
                 // Failing that, try again looking for partial matches.
                 for bundle_locale in bundle.locales.iter() {
                     if locale.matches(bundle_locale, false, true) {
@@ -234,5 +234,151 @@ impl Messages {
                     .unwrap_or(format!("!!!{}!!!", desired_message_key))
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use spectral::prelude::*;
+
+    #[test]
+    fn test_empty_messages_directory() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/empty/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["en"], "message-key", HashMap::new());
+        assert_that(&message).is_equal_to("!!!message-key!!!".to_owned());
+    }
+
+    #[test]
+    fn test_unknown_message_key() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["en"], "message-key", HashMap::new());
+        assert_that(&message).is_equal_to("!!!message-key!!!".to_owned());
+    }
+
+    #[test]
+    fn test_known_message_key() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["en"], "hello", HashMap::new());
+        assert_that(&message).is_equal_to("World".to_owned());
+    }
+
+    #[test]
+    fn test_message_key_with_insert() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let mut binds = HashMap::new();
+        binds.insert("name".to_owned(), json!("Graham"));
+        let message = messages.lookup(vec!["en"], "greetings", binds);
+        // U+2068 and U+2069 are used to wrap the insert for bi-directional text
+        assert_that(&message).is_equal_to("Hello, \u{2068}Graham\u{2069}".to_owned());
+    }
+
+    #[test]
+    fn test_message_key_with_missing_insert() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+
+        let message = messages.lookup(vec!["en"], "greetings", HashMap::new());
+        // U+2068 and U+2069 are used to wrap the insert for bi-directional text
+        assert_that(&message).is_equal_to("!!!greetings!!!".to_owned());
+    }
+
+    #[test]
+    fn test_fallback_locale() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["de"], "hello", HashMap::new());
+        assert_that(&message).is_equal_to("World".to_owned());
+    }
+
+    #[test]
+    fn test_second_locale() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "fr",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["es", "en"], "hello", HashMap::new());
+        assert_that(&message).is_equal_to("World".to_owned());
+    }
+
+    #[test]
+    fn test_non_exact_locale() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "fr",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["en_GB"], "hello", HashMap::new());
+        assert_that(&message).is_equal_to("World".to_owned());
+    }
+
+    #[test]
+    fn test_non_exact_locale_override_matches() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["en_US"], "answer", HashMap::new());
+        assert_that(&message).is_equal_to("41".to_owned());
+    }
+
+    #[test]
+    fn test_non_exact_locale_override_doesnt_match() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/full/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+        let message = messages.lookup(vec!["en_US"], "hello", HashMap::new());
+        assert_that(&message).is_equal_to("World".to_owned());
+    }
+
+    #[test]
+    fn test_nested_files() {
+        let messages = Messages::new(
+            "src/server/webapp/templates/test_messages/nested/**/*.ftl",
+            "en",
+        )
+        .unwrap();
+
+        let message_en = messages.lookup(vec!["en"], "hello", HashMap::new());
+        assert_that(&message_en).is_equal_to("World".to_owned());
+
+        let message_fr = messages.lookup(vec!["fr_FR"], "hello", HashMap::new());
+        assert_that(&message_fr).is_equal_to("Bonjour".to_owned());
+    }
+
+    #[test]
+    fn test_malformed_files() {
+        Messages::new(
+            "src/server/webapp/templates/test_messages/malformed/**/*.ftl",
+            "en",
+        )
+        .unwrap();
     }
 }

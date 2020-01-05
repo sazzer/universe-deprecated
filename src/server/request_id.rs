@@ -1,6 +1,6 @@
 use rocket::{
     fairing::{Fairing, Info, Kind},
-    http::{Header, Status},
+    http::Header,
     request::{FromRequest, Outcome},
     Data, Request, Response,
 };
