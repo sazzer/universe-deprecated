@@ -97,7 +97,6 @@ impl ToSql for Password {
 mod tests {
     use super::*;
     use spectral::prelude::*;
-    use test_env_log::test;
 
     #[test]
     fn test_hashing_simple_password() {

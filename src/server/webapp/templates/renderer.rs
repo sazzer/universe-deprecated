@@ -105,7 +105,7 @@ mod tests {
         );
 
         let rendered = renderer.render("hello.tera", vec![], Context::new());
-        assert_debug_snapshot!(rendered);
+        assert_debug_snapshot!("renderer_no_templates", rendered);
     }
 
     #[test]
@@ -121,7 +121,7 @@ mod tests {
         );
 
         let rendered = renderer.render("simple.tera", vec![], Context::new());
-        assert_debug_snapshot!(rendered);
+        assert_debug_snapshot!("renderer_simple_template", rendered);
     }
 
     #[test]
@@ -139,7 +139,7 @@ mod tests {
         let mut context = Context::new();
         context.insert("name", "Graham");
         let rendered = renderer.render("inserts.tera", vec![], context);
-        assert_debug_snapshot!(rendered);
+        assert_debug_snapshot!("renderer_template_inserts", rendered);
     }
 
     #[test]
@@ -155,7 +155,7 @@ mod tests {
         );
 
         let rendered = renderer.render("i18n.tera", vec![], Context::new());
-        assert_debug_snapshot!(rendered);
+        assert_debug_snapshot!("renderer_i18n", rendered);
     }
 
     #[test]
@@ -171,7 +171,7 @@ mod tests {
         );
 
         let rendered = renderer.render("i18n.tera", vec!["en_US".to_owned()], Context::new());
-        assert_debug_snapshot!(rendered);
+        assert_debug_snapshot!("renderer_i18n_override", rendered);
     }
 
     #[test]
@@ -189,6 +189,6 @@ mod tests {
         let mut context = Context::new();
         context.insert("name", "Graham");
         let rendered = renderer.render("i18n_inserts.tera", vec![], context);
-        assert_debug_snapshot!(rendered);
+        assert_debug_snapshot!("renderer_i18n_insert", rendered);
     }
 }

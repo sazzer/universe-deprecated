@@ -1,7 +1,7 @@
 use crate::database::test::TestData;
 use crate::entity::Identity;
 use crate::users::{Password, UserData, UserEntity, UserID, Username};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Timelike, Utc};
 use uuid::Uuid;
 
 /// User representation for test purposes
@@ -23,8 +23,8 @@ impl Default for User {
         Self {
             user_id: UserID::from_uuid(Uuid::new_v4()),
             version: Uuid::new_v4(),
-            created: Utc::now(),
-            updated: Utc::now(),
+            created: Utc::now().with_nanosecond(0).unwrap(),
+            updated: Utc::now().with_nanosecond(0).unwrap(),
             username: "testuser".parse().unwrap(),
             email: "test@example.com".to_owned(),
             display_name: "Test User".to_owned(),

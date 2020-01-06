@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
-use tracing::info;
 use postgres::{Client, NoTls};
 use testcontainers::{clients::Cli, images::postgres::Postgres, Container, Docker};
+use tracing::info;
 
 lazy_static! {
     static ref DOCKER: Cli = { Cli::default() };
@@ -10,6 +10,7 @@ lazy_static! {
 pub struct TestDatabase<'d> {
     #[allow(dead_code)]
     node: Container<'d, Cli, Postgres>,
+    pub host: String,
     pub port: u32,
     pub url: String,
 }
@@ -18,11 +19,17 @@ impl<'d> TestDatabase<'d> {
     pub fn new() -> Self {
         let node = DOCKER.run(Postgres::default());
 
+        let host = std::env::var("DOCKER_HOSTNAME").unwrap_or("localhost".to_owned());
         let port = node.get_host_port(5432).unwrap();
-        let url = format!("postgres://postgres:postgres@localhost:{}", port);
+        let url = format!("postgres://postgres:postgres@{}:{}", host, port);
         info!("Running postgres on {}", url);
 
-        TestDatabase { node, port, url }
+        TestDatabase {
+            node,
+            host,
+            port,
+            url,
+        }
     }
 
     pub fn client(&self) -> Client {

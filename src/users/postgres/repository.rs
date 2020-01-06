@@ -53,7 +53,6 @@ mod tests {
     use super::*;
     use crate::{database::test::TestDatabaseWrapper, users::testdata};
     use spectral::prelude::*;
-    use test_env_log::test;
     use uuid::Uuid;
 
     #[test]

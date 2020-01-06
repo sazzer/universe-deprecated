@@ -1,8 +1,8 @@
 use super::Database;
-use tracing::{debug, error};
 use postgres::NoTls;
 use r2d2::{Pool, PooledConnection};
 use r2d2_postgres::PostgresConnectionManager;
+use tracing::{debug, error};
 
 /// Errors that can be returned when creating a Postgres Database wrapper
 #[derive(Debug, PartialEq)]
@@ -79,7 +79,6 @@ mod tests {
     use super::*;
     use crate::database::test::TestDatabase;
     use spectral::prelude::*;
-    use test_env_log::test;
 
     #[test]
     fn test_connect_success() {
@@ -93,7 +92,10 @@ mod tests {
     fn test_connect_bad_credentials() {
         let database = TestDatabase::new();
 
-        let url = format!("postgres://invalid:invalid@localhost:{}", database.port);
+        let url = format!(
+            "postgres://invalid:invalid@{}:{}",
+            database.host, database.port
+        );
         let postgres = PostgresDatabase::new(url);
         assert_that(&postgres)
             .is_err()

@@ -1,0 +1,92 @@
+stages:
+  - build
+  - deploy
+
+build-webapp:
+  stage: build
+  image: rustlang/rust:nightly-slim
+
+  services:
+    - docker:19.03.0-dind
+
+  variables:
+    DOCKER_HOSTNAME: docker
+    DOCKER_HOST: tcp://$DOCKER_HOSTNAME:2375
+    DOCKER_DRIVER: overlay2
+    CARGO_HOME: $CI_PROJECT_DIR/.cargo
+    RUST_LOG: debug
+
+  before_script:
+    - apt update
+    - apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+    - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    - apt update
+    - apt -y install docker-ce-cli
+
+  script:
+    - cargo test
+
+  cache:
+    key: universe-webapp
+    paths:
+      - target
+      - .cargo
+
+build-webapp-container:
+  stage: build
+  image: docker:stable
+
+  services:
+    - docker:19.03.0-dind
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    IMAGE_TAG: $CI_REGISTRY/sazzer/universe/universe-webapp
+
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG
+
+    - |-
+      echo Date: `date` > static/buildinfo
+      echo CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME >> static/buildinfo
+      echo CI_COMMIT_SHA: $CI_COMMIT_SHA >> static/buildinfo
+      echo CI_PROJECT_ID: $CI_PROJECT_ID >> static/buildinfo
+      echo CI_PIPELINE_ID: $CI_PIPELINE_ID >> static/buildinfo
+      echo CI_JOB_ID: $CI_JOB_ID >> static/buildinfo
+    - cat static/buildinfo
+    
+  script:
+    - docker build -t $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG --target builder --cache-from $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG .
+    - docker build -t $IMAGE_TAG:latest-$CI_COMMIT_REF_SLUG --cache-from $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG .
+    - docker push $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG
+    - docker push $IMAGE_TAG:latest-$CI_COMMIT_REF_SLUG
+
+deploy-webapp:
+  stage: deploy
+  image: docker:stable
+  services:
+    - docker:19.03.0-dind
+
+  only:
+    refs:
+      - rust3
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    SOURCE_TAG: $CI_REGISTRY/sazzer/universe/universe-webapp
+    TARGET_APP: universe-cd
+
+  before_script:
+    - docker pull $SOURCE_TAG:latest-$CI_COMMIT_REF_SLUG
+    - apk add --no-cache curl
+  script:
+    - docker login --username=graham@grahamcox.co.uk --password=$HEROKU_API_KEY registry.heroku.com
+    - docker tag $SOURCE_TAG:latest-$CI_COMMIT_REF_SLUG registry.heroku.com/$TARGET_APP/web
+    - docker push registry.heroku.com/$TARGET_APP/web
+    - docker inspect registry.heroku.com/$TARGET_APP/web:latest --format={{.Id}} > /tmp/imageid
+    - |-
+      curl -X PATCH https://api.heroku.com/apps/$TARGET_APP/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --user graham@grahamcox.co.uk:${HEROKU_API_KEY} --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat /tmp/imageid)'" } ] }'
