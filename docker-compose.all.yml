@@ -1,18 +1,16 @@
 version: '3'
 
 services:
-    universe-dev-postgres:
+    universe-all-postgres:
         image: postgres:11.5-alpine
         environment:
             POSTGRES_DB: universe
             POSTGRES_USER: universe
             POSTGRES_PASSWORD: universe
-        ports:
-            - "127.0.0.1:45432:5432"
         networks:
-            - universe-dev
+            - universe-all
 
-    universe-dev-phppgadmin:
+    universe-all-phppgadmin:
         image: dockage/phppgadmin:latest
         environment:
             - PHP_PG_ADMIN_SERVER_DESC=NuWorlds
@@ -28,9 +26,23 @@ services:
         ports:
             - "127.0.0.1:48081:80"
         depends_on:
-            - universe-postgres
+            - universe-all-postgres
         networks:
-            - universe-dev
+            - universe-all
+
+    universe-all:
+        build: .
+        environment:
+            - PORT=8000
+            - RUST_LOG=info,universe=debug
+            - RUST_BACKTRACE=1
+            - DATABASE_URL=postgres://universe:universe@universe-all-postgres:5432/universe
+        ports:
+            - "127.0.0.1:48000:8000"
+        depends_on:
+            - universe-all-postgres
+        networks:
+            - universe-all
 
 networks:
-    universe-dev:
+    universe-all:
