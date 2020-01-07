@@ -3,7 +3,8 @@
 {% block content %}
 <div class="row">
   <div class="col-12 col-md-4 order-sm-1">
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis imperdiet massa tincidunt nunc pulvinar sapien et. Congue quisque egestas diam in arcu cursus euismod. Vulputate enim nulla aliquet porttitor lacus luctus. Lacus viverra vitae congue eu consequat ac felis donec. Eu sem integer vitae justo eget magna fermentum. Mi bibendum neque egestas congue quisque egestas diam in. At tempor commodo ullamcorper a lacus vestibulum sed arcu. Vel risus commodo viverra maecenas. Ac turpis egestas sed tempus. Id eu nisl nunc mi ipsum. Sem fringilla ut morbi tincidunt augue interdum velit. Dictum at tempor commodo ullamcorper a lacus.
+    {% block sidebar %}
+    {% endblock sidebar %}
   </div>
   <div class="col-12 col-md-8">
     <h3>The World of Sæmyyr</h3>

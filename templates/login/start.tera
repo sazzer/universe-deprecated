@@ -1,0 +1,12 @@
+{% extends "layout/landing.tera" %}
+
+{% block sidebar %}
+<h3>{{t(key="login_title_login")}}</h3>
+<form action="/login" method="POST">
+  <div class="form-group">
+    <label for="login_username">{{t(key="login_username_label")}}</label>
+    <input type="text" class="form-control" id="login_username" autofocus />
+  </div>
+  <button type="submit" class="btn btn-primary">{{t(key="login_submit_login")}}</button>
+</form>
+{% endblock sidebar %}
