@@ -1,7 +1,7 @@
 {% extends "layout/landing.tera" %}
 
 {% block sidebar %}
-<h3>{{t(key="login_title_login")}}</h3>
+<h3>{{t(key="login_title_start")}}</h3>
 <form action="/login" method="POST">
   <div class="form-group">
     <label for="login_username">{{t(key="login_username_label")}}</label>
@@ -12,6 +12,6 @@
     </div>
     {% endif %}
   </div>
-  <button type="submit" class="btn btn-primary">{{t(key="login_submit_login")}}</button>
+  <button type="submit" class="btn btn-primary">{{t(key="login_submit_start")}}</button>
 </form>
 {% endblock sidebar %}

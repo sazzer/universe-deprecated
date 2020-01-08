@@ -33,6 +33,6 @@ pub fn process_login(form: LenientForm<LoginForm>, _request_id: RequestId) -> Te
             errors.insert("username", e);
             Template::new("login/start.tera").with_data("errors", &errors)
         }
-        Ok(username) => Template::new("login/start.tera").with_data("username", &username),
+        Ok(username) => Template::new("login/login.tera").with_data("username", &username),
     }
 }
