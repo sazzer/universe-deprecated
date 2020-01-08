@@ -5,7 +5,12 @@
 <form action="/login" method="POST">
   <div class="form-group">
     <label for="login_username">{{t(key="login_username_label")}}</label>
-    <input type="text" class="form-control" id="login_username" autofocus />
+    <input type="text" class="form-control {% if errors.username is defined %}is-invalid{% endif %}" id="login_username" name="username" autofocus required />
+    {% if errors.username is defined %}
+    <div class="invalid-feedback">
+      {{ t(key="login_username_problems_" ~ errors.username) }}
+    </div>
+    {% endif %}
   </div>
   <button type="submit" class="btn btn-primary">{{t(key="login_submit_login")}}</button>
 </form>

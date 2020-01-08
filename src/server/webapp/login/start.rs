@@ -1,5 +1,4 @@
-use crate::server::request_id::RequestId;
-use crate::server::webapp::templates::Template;
+use crate::server::{request_id::RequestId, webapp::templates::Template};
 use rocket::get;
 
 #[get("/login")]
