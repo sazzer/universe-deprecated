@@ -6,12 +6,12 @@
   <div class="form-group">
     <label for="login_username">{{t(key="login_username_label")}}</label>
     <input type="text"
-           class="form-control {% if errors.username is string %}is-invalid{% endif %}"
+           class="form-control {% if errors.username is defined and errors.username is string %}is-invalid{% endif %}"
            id="login_username"
            name="username"
            value="{{ username | default(value="") }}"
            readonly />
-    {% if errors.username is string %}
+    {% if errors.username is defined and errors.username is string %}
     <div class="invalid-feedback">
       {{ t(key="login_username_problems_" ~ errors.username) }}
     </div>
@@ -20,14 +20,14 @@
   <div class="form-group">
     <label for="login_email">{{t(key="login_email_label")}}</label>
     <input type="email"
-           class="form-control {% if errors.email is string %}is-invalid{% endif %}"
+           class="form-control {% if errors.email is defined and errors.email is string %}is-invalid{% endif %}"
            id="login_email"
            name="email"
            value="{{ email | default(value="") }}"
            aria-describedby="login_email_help"
            autofocus
            required />
-    {% if errors.email is string %}
+    {% if errors.email is defined and errors.email is string %}
     <div class="invalid-feedback">
       {{ t(key="login_email_problems_" ~ errors.email) }}
     </div>
@@ -37,12 +37,12 @@
   <div class="form-group">
     <label for="login_name">{{t(key="login_name_label")}}</label>
     <input type="text"
-           class="form-control {% if errors.name is string %}is-invalid{% endif %}"
+           class="form-control {% if errors.name is defined and errors.name is string %}is-invalid{% endif %}"
            id="login_name"
            name="name"
            value="{{ name | default(value="") }}"
            required />
-    {% if errors.name is string %}
+    {% if errors.name is defined and errors.name is string %}
     <div class="invalid-feedback">
       {{ t(key="login_name_problems_" ~ errors.name) }}
     </div>
@@ -51,11 +51,11 @@
   <div class="form-group">
     <label for="login_password">{{t(key="login_password_label")}}</label>
     <input type="password"
-           class="form-control {% if errors.password is string %}is-invalid{% endif %}"
+           class="form-control {% if errors.password is defined and errors.password is string %}is-invalid{% endif %}"
            id="login_password"
            name="password"
            required />
-    {% if errors.password is string %}
+    {% if errors.password is defined and errors.password is string %}
     <div class="invalid-feedback">
       {{ t(key="login_password_problems_" ~ errors.password) }}
     </div>
@@ -64,11 +64,11 @@
   <div class="form-group">
     <label for="login_password2">{{t(key="login_password2_label")}}</label>
     <input type="password"
-           class="form-control {% if errors.password2 is string %}is-invalid{% endif %}"
+           class="form-control {% if errors.password2 is defined and errors.password2 is string %}is-invalid{% endif %}"
            id="login_password2"
            name="password2"
            required />
-    {% if errors.password2 is string %}
+    {% if errors.password2 is defined and errors.password2 is string %}
     <div class="invalid-feedback">
       {{ t(key="login_password2_problems_" ~ errors.password2) }}
     </div>
