@@ -2,8 +2,7 @@
 
 {% block sidebar %}
 <h3>{{t(key="login_title_login")}}</h3>
-<form action="/login" method="POST">
-  <input type="hidden" name="action" value="login" />
+<form action="/login/login" method="POST">
   <div class="form-group">
     <label for="login_username">{{t(key="login_username_label")}}</label>
     <input type="text" class="form-control" id="login_username" name="username" value="{{ username }}" readonly />
