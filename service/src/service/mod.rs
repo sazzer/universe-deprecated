@@ -1,4 +1,4 @@
-use rocket::Rocket;
+use rocket::{local::Client, Rocket};
 use rocket_contrib::serve::StaticFiles;
 use tracing::info;
 
@@ -61,5 +61,9 @@ impl Service {
     /// Actually launch the server
     pub fn launch(self) {
         self.rocket.launch();
+    }
+
+    pub fn client(self) -> Client {
+        Client::new(self.rocket).unwrap()
     }
 }
