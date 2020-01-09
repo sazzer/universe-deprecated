@@ -13,7 +13,7 @@ build-webapp:
     DOCKER_HOSTNAME: docker
     DOCKER_HOST: tcp://$DOCKER_HOSTNAME:2375
     DOCKER_DRIVER: overlay2
-    CARGO_HOME: $CI_PROJECT_DIR/.cargo
+    CARGO_HOME: $CI_PROJECT_DIR/service/.cargo
     RUST_LOG: debug
 
   before_script:
@@ -25,13 +25,14 @@ build-webapp:
     - apt -y install docker-ce-cli
 
   script:
+    - cd service
     - cargo test
 
   cache:
     key: universe-webapp
     paths:
-      - target
-      - .cargo
+      - service/target
+      - service/.cargo
 
 build-webapp-container:
   stage: build
@@ -49,6 +50,8 @@ build-webapp-container:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG
 
+  script:
+    - cd service
     - |-
       echo Date: `date` > static/buildinfo
       echo CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME >> static/buildinfo
@@ -57,8 +60,7 @@ build-webapp-container:
       echo CI_PIPELINE_ID: $CI_PIPELINE_ID >> static/buildinfo
       echo CI_JOB_ID: $CI_JOB_ID >> static/buildinfo
     - cat static/buildinfo
-    
-  script:
+
     - docker build -t $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG --target builder --cache-from $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG .
     - docker build -t $IMAGE_TAG:latest-$CI_COMMIT_REF_SLUG --cache-from $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG .
     - docker push $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG
