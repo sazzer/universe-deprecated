@@ -1,6 +1,5 @@
 use super::renderer::TemplateRenderer;
 use accept_language::parse;
-use tracing::{debug, error};
 use rocket::{
     http::{ContentType, Status},
     response::{Responder, Result},
@@ -9,6 +8,7 @@ use rocket::{
 use serde::Serialize;
 use std::io::Cursor;
 use tera::Context;
+use tracing::{debug, error};
 
 /// Representation of a template that we want to render so that we can send it to a client.
 ///
@@ -43,16 +43,6 @@ impl Template {
     ) -> Template {
         self.data.insert(&key.into(), val);
         self
-    }
-
-    /// Get the name of the template that is to be rendered
-    pub fn get_name(&self) -> String {
-        self.name.clone()
-    }
-
-    /// Get the entire set of data to bind to the template that is to be rendered
-    pub fn get_data(&self) -> Context {
-        self.data.clone()
     }
 }
 
