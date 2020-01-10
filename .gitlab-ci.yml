@@ -115,7 +115,7 @@ run-e2e:
   artifacts:
     name: '$CI_COMMIT_REF_SLUG-Cucumber'
     paths:
-      - /universe/output/
+      - output/*
     when: always
 
 deploy-webapp:
