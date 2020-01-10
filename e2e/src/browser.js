@@ -1,4 +1,5 @@
-const { Builder, By, Key, until } = require('selenium-webdriver');
+const { Builder } = require('selenium-webdriver');
+const { expect } = require('chai');
 
 /**
  * The wrapper around the Browser to use
@@ -53,12 +54,13 @@ class Browser {
    * @param  {Constructor}  page The page model to open
    */
   async visit(page) {
-    if (page.URL) {
-      const driver = await this._openBrowser();
-      const urlBase = process.env.SERVICE_URL;
-      const url = urlBase + page.URL;
-      await driver.get(url);
-    }
+    expect(page.URL).not.to.be.undefined;
+
+    const driver = await this._openBrowser();
+    const urlBase = process.env.SERVICE_URL;
+    const url = urlBase + page.URL;
+    await driver.get(url);
+
     return await this.buildPage(page);
   }
 
@@ -68,7 +70,11 @@ class Browser {
    */
   async buildPage(page) {
     const driver = await this._openBrowser();
-    return new page(driver);
+    const result = new page(driver);
+    if (result.isDisplayed) {
+      expect(await result.isDisplayed()).to.be.true;
+    }
+    return result;
   }
 }
 

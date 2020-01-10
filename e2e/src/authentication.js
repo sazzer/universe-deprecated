@@ -1,5 +1,6 @@
-const { Then } = require('cucumber');
+const { When, Then } = require('cucumber');
 const { BasePage } = require('./pages/basepage');
+const { StartLoginPage, RegisterPage } = require('./pages/login');
 const { expect } = require('chai');
 
 Then('I am not logged in', async function() {
@@ -7,4 +8,25 @@ Then('I am not logged in', async function() {
   const header = await page.getHeader();
   const authenticated = await header.isLoggedIn();
   expect(authenticated).to.be.false;
+});
+
+When('I start logging in as {string}', async function(username) {
+  const currentPage = await this.browser.buildPage(BasePage);
+  const header = await currentPage.getHeader();
+  await header.login();
+
+  const loginPage = await this.browser.buildPage(StartLoginPage);
+  await loginPage.login(username);
+});
+
+Then('I am displayed the Register User form', async function() {
+  await this.browser.buildPage(RegisterPage);
+});
+
+Then('the Register User form has details:', async function(data) {
+  const page = await this.browser.buildPage(RegisterPage);
+  const form = await page.getForm();
+
+  const expected = data.rowsHash();
+  expect(form).to.include(expected);
 });

@@ -17,6 +17,14 @@ class HeaderBar {
     const loginLinkPresent = await loginLink.isDisplayed();
     return !loginLinkPresent;
   }
+
+  /**
+   * Attempt to start authentication by pressing the "Login / Register" link
+   */
+  async login() {
+    const loginLink = await this._element.findElement(By.css('a.nav-link[href="/login"]'));
+    await loginLink.click();
+  }
 }
 
 module.exports = { HeaderBar };
