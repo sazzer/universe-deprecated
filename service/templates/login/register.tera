@@ -9,7 +9,7 @@
            class="form-control {% if errors.username is defined and errors.username is string %}is-invalid{% endif %}"
            id="login_username"
            name="username"
-           value="{{ username | default(value="") }}"
+           value="{{ username | default(value="") | escape }}"
            readonly />
     {% if errors.username is defined and errors.username is string %}
     <div class="invalid-feedback">
@@ -23,7 +23,7 @@
            class="form-control {% if errors.email is defined and errors.email is string %}is-invalid{% endif %}"
            id="login_email"
            name="email"
-           value="{{ email | default(value="") }}"
+           value="{{ email | default(value="") | escape }}"
            aria-describedby="login_email_help"
            autofocus
            required />
@@ -40,7 +40,7 @@
            class="form-control {% if errors.name is defined and errors.name is string %}is-invalid{% endif %}"
            id="login_name"
            name="name"
-           value="{{ name | default(value="") }}"
+           value="{{ name | default(value="") | escape }}"
            required />
     {% if errors.name is defined and errors.name is string %}
     <div class="invalid-feedback">

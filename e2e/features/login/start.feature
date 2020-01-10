@@ -25,17 +25,19 @@ Feature: Start Authentication
 
   Scenario Outline: Starting authentication with an unknown user displays the Register User form - username uses nasty characters
     Given I visit the home page
-    When I start logging in as "<Username>"
+    When I start logging in as "<Input>"
     Then I am displayed the Register User form
     And the Register User form has details:
-      | Username          | <Username> |
+      | Username          | <Expected> |
       | Email Address     |            |
       | Display Name      |            |
       | Password          |            |
       | Re-enter Password |            |
 
+      @wip
   Examples:
-    | Username     |
-    | !@#$%^&*     |
-    | Snow☃man     |
-    | <b>hello</b> |
+    | Input        | Expected     |
+    | !@#$%^&*     | !@#$%^&*     |
+    | Snow☃man     | Snow☃man     |
+    | <b>hello</b> | <b>hello</b> |
+    | \"quoted\"   | "quoted"     |
