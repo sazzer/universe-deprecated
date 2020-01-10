@@ -9,16 +9,18 @@
   "scripts": {
     "clean": "rimraf output/*",
     "setup": "mkdirp output",
-    "run": "cucumber-js --require-module dotenv/config --order random -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require src/**/*.js features/**/*.feature",
+    "run": "cucumber-js --require-module dotenv/config --order random -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.js' features/**/*.feature",
     "format": "node ./format.js",
     "start": "run-s -c clean setup run format"
   },
   "dependencies": {
+    "chai": "^4.2.0",
     "cucumber": "^6.0.5",
     "dotenv": "^8.2.0",
     "selenium-webdriver": "^4.0.0-alpha.5"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.7",
     "@types/cucumber": "^6.0.0",
     "@types/selenium-webdriver": "^4.0.6",
     "cucumber-html-reporter": "^5.1.0",

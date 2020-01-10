@@ -29,7 +29,6 @@ class Browser {
   async reset() {
     console.log('Resetting browser');
     const driver = await this._openBrowser();
-    await driver.get('http://www.google.com');
   }
 
   /**
@@ -47,6 +46,29 @@ class Browser {
   async screenshot() {
     const driver = await this._openBrowser();
     return await driver.takeScreenshot();
+  }
+
+  /**
+   * Visit the page that is represnted by the given page model
+   * @param  {Constructor}  page The page model to open
+   */
+  async visit(page) {
+    if (page.URL) {
+      const driver = await this._openBrowser();
+      const urlBase = process.env.SERVICE_URL;
+      const url = urlBase + page.URL;
+      await driver.get(url);
+    }
+    return await this.buildPage(page);
+  }
+
+  /**
+   * Build a page model as described by the given class
+   * @param  {Constructor}  page The page model to open
+   */
+  async buildPage(page) {
+    const driver = await this._openBrowser();
+    return new page(driver);
   }
 }
 
