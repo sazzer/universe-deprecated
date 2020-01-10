@@ -15,9 +15,12 @@
   },
   "dependencies": {
     "cucumber": "^6.0.5",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "selenium-webdriver": "^4.0.0-alpha.5"
   },
   "devDependencies": {
+    "@types/cucumber": "^6.0.0",
+    "@types/selenium-webdriver": "^4.0.6",
     "cucumber-html-reporter": "^5.1.0",
     "cucumber-pretty": "^6.0.0",
     "mkdirp": "^0.5.1",

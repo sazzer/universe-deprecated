@@ -32,7 +32,7 @@ services:
         environment: 
             - DATABASE_URL=postgres://universe:universe@universe-e2e-postgres:5432/universe
             - SERVICE_URL=http://universe-e2e-service:8000/
-            - SELENIUM_URL=http://universe-e2e-selenium:4444/wd/hub
+            - SELENIUM_REMOTE_URL=http://universe-e2e-selenium:4444/wd/hub
             - DOCKERIZE_PARAMS=-wait http://universe-e2e-service:8000 -wait http://universe-e2e-selenium:4444
         depends_on:
             - universe-e2e-postgres
