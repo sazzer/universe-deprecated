@@ -12,7 +12,8 @@ WORKDIR /universe
 COPY package.json yarn.lock docker/start.sh /universe/
 RUN yarn install
 
-COPY src /universe/
-COPY features /universe/
+COPY src /universe/src/
+COPY features /universe/features/
+COPY format.js /universe/
 
 CMD ["./start.sh"]

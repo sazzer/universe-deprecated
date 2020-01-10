@@ -107,9 +107,16 @@ run-e2e:
     - docker pull $E2E_TAG:latest-$CI_COMMIT_REF_SLUG
     - docker tag $SERVICE_TAG:latest-$CI_COMMIT_REF_SLUG universe-service
     - docker tag $E2E_TAG:latest-$CI_COMMIT_REF_SLUG universe-e2e
+    - mkdir -p /universe/output
 
   script:
     - docker-compose -f docker-compose.e2e.yml -f docker-compose.services.yml up --exit-code-from universe-e2e-tests
+
+  artifacts:
+    name: '$CI_COMMIT_REF_SLUG-Cucumber'
+    paths:
+      - /universe/output/
+    when: always
 
 deploy-webapp:
   stage: deploy

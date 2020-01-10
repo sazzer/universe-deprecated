@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
     universe-e2e-postgres:
@@ -39,7 +39,8 @@ services:
             - universe-e2e-service
         networks:
             - universe-e2e
+        volumes:
+            - ./output:/universe/output
 
 networks:
     universe-e2e:
-
