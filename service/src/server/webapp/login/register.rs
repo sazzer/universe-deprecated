@@ -47,14 +47,14 @@ impl TryFrom<RegisterForm> for UserData {
             }
         });
 
-        match (&username, &email, &name, &password, &password2) {
+        match (username, email, name, password, password2) {
             (Ok(username), Ok(email), Ok(display_name), Ok(password), Ok(_)) => Ok(UserData {
-                username: username.clone(),
-                email: email.clone(),
-                display_name: display_name.clone(),
-                password: password.clone(),
+                username,
+                email,
+                display_name,
+                password,
             }),
-            _ => {
+            (username, email, name, password, password2) => {
                 let mut errors = HashMap::new();
                 errors.insert("username", username.err());
                 errors.insert("email", email.err());
