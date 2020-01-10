@@ -7,9 +7,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "cucumber-js"
+    "start": "cucumber-js --require-module dotenv/config --order random --require src/**/*.js features/**/*.feature"
   },
   "devDependencies": {
     "cucumber": "^6.0.5"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0"
   }
 }
