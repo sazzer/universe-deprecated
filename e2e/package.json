@@ -1,0 +1,15 @@
+{
+  "name": "universe-e2e",
+  "version": "1.0.0",
+  "description": "E2E Tests for Universe",
+  "main": "index.js",
+  "author": "Graham Cox <graham@grahamcox.co.uk>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "cucumber-js"
+  },
+  "devDependencies": {
+    "cucumber": "^6.0.5"
+  }
+}

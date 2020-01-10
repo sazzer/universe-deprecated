@@ -24,7 +24,7 @@ services:
             - PHP_PG_ADMIN_SHOW_SYSTEM=true
             - PHP_PG_ADMIN_SHOW_OIDS=true
         ports:
-            - "127.0.0.1:48081:80"
+            - "127.0.0.1:38081:80"
         depends_on:
             - universe-all-postgres
         networks:
@@ -38,7 +38,7 @@ services:
             - RUST_BACKTRACE=1
             - DATABASE_URL=postgres://universe:universe@universe-all-postgres:5432/universe
         ports:
-            - "127.0.0.1:48000:8000"
+            - "127.0.0.1:38000:8000"
         depends_on:
             - universe-all-postgres
         networks:
