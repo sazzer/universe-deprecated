@@ -23,6 +23,18 @@ class StartLoginPage extends BasePage {
     const submit = this._element.findElement(By.css('form button.btn-primary[type="submit"]'));
     await submit.click();
   }
+
+  /**
+   * Get the contents of the form as currently displayed
+   */
+  async getForm() {
+    const form = await this._element.findElement(By.css('form[action="/login"]'));
+    const fields = {
+      Username: 'div[data-test="username"]',
+    }
+
+    return new FormPage(form, fields);
+  }
 }
 StartLoginPage.URL = '/login';
 

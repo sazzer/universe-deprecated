@@ -24,6 +24,27 @@ class FormPage {
 
     return data;
   }
+
+  /**
+   * Get the errors from the form as currently displayed
+   */
+  async getErrors() {
+    const errors = {};
+    const fields = this._fields;
+    for (const field of Object.keys(fields)) {
+      const selector = fields[field];
+      const input = await this._element.findElement(By.css(`${selector} input`));
+      const inputClasses = await input.getAttribute('class');
+      if (inputClasses.split(' ').includes('is-invalid')) {
+        const error = await this._element.findElement(By.css(`${selector} div.invalid-feedback`));
+
+        const value = await error.getText();
+        errors[field] = value;
+      }
+    }
+
+    return errors;
+  }
 }
 
 module.exports = { FormPage };

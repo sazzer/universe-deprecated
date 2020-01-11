@@ -3,7 +3,7 @@
 {% block sidebar %}
 <h3>{{t(key="login_title_start")}}</h3>
 <form action="/login" method="POST">
-  <div class="form-group">
+  <div class="form-group" data-test="username">
     <label for="login_username">{{t(key="login_username_label")}}</label>
     <input type="text" class="form-control {% if errors.username is defined %}is-invalid{% endif %}" id="login_username" name="username" autofocus required />
     {% if errors.username is defined %}

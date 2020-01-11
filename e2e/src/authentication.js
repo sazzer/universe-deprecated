@@ -25,6 +25,11 @@ Then('I am displayed the Start Login form', async function() {
 
 Then('the Start Login form has errors:', async function(data) {
   const page = await this.browser.buildPage(StartLoginPage);
+  const form = await page.getForm();
+  const values = await form.getErrors();
+
+  const expected = data.rowsHash();
+  expect(values).to.include(expected);
 });
 
 Then('I am displayed the Register User form', async function() {
