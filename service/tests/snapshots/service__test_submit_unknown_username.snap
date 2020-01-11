@@ -39,7 +39,7 @@ Server: Rocket
     
 <h3>Register</h3>
 <form action="/login/register" method="POST">
-  <div class="form-group">
+  <div class="form-group" data-test="username">
     <label for="login_username">Username</label>
     <input type="text"
            class="form-control "
@@ -49,7 +49,7 @@ Server: Rocket
            readonly />
     
   </div>
-  <div class="form-group">
+  <div class="form-group" data-test="email">
     <label for="login_email">Email Address</label>
     <input type="email"
            class="form-control "
@@ -62,7 +62,7 @@ Server: Rocket
     
     <small id="login_email_help" class="form-text text-muted">We'll never share your email with anyone else.</small>
   </div>
-  <div class="form-group">
+  <div class="form-group" data-test="name">
     <label for="login_name">Display Name</label>
     <input type="text"
            class="form-control "
@@ -72,7 +72,7 @@ Server: Rocket
            required />
     
   </div>
-  <div class="form-group">
+  <div class="form-group" data-test="password">
     <label for="login_password">Password</label>
     <input type="password"
            class="form-control "
@@ -81,7 +81,7 @@ Server: Rocket
            required />
     
   </div>
-  <div class="form-group">
+  <div class="form-group" data-test="password2">
     <label for="login_password2">Re-enter Password</label>
     <input type="password"
            class="form-control "

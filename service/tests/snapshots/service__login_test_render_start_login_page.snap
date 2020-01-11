@@ -39,7 +39,7 @@ Server: Rocket
     
 <h3>Login / Register</h3>
 <form action="/login" method="POST">
-  <div class="form-group">
+  <div class="form-group" data-test="username">
     <label for="login_username">Username</label>
     <input type="text" class="form-control " id="login_username" name="username" autofocus required />
     
