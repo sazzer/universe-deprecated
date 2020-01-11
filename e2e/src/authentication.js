@@ -19,6 +19,14 @@ When('I start logging in as {string}', async function(username) {
   await loginPage.login(username);
 });
 
+Then('I am displayed the Start Login form', async function() {
+  await this.browser.buildPage(StartLoginPage);
+});
+
+Then('the Start Login form has errors:', async function(data) {
+  const page = await this.browser.buildPage(StartLoginPage);
+});
+
 Then('I am displayed the Register User form', async function() {
   await this.browser.buildPage(RegisterPage);
 });
@@ -26,7 +34,8 @@ Then('I am displayed the Register User form', async function() {
 Then('the Register User form has details:', async function(data) {
   const page = await this.browser.buildPage(RegisterPage);
   const form = await page.getForm();
+  const values = await form.getValues();
 
   const expected = data.rowsHash();
-  expect(form).to.include(expected);
+  expect(values).to.include(expected);
 });

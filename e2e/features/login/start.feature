@@ -23,7 +23,7 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
-  Scenario Outline: Starting authentication with an unknown user displays the Register User form - username uses nasty characters
+  Scenario Outline: Starting authentication with an unknown user displays the Register User form - username uses nasty characters: <Input>
     Given I visit the home page
     When I start logging in as "<Input>"
     Then I am displayed the Register User form
@@ -34,7 +34,6 @@ Feature: Start Authentication
       | Password          |            |
       | Re-enter Password |            |
 
-      @wip
   Examples:
     | Input        | Expected     |
     | !@#$%^&*     | !@#$%^&*     |

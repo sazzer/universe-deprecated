@@ -1,4 +1,5 @@
 const { BasePage } = require('./basepage');
+const { FormPage } = require('./formpage');
 const { By } = require('selenium-webdriver');
 
 /**
@@ -46,23 +47,16 @@ class RegisterPage extends BasePage {
    * Get the contents of the form as currently displayed
    */
   async getForm() {
+    const form = await this._element.findElement(By.css('form[action="/login/register"]'));
     const fields = {
-      Username: 'input[name="username"]',
-      'Email Address': 'input[name="email"]',
-      'Display Name': 'input[name="name"]',
-      Password: 'input[name="password"]',
-      'Re-enter Password': 'input[name="password2"]',
+      Username: 'div[data-test="username"]',
+      'Email Address': 'div[data-test="email"]',
+      'Display Name': 'div[data-test="name"]',
+      Password: 'div[data-test="password"]',
+      'Re-enter Password': 'div[data-test="password2"]',
     }
 
-    const data = {};
-    for (const field of Object.keys(fields)) {
-      const selector = fields[field];
-      const element = await this._element.findElement(By.css(selector));
-      const value = await element.getAttribute('value');
-      data[field] = value;
-    }
-
-    return data;
+    return new FormPage(form, fields);
   }
 }
 module.exports = { StartLoginPage, RegisterPage };
