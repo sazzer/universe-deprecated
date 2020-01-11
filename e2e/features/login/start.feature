@@ -23,10 +23,20 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
-  Scenario: Starting authentication with an no username displays an error
+  Scenario: Starting authentication with an a blank username displays an error
+    Given I visit the home page
+    When I start logging in as ""
+    Then I am displayed the Start Login form
+    And the Start Login form has details:
+      | Username          | |
+    And the Start Login form has no errors
+
+  Scenario: Starting authentication with an a whitespace username displays an error
     Given I visit the home page
     When I start logging in as "  "
     Then I am displayed the Start Login form
+    And the Start Login form has details:
+      | Username          | |
     And the Start Login form has errors:
       | Username | Please enter a username |
 

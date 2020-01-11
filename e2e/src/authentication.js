@@ -23,6 +23,23 @@ Then('I am displayed the Start Login form', async function() {
   await this.browser.buildPage(StartLoginPage);
 });
 
+Then('the Start Login form has details:', async function(data) {
+  const page = await this.browser.buildPage(StartLoginPage);
+  const form = await page.getForm();
+  const values = await form.getValues();
+
+  const expected = data.rowsHash();
+  expect(values).to.include(expected);
+});
+
+Then('the Start Login form has no errors', async function() {
+  const page = await this.browser.buildPage(StartLoginPage);
+  const form = await page.getForm();
+  const values = await form.getErrors();
+
+  expect(values).to.be.empty;
+});
+
 Then('the Start Login form has errors:', async function(data) {
   const page = await this.browser.buildPage(StartLoginPage);
   const form = await page.getForm();
