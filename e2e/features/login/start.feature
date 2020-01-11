@@ -4,7 +4,7 @@ Feature: Start Authentication
   Scenario: Starting authentication with an unknown user displays the Register User form
     Given I visit the home page
     When I start logging in as "unknown"
-    Then I am displayed the Register User form
+    Then I am displayed the Register User page
     And the Register User form has details:
       | Username          | unknown |
       | Email Address     |         |
@@ -15,7 +15,7 @@ Feature: Start Authentication
   Scenario: Starting authentication with an unknown user displays the Register User form - username is padded
     Given I visit the home page
     When I start logging in as "  unknown  "
-    Then I am displayed the Register User form
+    Then I am displayed the Register User page
     And the Register User form has details:
       | Username          | unknown |
       | Email Address     |         |
@@ -26,7 +26,7 @@ Feature: Start Authentication
   Scenario: Starting authentication with an a blank username displays an error
     Given I visit the home page
     When I start logging in as ""
-    Then I am displayed the Start Login form
+    Then I am displayed the Start Login page
     And the Start Login form has details:
       | Username          | |
     And the Start Login form has no errors
@@ -34,7 +34,7 @@ Feature: Start Authentication
   Scenario: Starting authentication with an a whitespace username displays an error
     Given I visit the home page
     When I start logging in as "  "
-    Then I am displayed the Start Login form
+    Then I am displayed the Start Login page
     And the Start Login form has details:
       | Username          | |
     And the Start Login form has errors:
@@ -43,7 +43,7 @@ Feature: Start Authentication
   Scenario Outline: Starting authentication with an unknown user displays the Register User form - username uses nasty characters: <Input>
     Given I visit the home page
     When I start logging in as "<Input>"
-    Then I am displayed the Register User form
+    Then I am displayed the Register User page
     And the Register User form has details:
       | Username          | <Expected> |
       | Email Address     |            |
