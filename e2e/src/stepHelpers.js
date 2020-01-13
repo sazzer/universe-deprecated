@@ -1,5 +1,6 @@
 const { Then } = require('cucumber');
 const { expect } = require('chai');
+const { parseValue } = require('./dataTable');
 
 /**
  * Build some standard cucumber steps for dealing with pages
@@ -24,7 +25,12 @@ function buildFormSteps(name, pageModel) {
     const values = await form.getValues();
 
     const expected = data.rowsHash();
-    expect(values).to.include(expected);
+    const finalExpected = {};
+    Object.keys(expected)
+      .filter(key => expected[key])
+      .forEach(key => finalExpected[key] = parseValue(expected[key]));
+
+    expect(values).to.include(finalExpected);
   });
 
   Then(`the ${name} form has no errors`, async function() {
@@ -41,10 +47,13 @@ function buildFormSteps(name, pageModel) {
     const values = await form.getErrors();
 
     const expected = data.rowsHash();
-    expect(values).to.include(expected);
+    const finalExpected = {};
+    Object.keys(expected)
+      .filter(key => expected[key])
+      .forEach(key => finalExpected[key] = parseValue(expected[key]));
+
+    expect(values).to.include(finalExpected);
   });
-
-
 }
 
 module.exports = {

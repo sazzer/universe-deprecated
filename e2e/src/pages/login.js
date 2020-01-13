@@ -12,19 +12,6 @@ class StartLoginPage extends BasePage {
   }
 
   /**
-   * Enter a username to log in as
-   * @param  {string}  username The username to enter
-   */
-  async login(username) {
-    const usernameField = this._element.findElement(By.css('#login_username'));
-    await usernameField.clear();
-    await usernameField.sendKeys(username);
-
-    const submit = this._element.findElement(By.css('form button.btn-primary[type="submit"]'));
-    await submit.click();
-  }
-
-  /**
    * Get the contents of the form as currently displayed
    */
   async getForm() {

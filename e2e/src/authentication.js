@@ -3,6 +3,7 @@ const { BasePage } = require('./pages/basepage');
 const { StartLoginPage, RegisterPage } = require('./pages/login');
 const { buildPageSteps, buildFormSteps } = require('./stepHelpers');
 const { expect } = require('chai');
+const { parseValue } = require('./dataTable');
 
 Then('I am not logged in', async function() {
   const page = await this.browser.buildPage(BasePage);
@@ -17,7 +18,24 @@ When('I start logging in as {string}', async function(username) {
   await header.login();
 
   const loginPage = await this.browser.buildPage(StartLoginPage);
-  await loginPage.login(username);
+  const loginForm = await loginPage.getForm();
+  await loginForm.populate({
+    Username: username,
+  });
+  await loginForm.submit();
+});
+
+When('I register with details:', async function(data) {
+  const newValues = {};
+  const input = data.rowsHash();
+  Object.keys(input).forEach(key => {
+    newValues[key] = parseValue(input[key]);
+  });
+
+  const registrationPage = await this.browser.buildPage(RegisterPage);
+  const registrationForm = await registrationPage.getForm();
+  await registrationForm.populate(newValues);
+  await registrationForm.submit();
 });
 
 buildPageSteps('Start Login', StartLoginPage);

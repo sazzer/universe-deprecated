@@ -26,6 +26,31 @@ class FormPage {
   }
 
   /**
+   * Populate the form with the given values
+   * @param  {object}  values The values to populate the form with
+   */
+  async populate(values) {
+    const fields = this._fields;
+    for (const field of Object.keys(values)) {
+      const selector = fields[field];
+      const value = values[field];
+
+      const element = await this._element.findElement(By.css(`${selector} input`));
+
+      await element.clear();
+      await element.sendKeys(value);
+    }
+  }
+
+  /**
+   * Submit the form
+   */
+  async submit() {
+    const submit = await this._element.findElement(By.css('form button.btn-primary[type="submit"]'));
+    await submit.click();
+  }
+
+  /**
    * Get the errors from the form as currently displayed
    */
   async getErrors() {
