@@ -23,6 +23,26 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
+  Scenario: Starting authentication with a known user displays the Login User form
+    Given a user exists with details:
+      | Username | known |
+    And I visit the home page
+    When I start logging in as "known"
+    Then I am displayed the Login User page
+    And the Login User form has details:
+      | Username          | known |
+      | Password          |       |
+
+  Scenario: Starting authentication with a known user displays the Login User form - username is padded
+  Given a user exists with details:
+    | Username | known |
+  And I visit the home page
+  When I start logging in as "  known  "
+  Then I am displayed the Login User page
+  And the Login User form has details:
+    | Username          | known |
+    | Password          |       |
+
   Scenario: Starting authentication with an a blank username displays an error
     Given I visit the home page
     When I start logging in as ""

@@ -18,11 +18,14 @@
     "chai": "^4.2.0",
     "cucumber": "^6.0.5",
     "dotenv": "^8.2.0",
-    "selenium-webdriver": "^4.0.0-alpha.5"
+    "pg": "^7.17.1",
+    "selenium-webdriver": "^4.0.0-alpha.5",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/chai": "^4.2.7",
     "@types/cucumber": "^6.0.0",
+    "@types/pg": "^7.14.1",
     "@types/selenium-webdriver": "^4.0.6",
     "cucumber-html-reporter": "^5.1.0",
     "cucumber-pretty": "^6.0.0",
