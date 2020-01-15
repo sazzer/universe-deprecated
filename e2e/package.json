@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "rimraf output/*",
     "setup": "mkdirp output",
-    "run": "cucumber-js --require-module dotenv/config --order random -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.js' features/**/*.feature",
+    "run": "cucumber-js --require-module dotenv/config --order random -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.js' features/**/*.feature --tags 'not @ignore'",
     "format": "node ./format.js",
     "start": "run-s -c clean setup run format",
     "wip": "cucumber-js --require-module dotenv/config --order random -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.js' features/**/*.feature --tags @wip"

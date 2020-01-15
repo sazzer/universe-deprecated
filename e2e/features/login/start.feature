@@ -23,6 +23,7 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
+@ignore
   Scenario: Starting authentication with a known user displays the Login User form
     Given a user exists with details:
       | Username | known |
@@ -33,6 +34,7 @@ Feature: Start Authentication
       | Username          | known |
       | Password          |       |
 
+@ignore
   Scenario: Starting authentication with a known user displays the Login User form - username is padded
   Given a user exists with details:
     | Username | known |
