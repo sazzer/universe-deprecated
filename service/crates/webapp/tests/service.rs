@@ -27,7 +27,13 @@ impl<'d> ServiceWrapper<'d> {
         let port = node.get_host_port(5432).unwrap();
         let url = format!("postgres://postgres:postgres@{}:{}", host, port);
 
-        let service = Service::new(url.clone(), Some(0)).unwrap();
+        let service_base = std::fs::canonicalize("../..").unwrap();
+        let service = Service::new(
+            url.clone(),
+            Some(0),
+            service_base.to_str().unwrap().to_owned(),
+        )
+        .unwrap();
 
         ServiceWrapper {
             node,

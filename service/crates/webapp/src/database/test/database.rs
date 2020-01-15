@@ -23,7 +23,7 @@ impl<'d> TestDatabaseWrapper<'d> {
         let container = TestDatabase::new();
         let wrapper = Arc::new(PostgresDatabase::new(container.url.clone()).unwrap());
 
-        migrate(wrapper.clone(), "migrations/**/*.sql").unwrap();
+        migrate(wrapper.clone(), "../../migrations/**/*.sql").unwrap();
 
         Self { container, wrapper }
     }

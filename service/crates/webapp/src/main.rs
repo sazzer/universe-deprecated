@@ -13,7 +13,13 @@ fn main() {
 
     let settings = settings::Settings::new().unwrap();
 
-    let service = Service::new(settings.database_url, settings.port).unwrap();
+    let service_base = std::fs::canonicalize(".").unwrap();
+    let service = Service::new(
+        settings.database_url,
+        settings.port,
+        service_base.to_str().unwrap().to_owned(),
+    )
+    .unwrap();
 
     service.launch();
 }
