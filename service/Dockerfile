@@ -1,21 +1,27 @@
+FROM debian:stretch-slim AS package-cache
+
+WORKDIR /universe
+COPY Cargo.lock Cargo.toml docker/package.sh /universe/
+COPY ./crates /universe/crates/
+RUN ./package.sh
+
 # Build the code first
 FROM rustlang/rust:nightly-slim AS builder
 
 WORKDIR /universe
 
 # We do a non-code build to get all the dependencies. This allows us to benefit from layer caching
-COPY Cargo.lock Cargo.toml /universe/
-RUN mkdir /universe/src
-RUN touch /universe/src/lib.rs
-RUN echo 'fn main() {println!("Wrong");}' > /universe/src/main.rs
+COPY --from=package-cache /universe /universe
+RUN find /universe
 RUN cargo build --release
 
 # Then we trash our actual build so that we can correctly build again
-RUN find /universe/target -name *universe*
-RUN find /universe/target -name *universe* | xargs rm -rf
+RUN find /universe/target -name "*universe*" | xargs rm -rf
+RUN find /universe/target -name "*universe*"
 
 # Finally, we do a full build of our code
-COPY src /universe/src/
+RUN rm -rf crates
+COPY crates /universe/crates/
 RUN cargo build --release
 
 
