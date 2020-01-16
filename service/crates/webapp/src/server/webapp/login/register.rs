@@ -1,9 +1,9 @@
 use crate::server::{request_id::RequestId, webapp::templates::Template};
-use crate::users::{Password, UserData, Username};
 use rocket::{post, request::LenientForm, FromForm};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::convert::{TryFrom, TryInto};
+use universe_users::{Password, UserData, Username};
 
 /// The shape of the form data that the POST /login/register endpoing can accept
 #[derive(FromForm, Debug, Serialize, Clone)]

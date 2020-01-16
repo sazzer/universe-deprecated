@@ -4,7 +4,6 @@ use tracing::{debug, info};
 
 mod database;
 mod templates;
-mod users;
 
 /// The actual service that we are working with
 pub struct Service {
@@ -63,7 +62,7 @@ impl Service {
         }
 
         let rocket = rocket::custom(config)
-            .manage(users::new(database)?)
+            .manage(universe_users::builder::new(database))
             .manage(templates::new(message_files, template_files)?)
             .attach(crate::server::request_id::RequestIdFairing {})
             .mount("/public", StaticFiles::from(static_files))

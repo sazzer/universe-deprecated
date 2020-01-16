@@ -2,6 +2,5 @@
 
 mod server;
 mod service;
-mod users;
 
 pub use service::*;

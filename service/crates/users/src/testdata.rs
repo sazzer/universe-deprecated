@@ -1,4 +1,4 @@
-use crate::users::{Password, UserData, UserEntity, UserID, Username};
+use crate::{Password, UserData, UserEntity, UserID, Username};
 use chrono::{DateTime, Timelike, Utc};
 use universe_entity::Identity;
 use universe_test_database_wrapper::TestData;

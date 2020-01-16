@@ -1,8 +1,8 @@
 use crate::server::{request_id::RequestId, webapp::templates::Template};
-use crate::users::Username;
 use rocket::{post, request::LenientForm, FromForm};
 use std::collections::HashMap;
 use std::convert::{TryFrom, TryInto};
+use universe_users::Username;
 
 /// The shape of the form data that the POST /login endpoing can accept
 #[derive(FromForm, Debug)]

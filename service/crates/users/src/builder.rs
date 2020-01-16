@@ -1,9 +1,8 @@
-use super::ServiceCreationError;
-use universe_database::Database;
-use crate::users::{
-    implementation::UserServiceImpl, postgres::PostgresUserRepository, UserService,
+use crate::{
+    postgres::PostgresUserRepository, service::implementation::UserServiceImpl, UserService,
 };
 use std::sync::Arc;
+use universe_database::Database;
 
 /// Construct the new User Service to work with
 ///
@@ -12,9 +11,9 @@ use std::sync::Arc;
 ///
 /// # Returns
 /// The user service
-pub fn new(database: Arc<dyn Database>) -> Result<Arc<dyn UserService>, ServiceCreationError> {
+pub fn new(database: Arc<dyn Database>) -> Arc<dyn UserService> {
     let repository = Arc::new(PostgresUserRepository::new(database));
     let user_service: Arc<dyn UserService> = Arc::new(UserServiceImpl::new(repository));
 
-    Ok(user_service)
+    user_service
 }

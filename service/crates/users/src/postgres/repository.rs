@@ -1,5 +1,5 @@
-use crate::users::repository::UserRepository;
-use crate::users::{UserEntity, UserID, Username};
+use crate::service::repository::UserRepository;
+use crate::{UserEntity, UserID, Username};
 use postgres::types::ToSql;
 use std::sync::Arc;
 use tracing::warn;
@@ -51,7 +51,7 @@ impl UserRepository for PostgresUserRepository {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::users::testdata;
+    use crate::testdata;
     use spectral::prelude::*;
     use universe_test_database_wrapper::TestDatabaseWrapper;
     use uuid::Uuid;

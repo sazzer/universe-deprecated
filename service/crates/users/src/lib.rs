@@ -1,9 +1,10 @@
+pub mod builder;
 mod model;
-pub mod postgres;
+mod postgres;
 mod service;
 
 #[cfg(test)]
 mod testdata;
 
 pub use model::*;
-pub use service::*;
+pub use service::UserService;

@@ -2488,6 +2488,7 @@ dependencies = [
  "universe_entity",
  "universe_test_database_container",
  "universe_test_database_wrapper",
+ "universe_users",
  "uuid",
 ]
 
@@ -2531,6 +2532,26 @@ dependencies = [
  "postgres-types",
  "universe_database",
  "universe_test_database_container",
+]
+
+[[package]]
+name = "universe_users"
+version = "0.1.0"
+dependencies = [
+ "bcrypt",
+ "bytes",
+ "chrono",
+ "mockall",
+ "postgres",
+ "postgres-types",
+ "serde 1.0.104",
+ "serde_json",
+ "spectral",
+ "tracing",
+ "universe_database",
+ "universe_entity",
+ "universe_test_database_wrapper",
+ "uuid",
 ]
 
 [[package]]

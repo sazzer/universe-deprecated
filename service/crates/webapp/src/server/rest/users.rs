@@ -1,11 +1,11 @@
 use super::problem::Problem;
 use crate::server::request_id::RequestId;
-use crate::users::{UserEntity, UserID, UserService, Username};
 use rocket::{get, State};
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use std::sync::Arc;
 use tracing::debug;
+use universe_users::{UserEntity, UserID, UserService, Username};
 use uuid::Uuid;
 
 /// Shape of a User as returned by the REST API

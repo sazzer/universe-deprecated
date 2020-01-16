@@ -1,5 +1,5 @@
 use super::{repository::UserRepository, UserService};
-use crate::users::{UserEntity, UserID};
+use crate::{UserEntity, UserID};
 use std::sync::Arc;
 
 /// Standard implementation of the User Service
@@ -22,7 +22,7 @@ impl UserService for UserServiceImpl {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::users::{repository::MockUserRepository, testdata};
+    use crate::{service::repository::MockUserRepository, testdata};
     use mockall::predicate::*;
     use spectral::prelude::*;
     use uuid::Uuid;

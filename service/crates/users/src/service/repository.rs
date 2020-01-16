@@ -1,4 +1,4 @@
-use crate::users::{UserEntity, UserID, Username};
+use crate::{UserEntity, UserID, Username};
 use mockall::automock;
 
 /// Trait defining the ways that we can interact with user entities in the database
