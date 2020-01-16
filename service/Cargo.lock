@@ -2484,7 +2484,18 @@ dependencies = [
  "tracing-log",
  "tracing-subscriber",
  "unic-langid",
+ "universe_test_database_container",
  "uuid",
+]
+
+[[package]]
+name = "universe_test_database_container"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "postgres",
+ "testcontainers",
+ "tracing",
 ]
 
 [[package]]

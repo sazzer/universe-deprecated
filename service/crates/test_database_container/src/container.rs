@@ -7,6 +7,7 @@ lazy_static! {
     static ref DOCKER: Cli = { Cli::default() };
 }
 
+/// Wrapper around a Docker container that runs Postgres for our tests
 pub struct TestDatabase<'d> {
     #[allow(dead_code)]
     node: Container<'d, Cli, Postgres>,

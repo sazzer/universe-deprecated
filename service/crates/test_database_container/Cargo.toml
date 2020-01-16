@@ -1,0 +1,13 @@
+[package]
+name = "universe_test_database_container"
+version = "0.1.0"
+authors = ["Graham Cox <graham@grahamcox.co.uk>"]
+edition = "2018"
+
+[dependencies]
+lazy_static = "1.4.0"
+postgres = { version="0.17.0", features=["with-uuid-0_8", "with-chrono-0_4"] }
+tracing = "0.1.11"
+testcontainers = "0.8.1"
+
+[dev-dependencies]

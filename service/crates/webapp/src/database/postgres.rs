@@ -77,8 +77,8 @@ impl Database for PostgresDatabase {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database::test::TestDatabase;
     use spectral::prelude::*;
+    use universe_test_database_container::TestDatabase;
 
     #[test]
     fn test_connect_success() {

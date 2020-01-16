@@ -1,10 +1,10 @@
 use super::Database;
 use glob::glob;
-use tracing::{debug, error, info};
 use postgres::Transaction;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Arc;
+use tracing::{debug, error, info};
 
 /// Error returned when migrating the database fails for some reason
 #[derive(Debug, PartialEq)]
@@ -168,8 +168,9 @@ impl From<postgres::Error> for MigrationError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database::{postgres::PostgresDatabase, test::container::TestDatabase};
+    use crate::database::postgres::PostgresDatabase;
     use spectral::prelude::*;
+    use universe_test_database_container::TestDatabase;
 
     #[test]
     fn test_invalid_migrations_glob() {

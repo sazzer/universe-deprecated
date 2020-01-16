@@ -1,6 +1,6 @@
-use super::container::TestDatabase;
 use crate::database::{migrate::migrate, postgres::PostgresDatabase, Database};
 use std::sync::Arc;
+use universe_test_database_container::TestDatabase;
 
 /// Wrapper around the database, both the actual Postgres container and the Universe wrapper of it
 pub struct TestDatabaseWrapper<'d> {
