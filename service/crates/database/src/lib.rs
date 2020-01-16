@@ -1,5 +1,6 @@
+pub mod builder;
 mod database;
-pub mod migrate;
-pub mod postgres;
+mod migrate;
+mod postgres;
 
 pub use database::Database;

@@ -1,5 +1,5 @@
-use universe_database::{migrate::migrate, postgres::PostgresDatabase, Database};
 use std::sync::Arc;
+use universe_database::Database;
 use universe_test_database_container::TestDatabase;
 
 /// Wrapper around the database, both the actual Postgres container and the Universe wrapper of it
@@ -21,9 +21,11 @@ impl<'d> TestDatabaseWrapper<'d> {
     /// Create a new Test Database Wrapper
     pub fn new() -> Self {
         let container = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(container.url.clone()).unwrap());
-
-        migrate(wrapper.clone(), "../../migrations/**/*.sql").unwrap();
+        let wrapper = universe_database::builder::new(
+            container.url.clone(),
+            "../../migrations/**/*.sql".to_owned(),
+        )
+        .unwrap();
 
         Self { container, wrapper }
     }

@@ -2,27 +2,10 @@ use rocket::{local::Client, Rocket};
 use rocket_contrib::serve::StaticFiles;
 use tracing::{debug, info};
 
-mod database;
-mod templates;
-
 /// The actual service that we are working with
 pub struct Service {
     rocket: Rocket,
 }
-
-/// Error that indicates that the creation of the service failed
-#[derive(Debug, PartialEq)]
-pub struct ServiceCreationError {
-    message: String,
-}
-
-impl std::fmt::Display for ServiceCreationError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl std::error::Error for ServiceCreationError {}
 
 impl Service {
     /// Construct the service to work with
@@ -33,11 +16,7 @@ impl Service {
     ///
     /// # Returns
     /// The constructed service
-    pub fn new<S>(
-        database_url: S,
-        port: Option<u16>,
-        base: S,
-    ) -> Result<Service, ServiceCreationError>
+    pub fn new<S>(database_url: S, port: Option<u16>, base: S) -> Result<Service, String>
     where
         S: Into<String>,
     {
@@ -54,7 +33,7 @@ impl Service {
         debug!("Template files: {:?}", &template_files);
         debug!("Migration files: {:?}", &migration_files);
 
-        let database = database::new(database_url.into(), migration_files)?;
+        let database = universe_database::builder::new(database_url.into(), migration_files)?;
 
         let mut config = rocket::Config::active().unwrap();
         if let Some(port_number) = port {
@@ -63,7 +42,10 @@ impl Service {
 
         let rocket = rocket::custom(config)
             .manage(universe_users::builder::new(database))
-            .manage(templates::new(message_files, template_files)?)
+            .manage(universe_templates::builder::new(
+                message_files,
+                template_files,
+            ))
             .attach(crate::server::request_id::RequestIdFairing {})
             .mount("/public", StaticFiles::from(static_files))
             .mount("/", crate::server::webapp::routes())

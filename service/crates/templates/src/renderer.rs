@@ -1,4 +1,4 @@
-use super::Messages;
+use crate::messages::Messages;
 use serde_json::{to_value, Value};
 use std::collections::HashMap;
 use std::sync::Arc;
