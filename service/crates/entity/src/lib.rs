@@ -9,10 +9,3 @@ pub struct Identity<ID> {
     pub created: DateTime<Utc>,
     pub updated: DateTime<Utc>,
 }
-
-/// Represents a resource that has previously been persisted to the database
-#[derive(Debug, PartialEq, Clone)]
-pub struct Entity<ID, DATA> {
-    pub identity: Identity<ID>,
-    pub data: DATA,
-}

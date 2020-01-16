@@ -2485,6 +2485,7 @@ dependencies = [
  "tracing-subscriber",
  "unic-langid",
  "universe_database",
+ "universe_entity",
  "universe_test_database_container",
  "universe_test_database_wrapper",
  "uuid",
@@ -2502,6 +2503,14 @@ dependencies = [
  "spectral",
  "tracing",
  "universe_test_database_container",
+]
+
+[[package]]
+name = "universe_entity"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "uuid",
 ]
 
 [[package]]

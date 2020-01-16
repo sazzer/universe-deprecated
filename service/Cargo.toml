@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "crates/entity",
     "crates/test_database_container",
     "crates/database",
     "crates/test_database_wrapper",

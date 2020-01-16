@@ -1,5 +1,5 @@
 use super::{Password, UserID, Username};
-use crate::entity::{Entity, Identity};
+use universe_entity::Identity;
 
 /// Struct to represent the data about a single user record
 #[derive(Debug, PartialEq, Clone)]
@@ -11,7 +11,11 @@ pub struct UserData {
 }
 
 /// Type to represnt the entity that is a persisted user record
-pub type UserEntity = Entity<UserID, UserData>;
+#[derive(Debug, PartialEq, Clone)]
+pub struct UserEntity {
+    pub identity: Identity<UserID>,
+    pub data: UserData,
+}
 
 impl From<postgres::Row> for UserEntity {
     fn from(row: postgres::Row) -> Self {
