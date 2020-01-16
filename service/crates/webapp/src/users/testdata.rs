@@ -1,7 +1,7 @@
-use crate::database::test::TestData;
 use crate::entity::Identity;
 use crate::users::{Password, UserData, UserEntity, UserID, Username};
 use chrono::{DateTime, Timelike, Utc};
+use universe_test_database_wrapper::TestData;
 use uuid::Uuid;
 
 /// User representation for test purposes

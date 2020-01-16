@@ -1,9 +1,9 @@
-use universe_database::Database;
 use crate::users::repository::UserRepository;
 use crate::users::{UserEntity, UserID, Username};
-use tracing::warn;
 use postgres::types::ToSql;
 use std::sync::Arc;
+use tracing::warn;
+use universe_database::Database;
 
 /// User Repository that works in terms of the Postgres database
 pub struct PostgresUserRepository {
@@ -51,8 +51,9 @@ impl UserRepository for PostgresUserRepository {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{database::test::TestDatabaseWrapper, users::testdata};
+    use crate::users::testdata;
     use spectral::prelude::*;
+    use universe_test_database_wrapper::TestDatabaseWrapper;
     use uuid::Uuid;
 
     #[test]
