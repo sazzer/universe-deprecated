@@ -1,5 +1,5 @@
 use super::ServiceCreationError;
-use crate::database::Database;
+use universe_database::Database;
 use crate::users::{
     implementation::UserServiceImpl, postgres::PostgresUserRepository, UserService,
 };

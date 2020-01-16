@@ -1,4 +1,4 @@
-use crate::database::{migrate::migrate, postgres::PostgresDatabase, Database};
+use universe_database::{migrate::migrate, postgres::PostgresDatabase, Database};
 use std::sync::Arc;
 use universe_test_database_container::TestDatabase;
 

@@ -2484,8 +2484,23 @@ dependencies = [
  "tracing-log",
  "tracing-subscriber",
  "unic-langid",
+ "universe_database",
  "universe_test_database_container",
  "uuid",
+]
+
+[[package]]
+name = "universe_database"
+version = "0.1.0"
+dependencies = [
+ "glob",
+ "postgres",
+ "postgres-types",
+ "r2d2",
+ "r2d2_postgres",
+ "spectral",
+ "tracing",
+ "universe_test_database_container",
 ]
 
 [[package]]

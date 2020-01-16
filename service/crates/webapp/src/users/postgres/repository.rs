@@ -1,4 +1,4 @@
-use crate::database::Database;
+use universe_database::Database;
 use crate::users::repository::UserRepository;
 use crate::users::{UserEntity, UserID, Username};
 use tracing::warn;

@@ -168,7 +168,7 @@ impl From<postgres::Error> for MigrationError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database::postgres::PostgresDatabase;
+    use crate::postgres::PostgresDatabase;
     use spectral::prelude::*;
     use universe_test_database_container::TestDatabase;
 
@@ -195,10 +195,7 @@ mod tests {
         let database = TestDatabase::new();
         let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
 
-        let result = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/missing/**/*.sql",
-        );
+        let result = migrate(wrapper.clone(), "test_migrations/missing/**/*.sql");
 
         assert_that(&result).is_ok_containing(0);
         let tables = wrapper
@@ -213,10 +210,7 @@ mod tests {
         let database = TestDatabase::new();
         let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
 
-        let result = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/empty/**/*.sql",
-        );
+        let result = migrate(wrapper.clone(), "test_migrations/empty/**/*.sql");
 
         assert_that(&result).is_ok_containing(0);
         let tables: Vec<String> = wrapper
@@ -234,10 +228,7 @@ mod tests {
         let database = TestDatabase::new();
         let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
 
-        let result = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/full/**/*.sql",
-        );
+        let result = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
 
         assert_that(&result).is_ok_containing(2);
         let tables: Vec<String> = wrapper
@@ -265,8 +256,8 @@ mod tests {
             .collect();
 
         assert_that(&migrations).is_equal_to(vec![
-            "src/database/test_migrations/full/00001-first.sql".to_owned(),
-            "src/database/test_migrations/full/00002-second.sql".to_owned(),
+            "test_migrations/full/00001-first.sql".to_owned(),
+            "test_migrations/full/00002-second.sql".to_owned(),
         ]);
     }
 
@@ -275,17 +266,11 @@ mod tests {
         let database = TestDatabase::new();
         let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
 
-        let result = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/full/**/*.sql",
-        );
+        let result = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
 
         assert_that(&result).is_ok_containing(2);
 
-        let result2 = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/full/**/*.sql",
-        );
+        let result2 = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
 
         assert_that(&result2).is_ok_containing(0);
 
@@ -314,8 +299,8 @@ mod tests {
             .collect();
 
         assert_that(&migrations).is_equal_to(vec![
-            "src/database/test_migrations/full/00001-first.sql".to_owned(),
-            "src/database/test_migrations/full/00002-second.sql".to_owned(),
+            "test_migrations/full/00001-first.sql".to_owned(),
+            "test_migrations/full/00002-second.sql".to_owned(),
         ]);
     }
 
@@ -324,10 +309,7 @@ mod tests {
         let database = TestDatabase::new();
         let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
 
-        let result = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/full/00001-first.sql",
-        );
+        let result = migrate(wrapper.clone(), "test_migrations/full/00001-first.sql");
 
         assert_that(&result).is_ok_containing(1);
 
@@ -354,15 +336,11 @@ mod tests {
             .map(|row| row.get::<&str, String>("migration_file"))
             .collect();
 
-        assert_that(&migrations).is_equal_to(vec![
-            "src/database/test_migrations/full/00001-first.sql".to_owned(),
-        ]);
+        assert_that(&migrations)
+            .is_equal_to(vec!["test_migrations/full/00001-first.sql".to_owned()]);
 
         // Now run the rest of the files
-        let result2 = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/full/**/*.sql",
-        );
+        let result2 = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
 
         assert_that(&result2).is_ok_containing(1);
 
@@ -391,8 +369,8 @@ mod tests {
             .collect();
 
         assert_that(&migrations).is_equal_to(vec![
-            "src/database/test_migrations/full/00001-first.sql".to_owned(),
-            "src/database/test_migrations/full/00002-second.sql".to_owned(),
+            "test_migrations/full/00001-first.sql".to_owned(),
+            "test_migrations/full/00002-second.sql".to_owned(),
         ]);
     }
 
@@ -401,10 +379,7 @@ mod tests {
         let database = TestDatabase::new();
         let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
 
-        let result = migrate(
-            wrapper.clone(),
-            "src/database/test_migrations/invalid/**/*.sql",
-        );
+        let result = migrate(wrapper.clone(), "test_migrations/invalid/**/*.sql");
 
         assert_that(&result).is_err_containing(MigrationError {
                 message: "Database Error performing database migration: db error: ERROR: syntax error at or near \"IM\"".to_owned(),

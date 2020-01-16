@@ -1,10 +1,10 @@
 use super::ServiceCreationError;
-use crate::database::{
+use std::sync::Arc;
+use universe_database::{
     migrate::{migrate, MigrationError},
     postgres::{PostgresDatabase, PostgresDatabaseError},
     Database,
 };
-use std::sync::Arc;
 
 impl From<PostgresDatabaseError> for ServiceCreationError {
     fn from(e: PostgresDatabaseError) -> Self {
