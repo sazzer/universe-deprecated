@@ -29,7 +29,11 @@ class Browser {
    */
   async reset() {
     console.log('Resetting browser');
-    const driver = await this._openBrowser();
+    if (this._driver !== undefined) {
+      await this._driver.quit();
+      this._driver = undefined;
+    }
+    await this._openBrowser();
   }
 
   /**
@@ -39,6 +43,7 @@ class Browser {
     console.log('Closing browser');
     const driver = await this._openBrowser();
     await driver.quit();
+    this._driver = undefined;
   }
 
   /**
