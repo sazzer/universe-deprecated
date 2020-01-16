@@ -40,6 +40,7 @@ tracing-subscriber = "0.1.6"
 
 universe_database = { path = "../database" }
 universe_entity = { path = "../entity" }
+universe_templates = { path = "../templates" }
 universe_users = { path = "../users" }
 
 [dev-dependencies]

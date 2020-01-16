@@ -1,6 +1,6 @@
-use super::templates::Template;
 use crate::server::request_id::RequestId;
 use rocket::get;
+use universe_templates::Template;
 
 #[get("/")]
 #[tracing::instrument]

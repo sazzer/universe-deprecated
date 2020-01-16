@@ -1,0 +1,22 @@
+[package]
+name = "universe_templates"
+version = "0.1.0"
+authors = ["Graham Cox <graham@grahamcox.co.uk>"]
+edition = "2018"
+
+[dependencies]
+serde = {version = "1.0.103", features=["derive"] }
+glob = "0.3.0"
+rocket = "0.4.2"
+rocket_contrib = "0.4.2"
+http = "0.2.0"
+serde_json = "1.0.44"
+tera = "1.0.1"
+accept-language = "2.0.0"
+fluent = "0.9.1"
+unic-langid = "0.7.1"
+tracing = "0.1.11"
+
+[dev-dependencies]
+spectral = "0.6.0"
+insta = "0.12.0"

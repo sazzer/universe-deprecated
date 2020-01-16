@@ -94,15 +94,8 @@ mod tests {
 
     #[test]
     fn test_no_templates() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
-        let renderer = TemplateRenderer::new(
-            "src/server/webapp/templates/test_templates/empty/**/*.tera",
-            messages,
-        );
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
+        let renderer = TemplateRenderer::new("test_templates/empty/**/*.tera", messages);
 
         let rendered = renderer.render("hello.tera", vec![], Context::new());
         assert_debug_snapshot!("renderer_no_templates", rendered);
@@ -110,15 +103,8 @@ mod tests {
 
     #[test]
     fn test_simple_template() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
-        let renderer = TemplateRenderer::new(
-            "src/server/webapp/templates/test_templates/full/**/*.tera",
-            messages,
-        );
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
+        let renderer = TemplateRenderer::new("test_templates/full/**/*.tera", messages);
 
         let rendered = renderer.render("simple.tera", vec![], Context::new());
         assert_debug_snapshot!("renderer_simple_template", rendered);
@@ -126,15 +112,8 @@ mod tests {
 
     #[test]
     fn test_template_inserts() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
-        let renderer = TemplateRenderer::new(
-            "src/server/webapp/templates/test_templates/full/**/*.tera",
-            messages,
-        );
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
+        let renderer = TemplateRenderer::new("test_templates/full/**/*.tera", messages);
 
         let mut context = Context::new();
         context.insert("name", "Graham");
@@ -144,15 +123,8 @@ mod tests {
 
     #[test]
     fn test_i18n() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
-        let renderer = TemplateRenderer::new(
-            "src/server/webapp/templates/test_templates/full/**/*.tera",
-            messages,
-        );
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
+        let renderer = TemplateRenderer::new("test_templates/full/**/*.tera", messages);
 
         let rendered = renderer.render("i18n.tera", vec![], Context::new());
         assert_debug_snapshot!("renderer_i18n", rendered);
@@ -160,15 +132,8 @@ mod tests {
 
     #[test]
     fn test_i18n_override() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
-        let renderer = TemplateRenderer::new(
-            "src/server/webapp/templates/test_templates/full/**/*.tera",
-            messages,
-        );
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
+        let renderer = TemplateRenderer::new("test_templates/full/**/*.tera", messages);
 
         let rendered = renderer.render("i18n.tera", vec!["en_US".to_owned()], Context::new());
         assert_debug_snapshot!("renderer_i18n_override", rendered);
@@ -176,15 +141,8 @@ mod tests {
 
     #[test]
     fn test_i18n_insert() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
-        let renderer = TemplateRenderer::new(
-            "src/server/webapp/templates/test_templates/full/**/*.tera",
-            messages,
-        );
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
+        let renderer = TemplateRenderer::new("test_templates/full/**/*.tera", messages);
 
         let mut context = Context::new();
         context.insert("name", "Graham");

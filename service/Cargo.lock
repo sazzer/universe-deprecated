@@ -2486,6 +2486,7 @@ dependencies = [
  "unic-langid",
  "universe_database",
  "universe_entity",
+ "universe_templates",
  "universe_test_database_container",
  "universe_test_database_wrapper",
  "universe_users",
@@ -2512,6 +2513,25 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "uuid",
+]
+
+[[package]]
+name = "universe_templates"
+version = "0.1.0"
+dependencies = [
+ "accept-language",
+ "fluent",
+ "glob",
+ "http",
+ "insta",
+ "rocket",
+ "rocket_contrib",
+ "serde 1.0.104",
+ "serde_json",
+ "spectral",
+ "tera",
+ "tracing",
+ "unic-langid",
 ]
 
 [[package]]

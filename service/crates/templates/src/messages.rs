@@ -245,44 +245,28 @@ mod tests {
 
     #[test]
     fn test_empty_messages_directory() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/empty/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/empty/**/*.ftl", "en").unwrap();
         let message = messages.lookup(vec!["en"], "message-key", HashMap::new());
         assert_that(&message).is_equal_to("!!!message-key!!!".to_owned());
     }
 
     #[test]
     fn test_unknown_message_key() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
         let message = messages.lookup(vec!["en"], "message-key", HashMap::new());
         assert_that(&message).is_equal_to("!!!message-key!!!".to_owned());
     }
 
     #[test]
     fn test_known_message_key() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
         let message = messages.lookup(vec!["en"], "hello", HashMap::new());
         assert_that(&message).is_equal_to("World".to_owned());
     }
 
     #[test]
     fn test_message_key_with_insert() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
         let mut binds = HashMap::new();
         binds.insert("name".to_owned(), json!("Graham"));
         let message = messages.lookup(vec!["en"], "greetings", binds);
@@ -292,11 +276,7 @@ mod tests {
 
     #[test]
     fn test_message_key_with_missing_insert() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
 
         let message = messages.lookup(vec!["en"], "greetings", HashMap::new());
         // U+2068 and U+2069 are used to wrap the insert for bi-directional text
@@ -305,66 +285,42 @@ mod tests {
 
     #[test]
     fn test_fallback_locale() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
         let message = messages.lookup(vec!["de"], "hello", HashMap::new());
         assert_that(&message).is_equal_to("World".to_owned());
     }
 
     #[test]
     fn test_second_locale() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "fr",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "fr").unwrap();
         let message = messages.lookup(vec!["es", "en"], "hello", HashMap::new());
         assert_that(&message).is_equal_to("World".to_owned());
     }
 
     #[test]
     fn test_non_exact_locale() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "fr",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "fr").unwrap();
         let message = messages.lookup(vec!["en_GB"], "hello", HashMap::new());
         assert_that(&message).is_equal_to("World".to_owned());
     }
 
     #[test]
     fn test_non_exact_locale_override_matches() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
         let message = messages.lookup(vec!["en_US"], "answer", HashMap::new());
         assert_that(&message).is_equal_to("41".to_owned());
     }
 
     #[test]
     fn test_non_exact_locale_override_doesnt_match() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/full/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/full/**/*.ftl", "en").unwrap();
         let message = messages.lookup(vec!["en_US"], "hello", HashMap::new());
         assert_that(&message).is_equal_to("World".to_owned());
     }
 
     #[test]
     fn test_nested_files() {
-        let messages = Messages::new(
-            "src/server/webapp/templates/test_messages/nested/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        let messages = Messages::new("test_messages/nested/**/*.ftl", "en").unwrap();
 
         let message_en = messages.lookup(vec!["en"], "hello", HashMap::new());
         assert_that(&message_en).is_equal_to("World".to_owned());
@@ -375,10 +331,6 @@ mod tests {
 
     #[test]
     fn test_malformed_files() {
-        Messages::new(
-            "src/server/webapp/templates/test_messages/malformed/**/*.ftl",
-            "en",
-        )
-        .unwrap();
+        Messages::new("test_messages/malformed/**/*.ftl", "en").unwrap();
     }
 }

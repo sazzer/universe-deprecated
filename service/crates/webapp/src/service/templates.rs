@@ -1,5 +1,5 @@
 use super::ServiceCreationError;
-use crate::server::webapp::templates::{Messages, TemplateRenderer};
+use universe_templates::{Messages, TemplateRenderer};
 
 /// Create the new Template Renderer fully ready to use
 pub fn new<S>(messages_dir: S, templates_dir: S) -> Result<TemplateRenderer, ServiceCreationError>
