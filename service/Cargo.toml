@@ -5,6 +5,7 @@ members = [
     "crates/test_database_container",
     "crates/database",
     "crates/test_database_wrapper",
+    "crates/testdata",
     "crates/templates",
     "crates/users",
     "crates/webapp"

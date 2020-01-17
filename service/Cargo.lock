@@ -2488,6 +2488,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe_testdata"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "postgres",
+ "postgres-types",
+ "universe_test_database_wrapper",
+ "uuid",
+]
+
+[[package]]
 name = "universe_users"
 version = "0.1.0"
 dependencies = [
@@ -2506,6 +2517,7 @@ dependencies = [
  "universe_database",
  "universe_entity",
  "universe_test_database_wrapper",
+ "universe_testdata",
  "uuid",
 ]
 
