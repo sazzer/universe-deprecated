@@ -54,7 +54,7 @@ pub fn get_user_by_id(
         user_not_found()
     })?;
 
-    let user = user_service.get_user_by_id(user_id).ok_or_else(|| {
+    let user = user_service.get_user_by_id(&user_id).ok_or_else(|| {
         debug!("Failed to find user with ID {}", user_id.clone());
         user_not_found()
     })?;
