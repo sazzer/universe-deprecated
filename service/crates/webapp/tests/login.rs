@@ -82,3 +82,25 @@ fn test_submit_unknown_username() {
     let response = req.dispatch();
     assert_response("test_submit_unknown_username", response);
 }
+
+#[test]
+fn test_submit_known_username() {
+    let _ = tracing_subscriber::fmt::Builder::default()
+        .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
+        .try_init();
+
+    let user = universe_testdata::User {
+        username: "known".to_owned(),
+        ..Default::default()
+    };
+    let service = ServiceWrapper::new();
+    service.database.seed(vec![&user]);
+
+    let req = service
+        .client
+        .post("/login")
+        .header(rocket::http::ContentType::Form)
+        .body("username=known&");
+    let response = req.dispatch();
+    assert_response("test_submit_known_username", response);
+}

@@ -33,3 +33,4 @@ insta = "0.12.0"
 
 universe_test_database_container = { path = "../test_database_container" }
 universe_test_database_wrapper = { path = "../test_database_wrapper" }
+universe_testdata = { path = "../testdata" }
