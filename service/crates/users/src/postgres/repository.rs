@@ -37,14 +37,14 @@ impl PostgresUserRepository {
 }
 
 impl UserRepository for PostgresUserRepository {
-    fn get_user_by_id(&self, user_id: UserID) -> Option<UserEntity> {
-        self.get_single_user("SELECT * FROM users WHERE user_id = $1", &[&user_id])
+    fn get_user_by_id(&self, user_id: &UserID) -> Option<UserEntity> {
+        self.get_single_user("SELECT * FROM users WHERE user_id = $1", &[user_id])
     }
-    fn get_user_by_email(&self, email: String) -> Option<UserEntity> {
-        self.get_single_user("SELECT * FROM users WHERE email = $1", &[&email])
+    fn get_user_by_email(&self, email: &String) -> Option<UserEntity> {
+        self.get_single_user("SELECT * FROM users WHERE email = $1", &[email])
     }
-    fn get_user_by_username(&self, username: Username) -> Option<UserEntity> {
-        self.get_single_user("SELECT * FROM users WHERE username = $1", &[&username])
+    fn get_user_by_username(&self, username: &Username) -> Option<UserEntity> {
+        self.get_single_user("SELECT * FROM users WHERE username = $1", &[username])
     }
 }
 
@@ -61,7 +61,7 @@ mod tests {
         let database = TestDatabaseWrapper::new();
         let repository = PostgresUserRepository::new(database.wrapper.clone());
 
-        let user = repository.get_user_by_id(UserID::from_uuid(Uuid::new_v4()));
+        let user = repository.get_user_by_id(&UserID::from_uuid(Uuid::new_v4()));
         assert_that(&user).is_none();
     }
     #[test]
@@ -69,7 +69,7 @@ mod tests {
         let database = TestDatabaseWrapper::new();
         let repository = PostgresUserRepository::new(database.wrapper.clone());
 
-        let user = repository.get_user_by_email("testuser@example.com".to_owned());
+        let user = repository.get_user_by_email(&"testuser@example.com".to_owned());
         assert_that(&user).is_none();
     }
     #[test]
@@ -77,7 +77,7 @@ mod tests {
         let database = TestDatabaseWrapper::new();
         let repository = PostgresUserRepository::new(database.wrapper.clone());
 
-        let user = repository.get_user_by_username("testuser".parse().unwrap());
+        let user = repository.get_user_by_username(&"testuser".parse().unwrap());
         assert_that(&user).is_none();
     }
 
@@ -90,7 +90,7 @@ mod tests {
 
         let repository = PostgresUserRepository::new(database.wrapper.clone());
 
-        let user = repository.get_user_by_id(testuser.user_id.clone());
+        let user = repository.get_user_by_id(&testuser.user_id.clone());
         assert_user(testuser, user);
     }
     #[test]
@@ -102,7 +102,7 @@ mod tests {
 
         let repository = PostgresUserRepository::new(database.wrapper.clone());
 
-        let user = repository.get_user_by_email(testuser.email.clone());
+        let user = repository.get_user_by_email(&testuser.email.clone());
         assert_user(testuser, user);
     }
     #[test]
@@ -114,7 +114,7 @@ mod tests {
 
         let repository = PostgresUserRepository::new(database.wrapper.clone());
 
-        let user = repository.get_user_by_username(testuser.username.clone());
+        let user = repository.get_user_by_username(&testuser.username.clone());
         assert_user(testuser, user);
     }
 
