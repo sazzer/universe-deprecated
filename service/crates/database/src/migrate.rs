@@ -113,7 +113,13 @@ fn apply_migrations(
 
     let mut applied = 0;
     for entry in files.iter() {
-        if applied_migrations.contains(&entry.to_str().unwrap().to_owned()) {
+        let filename = entry
+            .file_name()
+            .map(|f| f.to_str().unwrap())
+            .map(|f| f.to_owned())
+            .unwrap();
+
+        if applied_migrations.contains(&filename) {
             debug!("Already processed file: {:?}", entry);
         } else {
             debug!("Processing file: {:?}", entry);
@@ -123,7 +129,7 @@ fn apply_migrations(
 
             transaction.execute(
                 "INSERT INTO __migrations(migration_file) VALUES ($1)",
-                &[&entry.to_str()],
+                &[&filename],
             )?;
             applied += 1;
         }
@@ -256,8 +262,8 @@ mod tests {
             .collect();
 
         assert_that(&migrations).is_equal_to(vec![
-            "test_migrations/full/00001-first.sql".to_owned(),
-            "test_migrations/full/00002-second.sql".to_owned(),
+            "00001-first.sql".to_owned(),
+            "00002-second.sql".to_owned(),
         ]);
     }
 
@@ -299,8 +305,8 @@ mod tests {
             .collect();
 
         assert_that(&migrations).is_equal_to(vec![
-            "test_migrations/full/00001-first.sql".to_owned(),
-            "test_migrations/full/00002-second.sql".to_owned(),
+            "00001-first.sql".to_owned(),
+            "00002-second.sql".to_owned(),
         ]);
     }
 
@@ -336,8 +342,7 @@ mod tests {
             .map(|row| row.get::<&str, String>("migration_file"))
             .collect();
 
-        assert_that(&migrations)
-            .is_equal_to(vec!["test_migrations/full/00001-first.sql".to_owned()]);
+        assert_that(&migrations).is_equal_to(vec!["00001-first.sql".to_owned()]);
 
         // Now run the rest of the files
         let result2 = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
@@ -369,8 +374,8 @@ mod tests {
             .collect();
 
         assert_that(&migrations).is_equal_to(vec![
-            "test_migrations/full/00001-first.sql".to_owned(),
-            "test_migrations/full/00002-second.sql".to_owned(),
+            "00001-first.sql".to_owned(),
+            "00002-second.sql".to_owned(),
         ]);
     }
 
