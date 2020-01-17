@@ -112,6 +112,10 @@ run-e2e:
   script:
     - docker-compose -f docker-compose.e2e.yml -f docker-compose.services.yml up --exit-code-from universe-e2e-tests
 
+  retry:
+    max: 2
+    when: always
+
   artifacts:
     name: '$CI_COMMIT_REF_SLUG-Cucumber'
     paths:
