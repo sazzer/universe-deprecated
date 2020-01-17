@@ -48,8 +48,7 @@ impl Service {
             ))
             .attach(crate::server::request_id::RequestIdFairing {})
             .mount("/public", StaticFiles::from(static_files))
-            .mount("/", crate::server::webapp::routes())
-            .mount("/api", crate::server::rest::routes());
+            .mount("/", crate::server::webapp::routes());
 
         Ok(Service { rocket })
     }
