@@ -23,7 +23,6 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
-@ignore
   Scenario: Starting authentication with a known user displays the Login User form
     Given a user exists with details:
       | Username | known |
@@ -34,16 +33,15 @@ Feature: Start Authentication
       | Username          | known |
       | Password          |       |
 
-@ignore
   Scenario: Starting authentication with a known user displays the Login User form - username is padded
-  Given a user exists with details:
-    | Username | known |
-  And I visit the home page
-  When I start logging in as "  known  "
-  Then I am displayed the Login User page
-  And the Login User form has details:
-    | Username          | known |
-    | Password          |       |
+    Given a user exists with details:
+      | Username | known |
+    And I visit the home page
+    When I start logging in as "  known  "
+    Then I am displayed the Login User page
+    And the Login User form has details:
+      | Username          | known |
+      | Password          |       |
 
   Scenario: Starting authentication with an a blank username displays an error
     Given I visit the home page
@@ -73,9 +71,26 @@ Feature: Start Authentication
       | Password          |            |
       | Re-enter Password |            |
 
-  Examples:
-    | Input        | Expected     |
-    | !@#$%^&*     | !@#$%^&*     |
-    | Snow☃man     | Snow☃man     |
-    | <b>hello</b> | <b>hello</b> |
-    | \"quoted\"   | "quoted"     |
+    Examples:
+      | Input        | Expected     |
+      | !@#$%^&*     | !@#$%^&*     |
+      | Snow☃man     | Snow☃man     |
+      | <b>hello</b> | <b>hello</b> |
+      | \"quoted\"   | "quoted"     |
+
+  Scenario Outline: Starting authentication with a known user displays the Login User form - username uses nasty characters: <Input>
+    Given a user exists with details:
+      | Username | <Expected> |
+    And I visit the home page
+    When I start logging in as "<Input>"
+    Then I am displayed the Login User page
+    And the Login User form has details:
+      | Username          | <Expected> |
+      | Password          |            |
+
+    Examples:
+      | Input        | Expected     |
+      | !@#$%^&*     | !@#$%^&*     |
+      | Snow☃man     | Snow☃man     |
+      | <b>hello</b> | <b>hello</b> |
+      | \"quoted\"   | "quoted"     |

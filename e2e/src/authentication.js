@@ -1,7 +1,6 @@
 const { When, Then } = require('cucumber');
 const { BasePage } = require('./pages/basepage');
 const { StartLoginPage, RegisterPage } = require('./pages/login');
-const { buildPageSteps, buildFormSteps } = require('./stepHelpers');
 const { expect } = require('chai');
 const { parseValue } = require('./dataTable');
 
@@ -37,9 +36,3 @@ When('I register with details:', async function(data) {
   await registrationForm.populate(newValues);
   await registrationForm.submit();
 });
-
-buildPageSteps('Start Login', StartLoginPage);
-buildFormSteps('Start Login', StartLoginPage);
-
-buildPageSteps('Register User', RegisterPage);
-buildFormSteps('Register User', RegisterPage);
