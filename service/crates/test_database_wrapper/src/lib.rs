@@ -25,7 +25,7 @@ impl<'d> TestDatabaseWrapper<'d> {
         let container = TestDatabase::new();
         let wrapper = universe_database::builder::new(
             container.url.clone(),
-            format!("{:?}/**/*.sql", migrations_base),
+            format!("{}/**/*.sql", migrations_base.to_str().unwrap()),
         )
         .unwrap();
 

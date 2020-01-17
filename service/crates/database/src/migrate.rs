@@ -50,6 +50,8 @@ where
 /// # Returns
 /// The list of files, in order, that we want to apply
 fn list_migration_files(migrations: String) -> Result<Vec<PathBuf>, MigrationError> {
+    info!("Loading migrations from: {:?}", migrations);
+
     let mut files: Vec<PathBuf> = glob(&migrations)?.filter_map(|res| res.ok()).collect();
     files.sort();
 
