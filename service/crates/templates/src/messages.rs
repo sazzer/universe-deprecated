@@ -3,7 +3,7 @@ use glob::glob;
 use serde_json::Value;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use tracing::{debug, warn};
+use tracing::{debug, trace, warn};
 use unic_langid::LanguageIdentifier;
 
 /// Type abbreviation for a bundle of messages for a single locale
@@ -116,7 +116,7 @@ impl Messages {
         // Build the actual list of locales to match against, including the default
         let mut desired_locales: Vec<&LanguageIdentifier> = locales.iter().collect();
         desired_locales.push(&self.default_locale);
-        debug!("Finding bundle for desired locales: {:?}", desired_locales);
+        trace!("Finding bundle for desired locales: {:?}", desired_locales);
 
         // Iterate over each Locale, trying to find a bundle that matches
         // This looks for an exact match first, and then a partial match otherwise
@@ -125,9 +125,10 @@ impl Messages {
                 // Check every bundle for an exact match first
                 for bundle_locale in bundle.locales.iter() {
                     if locale.matches(bundle_locale, false, false) {
-                        debug!(
+                        trace!(
                             "Matched locale {:?} against bundle {:?}",
-                            locale, bundle_locale
+                            locale,
+                            bundle_locale
                         );
                         return Some(bundle);
                     }
@@ -137,9 +138,10 @@ impl Messages {
                 // Failing that, try again looking for partial matches.
                 for bundle_locale in bundle.locales.iter() {
                     if locale.matches(bundle_locale, false, true) {
-                        debug!(
+                        trace!(
                             "Loosely matched locale {:?} against bundle {:?}",
-                            locale, bundle_locale
+                            locale,
+                            bundle_locale
                         );
                         return Some(bundle);
                     }
@@ -184,9 +186,10 @@ impl Messages {
             .map(|locale| locale.into())
             .map(|locale| locale.parse().unwrap())
             .collect();
-        debug!(
+        trace!(
             "Looking up message key '{}' for locales '{:?}'",
-            desired_message_key, &desired_locales
+            desired_message_key,
+            &desired_locales
         );
 
         match self.find_bundle(&desired_locales, &desired_message_key) {
@@ -198,9 +201,10 @@ impl Messages {
                 format!("!!!{}!!!", desired_message_key)
             }
             Some(bundle) => {
-                debug!(
+                trace!(
                     "Found bundle for message key '{}' and locales '{:?}'",
-                    desired_message_key, desired_locales
+                    desired_message_key,
+                    desired_locales
                 );
 
                 bundle
