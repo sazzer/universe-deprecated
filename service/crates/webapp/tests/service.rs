@@ -1,19 +1,13 @@
 use insta::assert_snapshot;
-use lazy_static::lazy_static;
 use rocket::local::{Client, LocalResponse};
 use std::fmt::Write;
-use testcontainers::{clients::Cli, images::postgres::Postgres, Container, Docker};
 use tracing::info;
 use universe::Service;
-
-lazy_static! {
-    static ref DOCKER: Cli = { Cli::default() };
-}
+use universe_test_database_wrapper::TestDatabaseWrapper;
 
 #[allow(dead_code)]
 pub struct ServiceWrapper<'d> {
-    node: Container<'d, Cli, Postgres>,
-    url: String,
+    pub database: TestDatabaseWrapper<'d>,
     pub client: Client,
 }
 
@@ -21,23 +15,18 @@ impl<'d> ServiceWrapper<'d> {
     pub fn new() -> Self {
         info!("Creating service");
 
-        let node = DOCKER.run(Postgres::default());
-
-        let host = std::env::var("DOCKER_HOSTNAME").unwrap_or("localhost".to_owned());
-        let port = node.get_host_port(5432).unwrap();
-        let url = format!("postgres://postgres:postgres@{}:{}", host, port);
+        let database = TestDatabaseWrapper::new();
 
         let service_base = std::fs::canonicalize("../..").unwrap();
         let service = Service::new(
-            url.clone(),
+            database.url(),
             Some(0),
             service_base.to_str().unwrap().to_owned(),
         )
         .unwrap();
 
         ServiceWrapper {
-            node,
-            url,
+            database,
             client: service.client(),
         }
     }

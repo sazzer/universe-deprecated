@@ -20,14 +20,20 @@ pub trait TestData {
 impl<'d> TestDatabaseWrapper<'d> {
     /// Create a new Test Database Wrapper
     pub fn new() -> Self {
+        let migrations_base = std::fs::canonicalize("../../migrations").unwrap();
+
         let container = TestDatabase::new();
         let wrapper = universe_database::builder::new(
             container.url.clone(),
-            "../../migrations/**/*.sql".to_owned(),
+            format!("{:?}/**/*.sql", migrations_base),
         )
         .unwrap();
 
         Self { container, wrapper }
+    }
+
+    pub fn url(&self) -> String {
+        self.container.url.clone()
     }
 
     /// Seed the database with the provided test data, all inserted in the provided order and in the
