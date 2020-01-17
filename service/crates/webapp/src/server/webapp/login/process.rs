@@ -31,7 +31,7 @@ impl TryFrom<LoginForm> for Username {
 pub fn process_login(form: LenientForm<LoginForm>, _request_id: RequestId) -> Template {
     let login_form = form.into_inner();
     let username: Result<Username, HashMap<&'static str, &'static str>> = login_form.try_into();
-    log::debug!("Username parsed from form: {:?}", username);
+    tracing::debug!("Username parsed from form: {:?}", username);
 
     match username {
         Err(e) => Template::new("login/start.tera").with_data("errors", &e),
