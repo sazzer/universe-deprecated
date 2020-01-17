@@ -23,7 +23,7 @@ services:
             - universe-e2e
 
     universe-e2e-selenium:
-        image: selenium/standalone-chrome:3.141.59-yttrium
+        image: selenium/standalone-firefox:3.141.59-zinc
         networks:
             - universe-e2e
 

@@ -18,7 +18,7 @@ class Browser {
   async _openBrowser() {
     if (this._driver === undefined) {
       this._driver = await new Builder()
-        .forBrowser('chrome')
+        .forBrowser('firefox')
         .build();
     }
     return this._driver;
