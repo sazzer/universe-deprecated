@@ -40,10 +40,10 @@ pub fn process_login(
 
     match username {
         Ok(username) => {
-            let known_user = user_service.username_exists(&username);
-            match known_user {
-                true => Template::new("login/login.tera").with_data("username", &username),
-                false => Template::new("login/register.tera").with_data("username", &username),
+            if user_service.username_exists(&username) {
+                Template::new("login/login.tera").with_data("username", &username)
+            } else {
+                Template::new("login/register.tera").with_data("username", &username)
             }
         }
         Err(e) => Template::new("login/start.tera").with_data("errors", &e),

@@ -29,5 +29,5 @@ pub trait UserRepository: Send + Sync {
     ///
     /// # Returns
     /// The user, if found. None if the user doesn't exist
-    fn get_user_by_email(&self, email: &String) -> Option<UserEntity>;
+    fn get_user_by_email(&self, email: &str) -> Option<UserEntity>;
 }

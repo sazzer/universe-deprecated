@@ -40,8 +40,8 @@ impl UserRepository for PostgresUserRepository {
     fn get_user_by_id(&self, user_id: &UserID) -> Option<UserEntity> {
         self.get_single_user("SELECT * FROM users WHERE user_id = $1", &[user_id])
     }
-    fn get_user_by_email(&self, email: &String) -> Option<UserEntity> {
-        self.get_single_user("SELECT * FROM users WHERE email = $1", &[email])
+    fn get_user_by_email(&self, email: &str) -> Option<UserEntity> {
+        self.get_single_user("SELECT * FROM users WHERE email = $1", &[&email])
     }
     fn get_user_by_username(&self, username: &Username) -> Option<UserEntity> {
         self.get_single_user("SELECT * FROM users WHERE username = $1", &[username])

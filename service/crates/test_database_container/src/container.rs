@@ -20,7 +20,7 @@ impl<'d> TestDatabase<'d> {
     pub fn new() -> Self {
         let node = DOCKER.run(Postgres::default());
 
-        let host = std::env::var("DOCKER_HOSTNAME").unwrap_or("localhost".to_owned());
+        let host = std::env::var("DOCKER_HOSTNAME").unwrap_or_else(|_| "localhost".to_owned());
         let port = node.get_host_port(5432).unwrap();
         let url = format!("postgres://postgres:postgres@{}:{}", host, port);
         info!("Running postgres on {}", url);

@@ -12,7 +12,7 @@ use uuid::Uuid;
 pub struct RequestIdFairing {}
 
 /// The name of the header to use for the Request ID
-const REQUEST_ID_HEADER: &'static str = "X-Request-ID";
+const REQUEST_ID_HEADER: &str = "X-Request-ID";
 
 impl Fairing for RequestIdFairing {
     fn info(&self) -> Info {
