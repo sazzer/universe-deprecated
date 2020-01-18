@@ -42,3 +42,25 @@ Scenario Outline: Registering a user with invalid details: <Comment>
     | Email Address    | Display Name | Password | Re-enter Password | Email Address Error | Display Name Error          | Password Error | Re-enter Password Error | Comment             |
     | test@example.com | Test User    | Pa55word | password          |                     |                             |                | Passwords do not match  | Different Passwords |
     | test@example.com | [space]      | Pa55word | Pa55word          |                     | Please enter a display name |                |                         | No Display Name     |
+
+@wip
+  Scenario: Registering a user with a duplicate email address
+    Given a user exists with details:
+      | Username      | known                |
+      | Email Address | testuser@example.com |
+    Given I visit the home page
+      And I start logging in as "unknown"
+      And I am displayed the Register User page
+     When I register with details:
+       | Email Address     | testuser@example.com |
+       | Display Name      | Test User            |
+       | Password          | Password             |
+       | Re-enter Password | Password             |
+      And the Register User form has errors:
+        | Email Address     | That email address is registered to a different user |
+      And the Register User form has details:
+        | Username          | unknown              |
+        | Email Address     | testuser@example.com |
+        | Display Name      | Test User            |
+        | Password          |                      |
+        | Re-enter Password |                      |
