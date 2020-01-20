@@ -1,10 +1,11 @@
 use crate::server::request_id::RequestId;
-use rocket::{post, request::LenientForm, FromForm};
+use rocket::{post, request::LenientForm, FromForm, State};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::convert::{TryFrom, TryInto};
+use std::sync::Arc;
 use universe_templates::Template;
-use universe_users::{Password, UserData, Username};
+use universe_users::{Password, UserData, UserRegistrationError, UserService, Username};
 
 /// The shape of the form data that the POST /login/register endpoing can accept
 #[derive(FromForm, Debug, Serialize, Clone)]
@@ -69,13 +70,30 @@ impl TryFrom<RegisterForm> for UserData {
 }
 
 #[post("/login/register", data = "<form>")]
-#[tracing::instrument]
-pub fn process_register(form: LenientForm<RegisterForm>, _request_id: RequestId) -> Template {
+#[tracing::instrument(skip(user_service))]
+pub fn process_register(
+    form: LenientForm<RegisterForm>,
+    user_service: State<Arc<dyn UserService>>,
+    _request_id: RequestId,
+) -> Template {
     let register_form = form.into_inner();
     let user: Result<UserData, HashMap<&str, Option<&str>>> = register_form.clone().try_into();
 
     let template = match user {
-        Ok(user) => Template::new("login/register.tera"),
+        Ok(user) => match user_service.register_user(user) {
+            Ok(_) => Template::new("login/register.tera"),
+            Err(register_errors) => {
+                let mut errors = HashMap::new();
+                for e in register_errors {
+                    match e {
+                        UserRegistrationError::DuplicateEmailAddress => {
+                            errors.insert("email", "duplicate");
+                        }
+                    }
+                }
+                Template::new("login/register.tera").with_data("errors", &errors)
+            }
+        },
         Err(errors) => Template::new("login/register.tera").with_data("errors", &errors),
     };
 

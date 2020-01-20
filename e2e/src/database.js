@@ -35,7 +35,10 @@ async function seed(data) {
 Before(async function() {
   const client = getClient();
   const result = await client.query('SELECT table_name FROM information_schema.tables WHERE table_schema = $1', ['public']);
-  const tableNames = result.rows.map(row => row.table_name).join(',');
+  const tableNames = result.rows
+    .map(row => row.table_name)
+    .filter(table_name => table_name !== '__migrations')
+    .join(',');
 
   const truncateSql = 'TRUNCATE ' + tableNames;
   await client.query(truncateSql);

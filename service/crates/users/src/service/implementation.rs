@@ -1,5 +1,5 @@
-use super::{repository::UserRepository, UserService};
-use crate::{UserEntity, UserID, Username};
+use super::{repository::UserRepository, UserRegistrationError, UserService};
+use crate::{UserData, UserEntity, UserID, Username};
 use std::sync::Arc;
 
 /// Standard implementation of the User Service
@@ -23,6 +23,10 @@ impl UserService for UserServiceImpl {
             .get_user_by_username(username)
             .map(|_| true)
             .unwrap_or(false)
+    }
+
+    fn register_user(&self, _user: UserData) -> Result<UserEntity, Vec<UserRegistrationError>> {
+        Err(vec![UserRegistrationError::DuplicateEmailAddress])
     }
 }
 

@@ -7,4 +7,4 @@ mod service;
 mod testdata;
 
 pub use model::*;
-pub use service::UserService;
+pub use service::*;
