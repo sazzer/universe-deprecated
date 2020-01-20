@@ -1,10 +1,12 @@
 [package]
-name = "universe-webapp"
+name = "universe_webapp"
 version = "0.1.0"
 authors = ["Graham Cox <graham@grahamcox.co.uk>"]
 edition = "2018"
 
 [dependencies]
 tracing = "0.1.12"
+
+universe_database = { path = "../database" }
 
 [dev-dependencies]

@@ -1362,14 +1362,7 @@ dependencies = [
  "tracing",
  "tracing-log",
  "tracing-subscriber",
- "universe-webapp",
-]
-
-[[package]]
-name = "universe-webapp"
-version = "0.1.0"
-dependencies = [
- "tracing",
+ "universe_webapp",
 ]
 
 [[package]]
@@ -1404,6 +1397,14 @@ dependencies = [
  "postgres-types",
  "universe_database",
  "universe_test_database_container",
+]
+
+[[package]]
+name = "universe_webapp"
+version = "0.1.0"
+dependencies = [
+ "tracing",
+ "universe_database",
 ]
 
 [[package]]

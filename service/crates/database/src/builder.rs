@@ -8,7 +8,7 @@ use std::sync::Arc;
 ///
 /// # Returns
 /// The database connection
-pub fn new(database_url: String, migration_files: String) -> Result<Arc<dyn Database>, String> {
+pub fn new(database_url: &str, migration_files: &str) -> Result<Arc<dyn Database>, String> {
     let postgres_database = PostgresDatabase::new(database_url)
         .map_err(|e| format!("Error connecting to database: {}", e))?;
     let database: Arc<dyn Database> = Arc::new(postgres_database);

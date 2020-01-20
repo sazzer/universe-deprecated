@@ -12,6 +12,6 @@ tracing = "0.1.12"
 tracing-log = "0.1.1"
 tracing-subscriber = "0.1.6"
 
-universe-webapp = { path = "../webapp" }
+universe_webapp = { path = "../webapp" }
 
 [dev-dependencies]

@@ -21,13 +21,10 @@ impl<'d> TestDatabaseWrapper<'d> {
     /// Create a new Test Database Wrapper
     pub fn new() -> Self {
         let migrations_base = std::fs::canonicalize("../../migrations").unwrap();
+        let migrations_glob = format!("{}/**/*.sql", migrations_base.to_str().unwrap());
 
         let container = TestDatabase::new();
-        let wrapper = universe_database::builder::new(
-            container.url.clone(),
-            format!("{}/**/*.sql", migrations_base.to_str().unwrap()),
-        )
-        .unwrap();
+        let wrapper = universe_database::builder::new(&container.url, &migrations_glob).unwrap();
 
         Self { container, wrapper }
     }
