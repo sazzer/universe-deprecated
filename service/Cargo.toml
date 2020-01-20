@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "crates/test_database_container",
+  "crates/database",
+  "crates/test_database_wrapper"
+]
