@@ -1,15 +1,10 @@
 [package]
-name = "universe"
+name = "universe-webapp"
 version = "0.1.0"
 authors = ["Graham Cox <graham@grahamcox.co.uk>"]
 edition = "2018"
 
 [dependencies]
-dotenv = "0.15.0"
 tracing = "0.1.12"
-tracing-log = "0.1.1"
-tracing-subscriber = "0.1.6"
-
-universe-webapp = { path = "../webapp" }
 
 [dev-dependencies]

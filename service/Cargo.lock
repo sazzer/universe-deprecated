@@ -1207,6 +1207,14 @@ dependencies = [
  "tracing",
  "tracing-log",
  "tracing-subscriber",
+ "universe-webapp",
+]
+
+[[package]]
+name = "universe-webapp"
+version = "0.1.0"
+dependencies = [
+ "tracing",
 ]
 
 [[package]]

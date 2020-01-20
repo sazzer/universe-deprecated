@@ -8,5 +8,6 @@ fn main() {
         .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 
+    universe_webapp::Service::new();
     info!("Starting Universe");
 }
