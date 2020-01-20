@@ -5,7 +5,9 @@ authors = ["Graham Cox <graham@grahamcox.co.uk>"]
 edition = "2018"
 
 [dependencies]
+config = "0.10.1"
 dotenv = "0.15.0"
+serde = {version = "1.0.103", features=["derive"] }
 tracing = "0.1.12"
 tracing-log = "0.1.1"
 tracing-subscriber = "0.1.6"

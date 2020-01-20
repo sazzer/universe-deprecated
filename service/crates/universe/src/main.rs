@@ -1,5 +1,7 @@
 use dotenv::dotenv;
-use tracing::info;
+use tracing::{debug, info};
+
+mod settings;
 
 fn main() {
     dotenv().ok();
@@ -7,6 +9,9 @@ fn main() {
     tracing_subscriber::fmt::Builder::default()
         .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
+
+    let settings = settings::Settings::new();
+    debug!("Universe settings: {:?}", settings);
 
     universe_webapp::Service::new();
     info!("Starting Universe");
