@@ -17,6 +17,8 @@ fn main() {
     let settings = settings::Settings::new();
     debug!("Universe settings: {:?}", settings);
 
-    universe_webapp::Service::new(&settings.database_url, &migrations_glob);
+    let service =
+        universe_webapp::Service::new(&settings.database_url, settings.port, &migrations_glob);
     info!("Starting Universe");
+    service.launch();
 }
