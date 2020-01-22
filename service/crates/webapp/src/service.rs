@@ -9,14 +9,20 @@ impl Service {
     pub fn new(database_url: &str, port: Option<u16>, migration_files: &str) -> Self {
         debug!("Building Universe...");
 
-        let _database = universe_database::builder::new(database_url, migration_files).unwrap();
+        let database = universe_database::builder::new(database_url, migration_files).unwrap();
+
+        let healthchecker = crate::health::HealthcheckerBuilder::default()
+            .add("database", database.clone())
+            .build();
 
         let mut config = rocket::Config::active().unwrap();
         if let Some(port_number) = port {
             config.port = port_number;
         }
 
-        let rocket = rocket::custom(config);
+        let rocket = rocket::custom(config)
+            .manage(healthchecker)
+            .mount("/", crate::health::routes());
 
         Service { rocket }
     }

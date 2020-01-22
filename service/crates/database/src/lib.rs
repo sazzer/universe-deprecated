@@ -1,6 +1,6 @@
 pub mod builder;
-mod database;
+mod health;
 mod migrate;
 mod postgres;
 
-pub use database::Database;
+pub use crate::postgres::Database;

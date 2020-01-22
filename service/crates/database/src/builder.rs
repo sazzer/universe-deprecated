@@ -1,4 +1,4 @@
-use crate::{migrate::migrate, postgres::PostgresDatabase, Database};
+use crate::{migrate::migrate, postgres::Database};
 use std::sync::Arc;
 
 /// Connects to the database for other services to use
@@ -8,10 +8,10 @@ use std::sync::Arc;
 ///
 /// # Returns
 /// The database connection
-pub fn new(database_url: &str, migration_files: &str) -> Result<Arc<dyn Database>, String> {
-    let postgres_database = PostgresDatabase::new(database_url)
-        .map_err(|e| format!("Error connecting to database: {}", e))?;
-    let database: Arc<dyn Database> = Arc::new(postgres_database);
+pub fn new(database_url: &str, migration_files: &str) -> Result<Arc<Database>, String> {
+    let postgres_database =
+        Database::new(database_url).map_err(|e| format!("Error connecting to database: {}", e))?;
+    let database: Arc<Database> = Arc::new(postgres_database);
 
     migrate(database.clone(), migration_files)
         .map_err(|e| format!("Error migrating database: {}", e))?;

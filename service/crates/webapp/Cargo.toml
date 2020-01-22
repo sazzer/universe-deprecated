@@ -5,13 +5,14 @@ authors = ["Graham Cox <graham@grahamcox.co.uk>"]
 edition = "2018"
 
 [dependencies]
-tracing = "0.1.12"
-
-universe_database = { path = "../database" }
+http = "0.2.0"
 rocket = "0.4.2"
 rocket_contrib = "0.4.2"
 serde = "1.0.104"
 serde_json = "1.0.44"
-http = "0.2.0"
+tracing = "0.1.12"
+
+universe_database = { path = "../database" }
+universe_health = { path = "../health" }
 
 [dev-dependencies]

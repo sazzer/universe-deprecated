@@ -1804,8 +1804,13 @@ dependencies = [
  "r2d2_postgres",
  "spectral",
  "tracing",
+ "universe_health",
  "universe_test_database_container",
 ]
+
+[[package]]
+name = "universe_health"
+version = "0.1.0"
 
 [[package]]
 name = "universe_test_database_container"
@@ -1838,6 +1843,7 @@ dependencies = [
  "serde_json",
  "tracing",
  "universe_database",
+ "universe_health",
 ]
 
 [[package]]

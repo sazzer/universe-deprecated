@@ -6,7 +6,7 @@ use universe_test_database_container::TestDatabase;
 pub struct TestDatabaseWrapper<'d> {
     #[allow(dead_code)]
     container: TestDatabase<'d>,
-    pub wrapper: Arc<dyn Database>,
+    pub wrapper: Arc<Database>,
 }
 
 pub trait TestData {

@@ -1,4 +1,3 @@
-use super::Database;
 use postgres::NoTls;
 use r2d2::{Pool, PooledConnection};
 use r2d2_postgres::PostgresConnectionManager;
@@ -6,41 +5,41 @@ use tracing::{debug, error};
 
 /// Errors that can be returned when creating a Postgres Database wrapper
 #[derive(Debug, PartialEq)]
-pub struct PostgresDatabaseError {
+pub struct DatabaseError {
     message: String,
 }
 
-impl std::fmt::Display for PostgresDatabaseError {
+impl std::fmt::Display for DatabaseError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.message)
     }
 }
 
-impl std::error::Error for PostgresDatabaseError {}
+impl std::error::Error for DatabaseError {}
 
 /// Wrapper around a connection to the Postgres database
 #[derive(Debug)]
-pub struct PostgresDatabase {
+pub struct Database {
     pool: r2d2::Pool<PostgresConnectionManager<NoTls>>,
 }
 
-impl From<postgres::Error> for PostgresDatabaseError {
+impl From<postgres::Error> for DatabaseError {
     fn from(e: postgres::Error) -> Self {
         let message = format!("Failed to create connection: {}", e);
         error!("{}", message);
-        PostgresDatabaseError { message }
+        DatabaseError { message }
     }
 }
 
-impl From<r2d2::Error> for PostgresDatabaseError {
+impl From<r2d2::Error> for DatabaseError {
     fn from(e: r2d2::Error) -> Self {
         let message = format!("Failed to create connection pool: {}", e);
         error!("{}", message);
-        PostgresDatabaseError { message }
+        DatabaseError { message }
     }
 }
 
-impl PostgresDatabase {
+impl Database {
     /// Create a new wrapper around the postgres database
     ///
     /// # Arguments
@@ -48,7 +47,7 @@ impl PostgresDatabase {
     ///
     /// # Returns
     /// The database wrapper, or an error if the URL was bad for some reason
-    pub fn new<S>(url: S) -> Result<PostgresDatabase, PostgresDatabaseError>
+    pub fn new<S>(url: S) -> Result<Database, DatabaseError>
     where
         S: Into<String>,
     {
@@ -58,12 +57,10 @@ impl PostgresDatabase {
         let manager = PostgresConnectionManager::new(real_url.parse()?, NoTls);
         let pool = Pool::new(manager)?;
 
-        Ok(PostgresDatabase { pool })
+        Ok(Database { pool })
     }
-}
 
-impl Database for PostgresDatabase {
-    fn client(&self) -> Option<PooledConnection<PostgresConnectionManager<NoTls>>> {
+    pub fn client(&self) -> Option<PooledConnection<PostgresConnectionManager<NoTls>>> {
         self.pool
             .get()
             .map_err(|e| {
@@ -84,7 +81,7 @@ mod tests {
     fn test_connect_success() {
         let database = TestDatabase::new();
 
-        let postgres = PostgresDatabase::new(database.url);
+        let postgres = Database::new(database.url);
         assert_that(&postgres).is_ok();
     }
 
@@ -96,10 +93,10 @@ mod tests {
             "postgres://invalid:invalid@{}:{}",
             database.host, database.port
         );
-        let postgres = PostgresDatabase::new(url);
+        let postgres = Database::new(url);
         assert_that(&postgres)
             .is_err()
-            .is_equal_to(PostgresDatabaseError {
+            .is_equal_to(DatabaseError {
                 message: "Failed to create connection pool: timed out waiting for connection: db error: FATAL: role \"invalid\" does not exist".to_owned(),
             });
     }
@@ -108,7 +105,7 @@ mod tests {
     fn test_client() {
         let database = TestDatabase::new();
 
-        let postgres = PostgresDatabase::new(database.url).unwrap();
+        let postgres = Database::new(database.url).unwrap();
         let mut client = postgres.client().unwrap();
         client.query("SELECT 1", &[]).unwrap();
     }

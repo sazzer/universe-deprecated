@@ -12,6 +12,8 @@ r2d2_postgres = "0.16.0"
 tracing = "0.1.11"
 glob = "0.3.0"
 
+universe_health = { path = "../health" }
+
 [dev-dependencies]
 spectral = "0.6.0"
 

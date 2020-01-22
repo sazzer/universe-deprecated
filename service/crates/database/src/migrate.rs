@@ -20,7 +20,7 @@ pub struct MigrationError {
 ///
 /// # Returns
 /// If an error occurred then the error is returned. If not then no return value
-pub fn migrate<S>(database: Arc<dyn Database>, migrations: S) -> Result<u32, MigrationError>
+pub fn migrate<S>(database: Arc<Database>, migrations: S) -> Result<u32, MigrationError>
 where
     S: Into<String>,
 {
@@ -176,14 +176,14 @@ impl From<postgres::Error> for MigrationError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::postgres::PostgresDatabase;
+    use crate::Database;
     use spectral::prelude::*;
     use universe_test_database_container::TestDatabase;
 
     #[test]
     fn test_invalid_migrations_glob() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+        let wrapper = Arc::new(Database::new(database.url).unwrap());
 
         let result = migrate(wrapper.clone(), "****");
 
@@ -201,7 +201,7 @@ mod tests {
     #[test]
     fn test_no_migrations_directory() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+        let wrapper = Arc::new(Database::new(database.url).unwrap());
 
         let result = migrate(wrapper.clone(), "test_migrations/missing/**/*.sql");
 
@@ -216,7 +216,7 @@ mod tests {
     #[test]
     fn test_no_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+        let wrapper = Arc::new(Database::new(database.url).unwrap());
 
         let result = migrate(wrapper.clone(), "test_migrations/empty/**/*.sql");
 
@@ -234,7 +234,7 @@ mod tests {
     #[test]
     fn test_some_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+        let wrapper = Arc::new(Database::new(database.url).unwrap());
 
         let result = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
 
@@ -272,7 +272,7 @@ mod tests {
     #[test]
     fn test_some_migrations_again() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+        let wrapper = Arc::new(Database::new(database.url).unwrap());
 
         let result = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
 
@@ -315,7 +315,7 @@ mod tests {
     #[test]
     fn test_additional_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+        let wrapper = Arc::new(Database::new(database.url).unwrap());
 
         let result = migrate(wrapper.clone(), "test_migrations/full/00001-first.sql");
 
@@ -384,7 +384,7 @@ mod tests {
     #[test]
     fn test_invalid_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(PostgresDatabase::new(database.url).unwrap());
+        let wrapper = Arc::new(Database::new(database.url).unwrap());
 
         let result = migrate(wrapper.clone(), "test_migrations/invalid/**/*.sql");
 
