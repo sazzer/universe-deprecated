@@ -16,6 +16,12 @@ pub struct TestDatabase<'d> {
     pub url: String,
 }
 
+impl<'d> Default for TestDatabase<'d> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'d> TestDatabase<'d> {
     pub fn new() -> Self {
         let node = DOCKER.run(Postgres::default());

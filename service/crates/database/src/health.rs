@@ -8,7 +8,9 @@ impl Healthcheck for Database {
     /// # Returns
     /// The result of the healthcheck
     fn check_health(&self) -> Result<String, String> {
-        let mut client = self.client().ok_or("Failed to get connection".to_owned())?;
+        let mut client = self
+            .client()
+            .ok_or_else(|| "Failed to get connection".to_owned())?;
 
         let _ = client
             .query("SELECT 1", &[])

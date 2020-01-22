@@ -17,6 +17,12 @@ pub trait TestData {
     fn binds(&self) -> Vec<&(dyn postgres::types::ToSql + Sync)>;
 }
 
+impl<'d> Default for TestDatabaseWrapper<'d> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'d> TestDatabaseWrapper<'d> {
     /// Create a new Test Database Wrapper
     pub fn new() -> Self {

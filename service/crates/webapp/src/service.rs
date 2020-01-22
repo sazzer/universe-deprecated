@@ -12,7 +12,7 @@ impl Service {
         let database = universe_database::builder::new(database_url, migration_files).unwrap();
 
         let healthchecker = crate::health::HealthcheckerBuilder::default()
-            .add("database", database.clone())
+            .add("database", database)
             .build();
 
         let mut config = rocket::Config::active().unwrap();
