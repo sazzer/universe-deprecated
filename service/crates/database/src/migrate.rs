@@ -3,43 +3,43 @@ use glob::glob;
 use postgres::Transaction;
 use std::fs;
 use std::path::PathBuf;
-use std::sync::Arc;
 use tracing::{debug, error, info};
 
-/// Error returned when migrating the database fails for some reason
-#[derive(Debug, PartialEq)]
-pub struct MigrationError {
-    message: String,
+pub trait MigratableDatabase {
+    /// Migrate the database to the latest schema version as described by the files in the given directory
+    ///
+    /// # Arguments
+    /// * `migrations` The migration files to apply
+    ///
+    /// # Returns
+    /// If an error occurred then the error is returned. If not then no return value
+    fn migrate<S>(&self, migrations: S) -> Result<u32, MigrationError>
+    where
+        S: Into<String>;
 }
 
-/// Migrate the database to the latest schema version as described by the files in the given directory
-///
-/// # Arguments
-/// * `database` The database to migrate
-/// * `migrations` The migration files to apply
-///
-/// # Returns
-/// If an error occurred then the error is returned. If not then no return value
-pub fn migrate<S>(database: Arc<Database>, migrations: S) -> Result<u32, MigrationError>
-where
-    S: Into<String>,
-{
-    let files = list_migration_files(migrations.into())?;
-    info!("Migrations to apply: {:?}", files);
+impl MigratableDatabase for Database {
+    fn migrate<S>(&self, migrations: S) -> Result<u32, MigrationError>
+    where
+        S: Into<String>,
+    {
+        let files = list_migration_files(migrations.into())?;
+        info!("Migrations to apply: {:?}", files);
 
-    let mut applied = 0;
-    if !files.is_empty() {
-        let mut client = database.client().ok_or(MigrationError {
-            message: "Failed to get database connection".to_owned(),
-        })?;
-        let mut transaction = client.transaction()?;
+        let mut applied = 0;
+        if !files.is_empty() {
+            let mut client = self.client().ok_or(MigrationError {
+                message: "Failed to get database connection".to_owned(),
+            })?;
+            let mut transaction = client.transaction()?;
 
-        ensure_migrations_table(&mut transaction)?;
-        applied = apply_migrations(files, &mut transaction)?;
+            ensure_migrations_table(&mut transaction)?;
+            applied = apply_migrations(files, &mut transaction)?;
 
-        transaction.commit()?;
+            transaction.commit()?;
+        }
+        Ok(applied)
     }
-    Ok(applied)
 }
 
 /// Generate a list of the migration files that we want to apply
@@ -141,6 +141,12 @@ fn apply_migrations(
     Ok(applied)
 }
 
+/// Error returned when migrating the database fails for some reason
+#[derive(Debug, PartialEq)]
+pub struct MigrationError {
+    message: String,
+}
+
 impl std::fmt::Display for MigrationError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.message)
@@ -183,9 +189,9 @@ mod tests {
     #[test]
     fn test_invalid_migrations_glob() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(Database::new(database.url).unwrap());
+        let wrapper = Database::new(database.url).unwrap();
 
-        let result = migrate(wrapper.clone(), "****");
+        let result = wrapper.migrate("****");
 
         assert_that(&result).is_err_containing(MigrationError {
             message: "Invalid glob pattern listing files: Pattern syntax error near position 2: wildcards are either regular `*` or recursive `**`".to_owned(),
@@ -201,9 +207,9 @@ mod tests {
     #[test]
     fn test_no_migrations_directory() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(Database::new(database.url).unwrap());
+        let wrapper = Database::new(database.url).unwrap();
 
-        let result = migrate(wrapper.clone(), "test_migrations/missing/**/*.sql");
+        let result = wrapper.migrate("test_migrations/missing/**/*.sql");
 
         assert_that(&result).is_ok_containing(0);
         let tables = wrapper
@@ -216,9 +222,9 @@ mod tests {
     #[test]
     fn test_no_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(Database::new(database.url).unwrap());
+        let wrapper = Database::new(database.url).unwrap();
 
-        let result = migrate(wrapper.clone(), "test_migrations/empty/**/*.sql");
+        let result = wrapper.migrate("test_migrations/empty/**/*.sql");
 
         assert_that(&result).is_ok_containing(0);
         let tables: Vec<String> = wrapper
@@ -234,9 +240,9 @@ mod tests {
     #[test]
     fn test_some_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(Database::new(database.url).unwrap());
+        let wrapper = Database::new(database.url).unwrap();
 
-        let result = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
+        let result = wrapper.migrate("test_migrations/full/**/*.sql");
 
         assert_that(&result).is_ok_containing(2);
         let tables: Vec<String> = wrapper
@@ -272,13 +278,13 @@ mod tests {
     #[test]
     fn test_some_migrations_again() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(Database::new(database.url).unwrap());
+        let wrapper = Database::new(database.url).unwrap();
 
-        let result = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
+        let result = wrapper.migrate("test_migrations/full/**/*.sql");
 
         assert_that(&result).is_ok_containing(2);
 
-        let result2 = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
+        let result2 = wrapper.migrate("test_migrations/full/**/*.sql");
 
         assert_that(&result2).is_ok_containing(0);
 
@@ -315,9 +321,9 @@ mod tests {
     #[test]
     fn test_additional_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(Database::new(database.url).unwrap());
+        let wrapper = Database::new(database.url).unwrap();
 
-        let result = migrate(wrapper.clone(), "test_migrations/full/00001-first.sql");
+        let result = wrapper.migrate("test_migrations/full/00001-first.sql");
 
         assert_that(&result).is_ok_containing(1);
 
@@ -347,7 +353,7 @@ mod tests {
         assert_that(&migrations).is_equal_to(vec!["00001-first.sql".to_owned()]);
 
         // Now run the rest of the files
-        let result2 = migrate(wrapper.clone(), "test_migrations/full/**/*.sql");
+        let result2 = wrapper.migrate("test_migrations/full/**/*.sql");
 
         assert_that(&result2).is_ok_containing(1);
 
@@ -384,9 +390,9 @@ mod tests {
     #[test]
     fn test_invalid_migrations() {
         let database = TestDatabase::new();
-        let wrapper = Arc::new(Database::new(database.url).unwrap());
+        let wrapper = Database::new(database.url).unwrap();
 
-        let result = migrate(wrapper.clone(), "test_migrations/invalid/**/*.sql");
+        let result = wrapper.migrate("test_migrations/invalid/**/*.sql");
 
         assert_that(&result).is_err_containing(MigrationError {
                 message: "Database Error performing database migration: db error: ERROR: syntax error at or near \"IM\"".to_owned(),
