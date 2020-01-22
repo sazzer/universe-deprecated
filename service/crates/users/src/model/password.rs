@@ -1,0 +1,131 @@
+use bcrypt::{hash, verify, BcryptError, DEFAULT_COST};
+use tracing::warn;
+
+/// Representation of a password that has been securely hashed
+#[derive(Debug, PartialEq, Clone)]
+pub struct Password(String);
+
+/// Enumeration of errors that can occur when hashing a password
+#[derive(Debug, PartialEq)]
+pub struct PasswordHashError {}
+
+impl std::fmt::Display for PasswordHashError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Error hashing password")
+    }
+}
+
+impl std::error::Error for PasswordHashError {}
+
+impl From<BcryptError> for PasswordHashError {
+    fn from(_: BcryptError) -> Self {
+        PasswordHashError {}
+    }
+}
+
+impl Password {
+    /// Construct a new Password instance from an already hashed string.
+    ///
+    /// # Arguments
+    /// * `hash` The hash to wrap
+    ///
+    /// # Returns
+    /// The `Password` to wrap the hash
+    #[allow(unused)]
+    pub fn from_hash<S>(hash: S) -> Password
+    where
+        S: Into<String>,
+    {
+        Password(hash.into())
+    }
+
+    /// Generate a new Password instance from an unhashed password
+    ///
+    /// # Arguments
+    /// * `plaintext` The password to hash
+    ///
+    /// # Returns
+    /// The hashed `Password` representing the provided plaintext
+    #[allow(unused)]
+    pub fn from_plaintext<S>(plaintext: S) -> Result<Password, PasswordHashError>
+    where
+        S: Into<String>,
+    {
+        let hashed = hash(plaintext.into(), DEFAULT_COST)?;
+        Ok(Password(hashed))
+    }
+
+    /// Verify if our hashed password is consistent with the provided plaintext.
+    ///
+    /// # Arguments
+    /// * `plaintext` The plaintext to compare against
+    ///
+    /// # returns
+    /// True if the provided plaintext is consistent. False if not.
+    #[allow(unused)]
+    pub fn verify<S>(&self, plaintext: S) -> bool
+    where
+        S: Into<String>,
+    {
+        match verify(plaintext.into(), &self.0) {
+            Ok(v) => v,
+            Err(e) => {
+                warn!("Error verifying password: {}", e);
+                false
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use spectral::prelude::*;
+
+    #[test]
+    fn test_hashing_simple_password() {
+        let password = Password::from_plaintext("password");
+
+        assert_that(&password)
+            .is_ok()
+            .is_not_equal_to(Password::from_hash("password"));
+    }
+
+    #[test]
+    fn test_hashing_invalid_password() {
+        let plaintext = std::str::from_utf8(&[65u8, 66u8, 0u8, 67u8, 68u8]).unwrap();
+        let password = Password::from_plaintext(plaintext);
+
+        assert_that(&password)
+            .is_err()
+            .is_equal_to(PasswordHashError {});
+    }
+
+    #[test]
+    fn test_verify_valid_password() {
+        let password = Password::from_plaintext("password").unwrap();
+        let result = password.verify("password");
+        assert_that(&result).is_equal_to(true);
+    }
+
+    #[test]
+    fn test_verify_wrong_password() {
+        let password = Password::from_plaintext("password").unwrap();
+        let result = password.verify("wrong");
+        assert_that(&result).is_equal_to(false);
+    }
+
+    #[test]
+    fn test_verify_wrong_case() {
+        let password = Password::from_plaintext("password").unwrap();
+        let result = password.verify("Password");
+        assert_that(&result).is_equal_to(false);
+    }
+
+    #[test]
+    fn test_verify_invalid_hash() {
+        let password = Password::from_hash("password_hash");
+        let result = password.verify("password_hash");
+        assert_that(&result).is_equal_to(false);
+    }
+}

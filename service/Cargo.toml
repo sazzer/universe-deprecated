@@ -3,6 +3,8 @@ members = [
   "crates/test_database_container",
   "crates/database",
   "crates/test_database_wrapper",
+  "crates/entity",
+  "crates/users",
   "crates/webapp",
   "crates/universe"
 ]
