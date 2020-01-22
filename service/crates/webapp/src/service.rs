@@ -22,7 +22,8 @@ impl Service {
 
         let rocket = rocket::custom(config)
             .manage(healthchecker)
-            .mount("/", crate::health::routes());
+            .mount("/", crate::health::routes())
+            .mount("/", crate::users::routes());
 
         Service { rocket }
     }

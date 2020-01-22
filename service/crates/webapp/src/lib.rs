@@ -2,5 +2,6 @@
 
 mod health;
 mod service;
+mod users;
 
 pub use service::Service;
