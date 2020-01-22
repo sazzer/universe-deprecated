@@ -9,3 +9,4 @@ chrono = "0.4.10"
 uuid = {version = "0.8.1", features=["serde", "v4"] }
 
 [dev-dependencies]
+spectral = "0.6.0"
