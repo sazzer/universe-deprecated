@@ -1,16 +1,16 @@
+use std::boxed::Box;
 use std::collections::HashMap;
-use std::sync::Arc;
 use universe_health::Healthcheck;
 
 /// Struct representing the way to check the health of the entire system
 pub struct Healthchecker {
-    checks: HashMap<String, Arc<dyn Healthcheck>>,
+    checks: HashMap<String, Box<dyn Healthcheck>>,
 }
 
 /// Builder to make constructing a Healthchecker wasier
 #[derive(Default)]
 pub struct HealthcheckerBuilder {
-    checks: HashMap<String, Arc<dyn Healthcheck>>,
+    checks: HashMap<String, Box<dyn Healthcheck>>,
 }
 
 impl HealthcheckerBuilder {
@@ -22,7 +22,7 @@ impl HealthcheckerBuilder {
     ///
     /// # Returns
     /// The builder again, so that it can be chained
-    pub fn add(mut self, component: &str, check: Arc<dyn Healthcheck>) -> Self {
+    pub fn add(mut self, component: &str, check: Box<dyn Healthcheck>) -> Self {
         self.checks.insert(component.to_owned(), check);
         self
     }

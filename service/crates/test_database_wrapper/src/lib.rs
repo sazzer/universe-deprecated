@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use universe_database::Database;
 use universe_test_database_container::TestDatabase;
 
@@ -6,7 +5,7 @@ use universe_test_database_container::TestDatabase;
 pub struct TestDatabaseWrapper<'d> {
     #[allow(dead_code)]
     container: TestDatabase<'d>,
-    pub wrapper: Arc<Database>,
+    pub wrapper: Database,
 }
 
 pub trait TestData {

@@ -1,4 +1,5 @@
 use rocket::{local::Client, Rocket};
+use std::boxed::Box;
 use tracing::debug;
 
 pub struct Service {
@@ -9,7 +10,8 @@ impl Service {
     pub fn new(database_url: &str, port: Option<u16>, migration_files: &str) -> Self {
         debug!("Building Universe...");
 
-        let database = universe_database::builder::new(database_url, migration_files).unwrap();
+        let database =
+            Box::new(universe_database::builder::new(database_url, migration_files).unwrap());
 
         let healthchecker = crate::health::HealthcheckerBuilder::default()
             .add("database", database)
