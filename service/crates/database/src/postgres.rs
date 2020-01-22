@@ -1,6 +1,7 @@
 use postgres::NoTls;
 use r2d2::{Pool, PooledConnection};
 use r2d2_postgres::PostgresConnectionManager;
+use std::sync::Arc;
 use tracing::{debug, error};
 
 /// Errors that can be returned when creating a Postgres Database wrapper
@@ -18,9 +19,9 @@ impl std::fmt::Display for DatabaseError {
 impl std::error::Error for DatabaseError {}
 
 /// Wrapper around a connection to the Postgres database
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Database {
-    pool: r2d2::Pool<PostgresConnectionManager<NoTls>>,
+    pool: Arc<r2d2::Pool<PostgresConnectionManager<NoTls>>>,
 }
 
 impl From<postgres::Error> for DatabaseError {
@@ -57,7 +58,9 @@ impl Database {
         let manager = PostgresConnectionManager::new(real_url.parse()?, NoTls);
         let pool = Pool::new(manager)?;
 
-        Ok(Database { pool })
+        Ok(Database {
+            pool: Arc::new(pool),
+        })
     }
 
     pub fn client(&self) -> Option<PooledConnection<PostgresConnectionManager<NoTls>>> {

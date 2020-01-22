@@ -5,13 +5,14 @@ authors = ["Graham Cox <graham@grahamcox.co.uk>"]
 edition = "2018"
 
 [dependencies]
+bcrypt = "0.6.1"
 chrono = "0.4.10"
 uuid = {version = "0.8.1", features=["serde", "v4"] }
 serde = "1.0.104"
 tracing = "0.1.12"
 
+universe_database = { path = "../database" }
 universe_entity = { path = "../entity" }
-bcrypt = "0.6.1"
 
 [dev-dependencies]
 serde_json = "1.0.44"

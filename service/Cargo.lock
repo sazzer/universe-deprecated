@@ -1884,6 +1884,7 @@ dependencies = [
  "serde_json",
  "spectral",
  "tracing",
+ "universe_database",
  "universe_entity",
  "uuid",
 ]
@@ -1900,6 +1901,7 @@ dependencies = [
  "tracing",
  "universe_database",
  "universe_health",
+ "universe_users",
 ]
 
 [[package]]
