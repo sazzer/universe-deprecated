@@ -1,3 +1,5 @@
+use bytes::BytesMut;
+use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
 use serde::Serialize;
 use std::str::FromStr;
 use uuid::Uuid;
@@ -5,7 +7,7 @@ use uuid::Uuid;
 /// Representation of a User ID of some user in the system.
 ///
 /// A User ID is any valid UUID.
-#[derive(Debug, PartialEq, Clone, Copy, Serialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, FromSql)]
 pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
@@ -68,6 +70,23 @@ impl FromStr for UserID {
         let uuid: Uuid = s.trim().parse()?;
         Ok(UserID(uuid))
     }
+}
+
+/// Allow us to pass `UserID` objects to Postgres as part of executing a database query.
+///
+/// The implementation of this trait allows objects of this type to be used directly as database
+/// binds without ever needing to extract the string from inside it.
+impl ToSql for UserID {
+    fn to_sql(
+        &self,
+        t: &Type,
+        w: &mut BytesMut,
+    ) -> Result<IsNull, Box<dyn std::error::Error + Sync + Send>> {
+        self.0.to_sql(t, w)
+    }
+
+    accepts!(UUID);
+    to_sql_checked!();
 }
 
 #[cfg(test)]

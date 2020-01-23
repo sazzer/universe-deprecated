@@ -1,10 +1,12 @@
+use bytes::BytesMut;
+use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
 use serde::Serialize;
 use std::str::FromStr;
 
 /// Representation of a username of some user in the system.
 ///
 /// A username is any valid UTF-8 string, but must not have any whitespace padding to either end.
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, FromSql)]
 pub struct Username(String);
 
 /// Errors that can happen when parsing a string into a username.
@@ -41,6 +43,23 @@ impl FromStr for Username {
             Ok(Username(trimmed.to_owned()))
         }
     }
+}
+
+/// Allow us to pass `Username` objects to Postgres as part of executing a database query.
+///
+/// The implementation of this trait allows objects of this type to be used directly as database
+/// binds without ever needing to extract the string from inside it.
+impl ToSql for Username {
+    fn to_sql(
+        &self,
+        t: &Type,
+        w: &mut BytesMut,
+    ) -> Result<IsNull, Box<dyn std::error::Error + Sync + Send>> {
+        self.0.to_sql(t, w)
+    }
+
+    accepts!(VARCHAR, TEXT);
+    to_sql_checked!();
 }
 
 #[cfg(test)]

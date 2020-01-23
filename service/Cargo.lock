@@ -1879,7 +1879,10 @@ name = "universe_users"
 version = "0.1.0"
 dependencies = [
  "bcrypt",
+ "bytes",
  "chrono",
+ "postgres",
+ "postgres-types",
  "serde 1.0.104",
  "serde_json",
  "spectral",

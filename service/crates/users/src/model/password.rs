@@ -1,8 +1,10 @@
 use bcrypt::{hash, verify, BcryptError, DEFAULT_COST};
+use bytes::BytesMut;
+use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
 use tracing::warn;
 
 /// Representation of a password that has been securely hashed
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, FromSql)]
 pub struct Password(String);
 
 /// Enumeration of errors that can occur when hashing a password
@@ -75,6 +77,23 @@ impl Password {
             }
         }
     }
+}
+
+/// Allow us to pass `Password` objects to Postgres as part of executing a database query.
+///
+/// The implementation of this trait allows objects of this type to be used directly as database
+/// binds without ever needing to extract the string from inside it.
+impl ToSql for Password {
+    fn to_sql(
+        &self,
+        t: &Type,
+        w: &mut BytesMut,
+    ) -> Result<IsNull, Box<dyn std::error::Error + Sync + Send>> {
+        self.0.to_sql(t, w)
+    }
+
+    accepts!(VARCHAR, TEXT);
+    to_sql_checked!();
 }
 
 #[cfg(test)]
