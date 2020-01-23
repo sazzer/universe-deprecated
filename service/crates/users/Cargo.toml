@@ -20,3 +20,4 @@ universe_entity = { path = "../entity" }
 [dev-dependencies]
 serde_json = "1.0.44"
 spectral = "0.6.0"
+mockall = "0.6.0"

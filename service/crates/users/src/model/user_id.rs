@@ -7,7 +7,7 @@ use uuid::Uuid;
 /// Representation of a User ID of some user in the system.
 ///
 /// A User ID is any valid UUID.
-#[derive(Debug, PartialEq, Clone, Serialize, FromSql)]
+#[derive(Debug, Default, PartialEq, Clone, Serialize, FromSql)]
 pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
