@@ -7,5 +7,14 @@
     "loginMenu": {
       "title": "Login / Register"
     }
+  },
+  "login": {
+    "start": {
+      "title": "Login / Register",
+      "submit": "Login / Register"
+    },
+    "username": {
+      "label": "Username"
+    }
   }
 }
