@@ -1,11 +1,12 @@
 import React from 'react';
+import { Header } from './header';
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   return (
-    <div>
-      Hello
-    </div>
+    <>
+      <Header />
+      <div className="container-fluid mt-3">
+      </div>
+    </>
   );
 }
-
-export default App;
