@@ -40,6 +40,23 @@ impl UserRepository for Database {
         debug!("User for ID {}: {:?}", user_id, user);
         user
     }
+
+    fn get_user_by_username(&self, username: &Username) -> Option<UserEntity> {
+        let mut client = self.client().unwrap();
+
+        let user = client
+            .query("SELECT * FROM users WHERE username = $1", &[&username])
+            .map_err(|e| {
+                warn!("Error loading user from database: {}", e);
+                e
+            })
+            .ok()
+            .filter(|rows| rows.len() > 0)
+            .and_then(|rows| rows.get(0).map(|row| row.into()));
+
+        debug!("User for username {}: {:?}", username, user);
+        user
+    }
 }
 
 #[cfg(test)]
@@ -51,7 +68,7 @@ mod tests {
     use universe_testdata::{seed, User};
 
     #[test]
-    fn test_get_unknown_user() {
+    fn test_get_unknown_user_by_id() {
         let database = TestDatabaseWrapper::new();
         let user_id: UserID = Default::default();
 
@@ -60,13 +77,49 @@ mod tests {
     }
 
     #[test]
-    fn test_get_known_user() {
+    fn test_get_known_user_by_id() {
         let database = TestDatabaseWrapper::new();
         let seeded_user: User = Default::default();
         seed(&database, vec![&seeded_user]);
 
         let user_id = UserID::from_uuid(seeded_user.user_id);
         let user = database.wrapper.get_user_by_id(&user_id);
+        assert_that(&user).is_some();
+
+        let user = user.unwrap();
+        assert_that(&user).is_equal_to(UserEntity {
+            identity: Identity {
+                id: UserID::from_uuid(seeded_user.user_id),
+                version: seeded_user.version,
+                created: seeded_user.created,
+                updated: seeded_user.updated,
+            },
+            data: UserData {
+                username: seeded_user.username.parse().unwrap(),
+                email: seeded_user.email,
+                display_name: seeded_user.display_name,
+                password: Password::from_hash(seeded_user.password),
+            },
+        });
+    }
+
+    #[test]
+    fn test_get_unknown_user_by_username() {
+        let database = TestDatabaseWrapper::new();
+        let username: Username = "testuser".parse().unwrap();
+
+        let user = database.wrapper.get_user_by_username(&username);
+        assert_that(&user).is_none();
+    }
+
+    #[test]
+    fn test_get_known_user_by_username() {
+        let database = TestDatabaseWrapper::new();
+        let seeded_user: User = Default::default();
+        seed(&database, vec![&seeded_user]);
+
+        let username: Username = seeded_user.username.parse().unwrap();
+        let user = database.wrapper.get_user_by_username(&username);
         assert_that(&user).is_some();
 
         let user = user.unwrap();

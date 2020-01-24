@@ -9,17 +9,11 @@ use std::str::FromStr;
 #[derive(Debug, PartialEq, Clone, Serialize, FromSql)]
 pub struct Username(String);
 
-/// Errors that can happen when parsing a string into a username.
-#[derive(Debug, PartialEq, Clone)]
-pub struct UsernameParseError {}
-
-impl std::fmt::Display for UsernameParseError {
+impl std::fmt::Display for Username {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error parsing username")
+        write!(f, "{}", self.0)
     }
 }
-
-impl std::error::Error for UsernameParseError {}
 
 /// Implementation of the standard `FromStr` trait to allow us to parse any String into a `Username` object
 impl FromStr for Username {
@@ -61,6 +55,18 @@ impl ToSql for Username {
     accepts!(VARCHAR, TEXT);
     to_sql_checked!();
 }
+
+/// Errors that can happen when parsing a string into a username.
+#[derive(Debug, PartialEq, Clone)]
+pub struct UsernameParseError {}
+
+impl std::fmt::Display for UsernameParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Error parsing username")
+    }
+}
+
+impl std::error::Error for UsernameParseError {}
 
 #[cfg(test)]
 mod tests {
