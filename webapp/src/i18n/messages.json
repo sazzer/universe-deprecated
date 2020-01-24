@@ -1,0 +1,11 @@
+{
+  "page": {
+    "title": "Universe"
+  },
+  "header": {
+    "toggleNavigation": "Toggle Navigation",
+    "loginMenu": {
+      "title": "Login / Register"
+    }
+  }
+}
