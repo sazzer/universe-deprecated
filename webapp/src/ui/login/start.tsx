@@ -1,6 +1,9 @@
 import React from 'react';
 import { useTranslation } from "react-i18next";
 
+/**
+ * Form rendered to collect the username to log in as.
+ */
 export const StartLoginForm: React.FC = () => {
   const { t } = useTranslation();
   return (

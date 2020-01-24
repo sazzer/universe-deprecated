@@ -4,6 +4,9 @@ import { Header } from './header';
 import { HomePage } from './homePage';
 import { LoginPage } from './login';
 
+/**
+ * The main application
+ */
 export const App: React.FC = () => {
   return (
     <Router>

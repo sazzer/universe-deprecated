@@ -1,6 +1,9 @@
 import React from 'react';
 import { LandingPage } from './landing';
 
+/**
+ * Component to represent the home page, if nothing else is seen
+ */
 export const HomePage: React.FC = () => {
   return (
     <LandingPage>

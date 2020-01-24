@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * Wrapper around landing page style pages, with an image and a sidebar
+ * @param children The child elements to render in the sidebar
+ */
 export const LandingPage: React.FC = ({ children }) => {
   return (
     <div className="row">

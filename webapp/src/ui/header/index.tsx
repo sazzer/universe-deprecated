@@ -2,6 +2,9 @@ import React from 'react';
 import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
 
+/**
+ * Component to represent the header bar of the entire page
+ */
 export const Header: React.FC = () => {
   const { t } = useTranslation();
 
