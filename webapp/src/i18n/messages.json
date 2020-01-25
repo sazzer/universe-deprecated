@@ -14,7 +14,10 @@
       "submit": "Login / Register"
     },
     "username": {
-      "label": "Username"
+      "label": "Username",
+      "errors": {
+        "required": "Please enter a username"
+      }
     }
   }
 }

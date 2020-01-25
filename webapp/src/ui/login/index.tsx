@@ -8,7 +8,7 @@ import { StartLoginForm } from './start';
 export const LoginPage: React.FC = () => {
   return (
     <LandingPage>
-      <StartLoginForm />
+      <StartLoginForm onSubmit={(username) => console.log(username)} />
     </LandingPage>
   );
 }
