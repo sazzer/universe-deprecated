@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
 import useFormal from "@kevinwolf/formal-web";
 import * as yup from "yup";
 
 export interface StartLoginFormProps {
-  onSubmit: (username: string) => void,
+  onSubmit: (username: string, known: boolean) => void,
 }
 /**
  * Form rendered to collect the username to log in as.
@@ -12,12 +12,20 @@ export interface StartLoginFormProps {
 export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation();
 
+  const [pending, setPending] = useState(false);
+
   const schema = yup.object().shape({
     username: yup.string().required(t('login.username.errors.required')),
   });
   const formal = useFormal({ username: '' }, {
     schema,
-    onSubmit: values => onSubmit(values.username),
+    onSubmit: ({ username }) => {
+      setPending(true);
+      setTimeout(() => {
+        setPending(false);
+        onSubmit(username, true);
+      }, 5000);
+    }
   });
 
   return (
@@ -33,7 +41,13 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
             {...formal.getFieldProps('username')} />
           {formal.errors.username && <div className="invalid-feedback">{formal.errors.username}</div>}
         </div>
-        <button {...formal.getSubmitButtonProps()} type="submit" className="btn btn-primary">{t('login.start.submit')}</button>
+        <button {...formal.getSubmitButtonProps()}
+          type="submit"
+          className="btn btn-primary"
+          disabled={pending || formal.getSubmitButtonProps().disabled}>
+          {pending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+          {t('login.start.submit')}
+        </button>
       </form>
     </>
   );
