@@ -17,7 +17,7 @@ export const Header: React.FC = () => {
         data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent"
         aria-expanded="false"
-        aria-label="{t('header.toggleNavigation')}">
+        aria-label={t('header.toggleNavigation')}>
         <span className="navbar-toggler-icon"></span>
       </button>
 
