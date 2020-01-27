@@ -1,7 +1,7 @@
 stages:
   - build
 
-build-webapp:
+build-service:
   stage: build
   image: rustlang/rust:nightly-slim
 
@@ -28,12 +28,29 @@ build-webapp:
     - cargo test
 
   cache:
-    key: cache-universe-webapp
+    key: universe-service
     paths:
       - service/target
       - service/.cargo
 
-build-webapp-container:
+build-webapp:
+  stage: build
+  image: node:13.7.0
+
+  before_script:
+    - cd webapp
+    - yarn install
+
+  script:
+    - yarn test
+
+
+  cache:
+    key: universe-webapp
+    paths:
+      - webapp/node_modules
+
+build-service-container:
   stage: build
   image: docker:stable
 
@@ -43,7 +60,7 @@ build-webapp-container:
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
-    IMAGE_TAG: $CI_REGISTRY/sazzer/universe/universe-webapp
+    IMAGE_TAG: $CI_REGISTRY/sazzer/universe/universe-service
 
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
