@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The Start Login View Entering a username 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+        value="testuser"
+      />
+    </div>
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
+      Login / Register
+    </button>
+  </form>
+</div>
+`;
+
+exports[`The Start Login View Rendering when not pending 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+        value=""
+      />
+    </div>
+    <button
+      class="btn btn-primary"
+      disabled=""
+      type="submit"
+    >
+      Login / Register
+    </button>
+  </form>
+</div>
+`;
+
+exports[`The Start Login View Rendering when pending 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+        value=""
+      />
+    </div>
+    <button
+      class="btn btn-primary"
+      disabled=""
+      type="submit"
+    >
+      <span
+        aria-hidden="true"
+        class="spinner-border spinner-border-sm"
+        role="status"
+      />
+      Login / Register
+    </button>
+  </form>
+</div>
+`;
+
+exports[`The Start Login Wrapper Entering a username 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+        value="testuser"
+      />
+    </div>
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
+      Login / Register
+    </button>
+  </form>
+</div>
+`;
+
+exports[`The Start Login Wrapper Initial Rendering 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+        value=""
+      />
+    </div>
+    <button
+      class="btn btn-primary"
+      disabled=""
+      type="submit"
+    >
+      Login / Register
+    </button>
+  </form>
+</div>
+`;

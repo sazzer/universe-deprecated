@@ -27,10 +27,10 @@ export const StartLoginFormView: React.FC<StartLoginFormViewProps> = ({ onSubmit
       <h3>{t('login.start.title')}</h3>
       <form {...formal.getFormProps()} data-test="startLoginForm">
         <div className="form-group" data-test="username">
-          <label htmlFor="login_username">{t('login.username.label')}</label>
+          <label htmlFor="username">{t('login.username.label')}</label>
           <input type="text"
             className={formal.errors.username ? 'form-control is-invalid' : 'form-control'}
-            id="login_username"
+            id="username"
             autoFocus
             {...formal.getFieldProps('username')} />
           {formal.errors.username && <div className="invalid-feedback">{formal.errors.username}</div>}
@@ -63,6 +63,6 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
     setTimeout(() => {
       setPending(false);
       onSubmit(username, true);
-    }, 5000);
+    }, 2000);
   }} />;
 };
