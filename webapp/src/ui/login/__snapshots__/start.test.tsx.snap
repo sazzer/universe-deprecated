@@ -35,6 +35,41 @@ exports[`The Start Login View Entering a username 1`] = `
 </div>
 `;
 
+exports[`The Start Login View Entering a whitespace-only username 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+        value="  "
+      />
+    </div>
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
+      Login / Register
+    </button>
+  </form>
+</div>
+`;
+
 exports[`The Start Login View Rendering when not pending 1`] = `
 <div>
   <h3>
@@ -106,6 +141,82 @@ exports[`The Start Login View Rendering when pending 1`] = `
         class="spinner-border spinner-border-sm"
         role="status"
       />
+      Login / Register
+    </button>
+  </form>
+</div>
+`;
+
+exports[`The Start Login View Submitting a username 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+        value="testuser"
+      />
+    </div>
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
+      Login / Register
+    </button>
+  </form>
+</div>
+`;
+
+exports[`The Start Login View Submitting a whitespace-only username 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control is-invalid"
+        error="Please enter a username"
+        id="username"
+        name="username"
+        type="text"
+        value="  "
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a username
+      </div>
+    </div>
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
       Login / Register
     </button>
   </form>

@@ -15,11 +15,13 @@ export interface StartLoginFormViewProps {
 export const StartLoginFormView: React.FC<StartLoginFormViewProps> = ({ onSubmit, pending }) => {
   const { t } = useTranslation();
   const schema = yup.object().shape({
-    username: yup.string().required(t('login.username.errors.required')),
+    username: yup.string()
+      .required(t('login.username.errors.required'))
+      .matches(/\S+/, t('login.username.errors.required')),
   });
   const formal = useFormal({ username: '' }, {
     schema,
-    onSubmit: ({ username }) => onSubmit(username),
+    onSubmit: ({ username }) => onSubmit(username.trim()),
   });
 
   return (

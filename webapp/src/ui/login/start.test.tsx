@@ -19,6 +19,36 @@ describe('The Start Login View', () => {
     fireEvent.change(getByLabelText('Username'), { target: { value: 'testuser' } });
     expect(container).toMatchSnapshot();
   });
+
+  test('Entering a whitespace-only username', () => {
+    const { container, getByLabelText } = render(<StartLoginFormView pending={false} onSubmit={() => { }} />);
+
+    fireEvent.change(getByLabelText('Username'), { target: { value: '  ' } });
+    expect(container).toMatchSnapshot();
+  });
+
+  test('Submitting a username', async () => {
+    const onSubmit = jest.fn()
+    const { container, getByLabelText, getByText } = render(<StartLoginFormView pending={false} onSubmit={onSubmit} />);
+
+    fireEvent.change(getByLabelText('Username'), { target: { value: 'testuser' } });
+    fireEvent.click(getByText('Login / Register', { selector: 'button' }));
+
+    await wait(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith('testuser');
+    expect(container).toMatchSnapshot();
+  });
+
+  test('Submitting a whitespace-only username', async () => {
+    const onSubmit = jest.fn()
+    const { container, getByLabelText, getByText } = render(<StartLoginFormView pending={false} onSubmit={onSubmit} />);
+
+    fireEvent.change(getByLabelText('Username'), { target: { value: '  ' } });
+    fireEvent.click(getByText('Login / Register', { selector: 'button' }));
+
+    await wait(() => expect(onSubmit).toHaveBeenCalledTimes(0));
+    expect(container).toMatchSnapshot();
+  });
 });
 
 describe('The Start Login Wrapper', () => {
@@ -39,6 +69,17 @@ describe('The Start Login Wrapper', () => {
     const { getByLabelText, getByText } = render(<StartLoginForm onSubmit={onSubmit} />);
 
     fireEvent.change(getByLabelText('Username'), { target: { value: 'testuser' } });
+    fireEvent.click(getByText('Login / Register', { selector: 'button' }));
+
+    await wait(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith('testuser', true);
+  });
+
+  test('Submitting a padded username', async () => {
+    const onSubmit = jest.fn()
+    const { getByLabelText, getByText } = render(<StartLoginForm onSubmit={onSubmit} />);
+
+    fireEvent.change(getByLabelText('Username'), { target: { value: '  testuser  ' } });
     fireEvent.click(getByText('Login / Register', { selector: 'button' }));
 
     await wait(() => expect(onSubmit).toHaveBeenCalledTimes(1));
