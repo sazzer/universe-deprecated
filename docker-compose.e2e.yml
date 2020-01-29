@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+    universe-e2e-postgres:
+        image: postgres:11.5-alpine
+        environment:
+            POSTGRES_DB: universe
+            POSTGRES_USER: universe
+            POSTGRES_PASSWORD: universe
+        networks:
+            - universe-e2e
+
+    universe-e2e-service:
+        build: service
+        environment:
+            - PORT=8000
+            - RUST_LOG=info,universe=debug
+            - RUST_BACKTRACE=1
+            - DATABASE_URL=postgres://universe:universe@universe-e2e-postgres:5432/universe
+        depends_on:
+            - universe-e2e-postgres
+        networks:
+            - universe-e2e
+
+    universe-e2e-webapp:
+        build: webapp
+        depends_on:
+            - universe-e2e-service
+        networks:
+            - universe-e2e
+
+    universe-e2e-selenium:
+        image: selenium/standalone-firefox:3.141.59-zinc
+        networks:
+            - universe-e2e
+
+    universe-e2e-tests:
+        build: e2e
+        environment: 
+            - DATABASE_URL=postgres://universe:universe@universe-e2e-postgres:5432/universe
+            - SERVICE_URL=http://universe-e2e-webapp/
+            - SELENIUM_REMOTE_URL=http://universe-e2e-selenium:4444/wd/hub
+            - DOCKERIZE_PARAMS=-wait http://universe-e2e-webapp -wait http://universe-e2e-service:8000/health -wait http://universe-e2e-selenium:4444
+        depends_on:
+            - universe-e2e-postgres
+            - universe-e2e-service
+            - universe-e2e-webapp
+        networks:
+            - universe-e2e
+        volumes:
+            - ./output:/universe/output
+
+networks:
+    universe-e2e:

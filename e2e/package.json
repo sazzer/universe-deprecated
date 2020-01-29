@@ -1,0 +1,33 @@
+{
+  "name": "universe-e2e",
+  "version": "1.0.0",
+  "description": "E2E Tests for Universe",
+  "main": "index.js",
+  "author": "Graham Cox <graham@grahamcox.co.uk>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf output/*",
+    "setup": "mkdirp output",
+    "run": "cucumber-js --require-module dotenv/config --require-module ts-node/register --order random -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.ts' features/**/*.feature --tags 'not @ignore' --tags 'not @wip'",
+    "format": "ts-node ./format.ts",
+    "start": "run-s -c clean setup run format",
+    "wip": "cucumber-js --require-module dotenv/config --require-module ts-node/register -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.ts' features/**/*.feature --tags @wip"
+  },
+  "dependencies": {
+    "chai": "^4.2.0",
+    "cucumber": "^6.0.5",
+    "dotenv": "^8.2.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/cucumber": "^6.0.0",
+    "cucumber-html-reporter": "^5.1.0",
+    "cucumber-pretty": "^6.0.0",
+    "mkdirp": "^0.5.1",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.0"
+  }
+}

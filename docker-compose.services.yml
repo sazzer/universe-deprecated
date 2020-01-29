@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+    universe-e2e-service:
+        image: universe-service
+
+    universe-e2e-webapp:
+        image: universe-webapp
+
+    universe-e2e-tests:
+        image: universe-e2e
+
+networks:
+    universe-e2e:
+
+
