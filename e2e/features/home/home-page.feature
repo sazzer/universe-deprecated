@@ -1,4 +1,3 @@
-@ignore
 Feature: Load the home page
 
   Scenario: Load the home page

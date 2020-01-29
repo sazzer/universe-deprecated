@@ -38,7 +38,7 @@ services:
         build: e2e
         environment: 
             - DATABASE_URL=postgres://universe:universe@universe-e2e-postgres:5432/universe
-            - SERVICE_URL=http://universe-e2e-webapp/
+            - WEBAPP_URL=http://universe-e2e-webapp/
             - SELENIUM_REMOTE_URL=http://universe-e2e-selenium:4444/wd/hub
             - DOCKERIZE_PARAMS=-wait http://universe-e2e-webapp -wait http://universe-e2e-service:8000/health -wait http://universe-e2e-selenium:4444
         depends_on:

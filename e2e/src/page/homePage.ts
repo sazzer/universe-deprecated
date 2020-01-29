@@ -1,5 +1,18 @@
-import { When } from 'cucumber';
+import { Url, PageName } from './pageModel';
+import { BasePage } from './basePage';
+import { WebElement } from 'selenium-webdriver';
 
-When('I visit the home page', async () => {
+/**
+ * Page Object representing the home page of the application
+ */
+@PageName('home page')
+@Url('/')
+export class HomePage extends BasePage {
+  constructor(baseElement: WebElement) {
+    super(baseElement);
+  }
 
-});
+  async verifyCorrectPage() {
+    return true;
+  }
+}
