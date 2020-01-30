@@ -43,13 +43,15 @@ Feature: Start Authentication
       | Username          | known |
       | Password          |       |
 
+  @wip
   Scenario: Starting authentication with an a blank username displays an error
     Given I visit the home page
     When I start logging in as ""
     Then I am displayed the Start Login page
     And the Start Login form has details:
-      | Username          | |
-    And the Start Login form has no errors
+      | Username | |
+    And the Start Login form has errors:
+      | Username | Please enter a username |
 
   Scenario: Starting authentication with an a whitespace username displays an error
     Given I visit the home page

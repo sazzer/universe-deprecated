@@ -5,7 +5,7 @@ import { WebElement } from 'selenium-webdriver';
 /**
  * Page Object representing the home page of the application
  */
-@PageName('home page')
+@PageName('home')
 @Url('/')
 export class HomePage extends BasePage {
   constructor(baseElement: WebElement) {

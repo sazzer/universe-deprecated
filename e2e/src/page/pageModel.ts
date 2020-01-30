@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { When } from 'cucumber';
+import { When, Then } from 'cucumber';
 import { WebElement, By } from 'selenium-webdriver';
 import { expect } from 'chai';
 
@@ -24,7 +24,7 @@ export function PageName(name: string) {
   return function <T extends PageModel>(constructor: PageModelConstructor<T>) {
     LOG('Building page steps with name "%s" for page model: %o', name, constructor);
 
-    When(`I visit the ${name}`, async function() {
+    When(`I visit the ${name} page`, async function() {
       LOG('Visiting page: %o', constructor);
 
       const page = await this.browser.newPageModel(constructor);
@@ -35,6 +35,15 @@ export function PageName(name: string) {
 
       const correctPage = await page.verifyCorrectPage();
       expect(correctPage, `Visiting page [${name}]`).to.be.true;
+    });
+
+    Then(`I am displayed the ${name} page`, async function() {
+      LOG('Checking if current page matches: %o', constructor);
+
+      const page = await this.browser.newPageModel(constructor);
+
+      const correctPage = await page.verifyCorrectPage();
+      expect(correctPage, `Check current page [${name}]`).to.be.true;
     });
   }
 }
@@ -49,6 +58,13 @@ export class BasePageModel {
 
   constructor(baseElement: WebElement) {
     this._baseElement = baseElement;
+  }
+
+  /**
+   * Get the base element for the page model
+   */
+  protected get baseElement() {
+    return this._baseElement;
   }
 
   /**

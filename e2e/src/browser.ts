@@ -1,4 +1,4 @@
-import { Builder, WebDriver, WebElement, By } from 'selenium-webdriver';
+import { Builder, WebDriver, By } from 'selenium-webdriver';
 import { AfterAll } from 'cucumber';
 import debug from 'debug';
 import { PageModelConstructor, PageModel } from './page/pageModel';

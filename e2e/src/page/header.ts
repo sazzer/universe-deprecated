@@ -15,4 +15,12 @@ export class HeaderPageModel extends BasePageModel {
     const loginLinkPresent = await loginLink.isDisplayed();
     return !loginLinkPresent;
   }
+
+  /**
+   * Start the login process
+   */
+  async startLogin() {
+    const loginLink = await this.findElement(By.css('a.nav-link[href="/login"]'));
+    await loginLink.click();
+  }
 }
