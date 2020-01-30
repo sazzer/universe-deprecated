@@ -1,6 +1,6 @@
-@ignore
 Feature: Start Authentication
 
+  @ignore
   Scenario: Starting authentication with an unknown user displays the Register User form
     Given I visit the home page
     When I start logging in as "unknown"
@@ -12,6 +12,7 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
+  @ignore
   Scenario: Starting authentication with an unknown user displays the Register User form - username is padded
     Given I visit the home page
     When I start logging in as "  unknown  "
@@ -23,6 +24,7 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
+  @ignore
   Scenario: Starting authentication with a known user displays the Login User form
     Given a user exists with details:
       | Username | known |
@@ -33,6 +35,7 @@ Feature: Start Authentication
       | Username          | known |
       | Password          |       |
 
+  @ignore
   Scenario: Starting authentication with a known user displays the Login User form - username is padded
     Given a user exists with details:
       | Username | known |
@@ -43,7 +46,6 @@ Feature: Start Authentication
       | Username          | known |
       | Password          |       |
 
-  @wip
   Scenario: Starting authentication with an a blank username displays an error
     Given I visit the home page
     When I start logging in as ""
@@ -58,10 +60,11 @@ Feature: Start Authentication
     When I start logging in as "  "
     Then I am displayed the Start Login page
     And the Start Login form has details:
-      | Username          | |
+      | Username          | {space}{space} |
     And the Start Login form has errors:
       | Username | Please enter a username |
 
+  @ignore
   Scenario Outline: Starting authentication with an unknown user displays the Register User form - username uses nasty characters: <Input>
     Given I visit the home page
     When I start logging in as "<Input>"
@@ -80,6 +83,7 @@ Feature: Start Authentication
       | <b>hello</b> | <b>hello</b> |
       | \"quoted\"   | "quoted"     |
 
+  @ignore
   Scenario Outline: Starting authentication with a known user displays the Login User form - username uses nasty characters: <Input>
     Given a user exists with details:
       | Username | <Expected> |

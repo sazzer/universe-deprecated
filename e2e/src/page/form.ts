@@ -3,6 +3,7 @@ import { WebElement, By } from 'selenium-webdriver';
 import { expect } from 'chai';
 import { Then, TableDefinition } from 'cucumber';
 import debug from 'debug';
+import { processObject } from '../table';
 
 const LOG = debug('universe:e2e:form');
 
@@ -175,7 +176,7 @@ export function FormPage(name: string) {
       const values = await form.getAllValues();
 
       const expected = dataTable.rowsHash();
-      expect(values).to.contain(expected);
+      expect(values).to.contain(processObject(expected));
     });
 
     Then(`the ${name} form has errors:`, async function(dataTable: TableDefinition) {
@@ -184,7 +185,7 @@ export function FormPage(name: string) {
       const values = await form.getAllErrors();
 
       const expected = dataTable.rowsHash();
-      expect(values).to.contain(expected);
+      expect(values).to.contain(processObject(expected));
     });
   }
 }
