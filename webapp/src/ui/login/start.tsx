@@ -37,10 +37,9 @@ export const StartLoginFormView: React.FC<StartLoginFormViewProps> = ({ onSubmit
             {...formal.getFieldProps('username')} />
           {formal.errors.username && <div className="invalid-feedback">{formal.errors.username}</div>}
         </div>
-        <button {...formal.getSubmitButtonProps()}
-          type="submit"
+        <button type="submit"
           className="btn btn-primary"
-          disabled={pending || formal.getSubmitButtonProps().disabled}>
+          disabled={pending}>
           {pending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
           {t('login.start.submit')}
         </button>

@@ -97,7 +97,6 @@ exports[`The Start Login View Rendering when not pending 1`] = `
     </div>
     <button
       class="btn btn-primary"
-      disabled=""
       type="submit"
     >
       Login / Register
@@ -285,7 +284,6 @@ exports[`The Start Login Wrapper Initial Rendering 1`] = `
     </div>
     <button
       class="btn btn-primary"
-      disabled=""
       type="submit"
     >
       Login / Register
