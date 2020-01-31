@@ -16,9 +16,11 @@ async function getWebDriver() {
   if (_driver === undefined) {
     LOG('Creating new Web Driver');
     _driver = await new Builder()
-      .forBrowser('firefox')
+      .forBrowser('chrome')
       .build();
+    _driver.manage().setTimeouts({ implicit: 20000, pageLoad: 10000 });
   }
+
   return _driver;
 }
 
@@ -72,7 +74,7 @@ export class Browser {
    */
   async newPageModel<T extends PageModel>(constructor: PageModelConstructor<T>): Promise<T> {
     const driver = await getWebDriver();
-    const baseElement = await driver.findElement(By.tagName("body"));
+    const baseElement = await driver.wait(() => driver.findElement(By.tagName("body")));
     return new constructor(baseElement);
   }
 

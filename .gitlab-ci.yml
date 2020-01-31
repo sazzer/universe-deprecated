@@ -1,6 +1,7 @@
 stages:
   - build
   - e2e
+  - deploy
 
 build-service:
   stage: build
@@ -31,7 +32,6 @@ build-service:
   cache:
     key: universe-service
     paths:
-      - service/target
       - service/.cargo
 
 build-webapp:
@@ -44,12 +44,16 @@ build-webapp:
 
   script:
     - yarn test
-
+    - yarn build
 
   cache:
     key: universe-webapp
     paths:
       - webapp/node_modules
+
+  artifacts:
+    paths:
+      - webapp/build
 
 build-service-container:
   stage: build
@@ -155,3 +159,51 @@ run-e2e:
       - output/*
     when: always
 
+deploy-webapp:
+  stage: deploy
+  image: node:13.7.0
+
+  only:
+    refs:
+      - rustspa
+
+  variables:
+    NETLIFY_SITE_ID: 5d660fa7-9244-4b03-84d5-9a7fdf547b65
+    SERVICE_URL: https://universe-cd.herokuapp.com/
+
+  before_script:
+    - npm install -g netlify-cli
+    - apt-get update && apt-get install -y gettext-base
+    - cd webapp
+
+  script:
+    - cat ./build/config.js.template | envsubst > ./build/config.js
+    - |-
+      netlify deploy --prod --dir=build --site=$NETLIFY_SITE_ID -m "CI Deploy: $CI_PIPELINE_ID"
+
+deploy-service:
+  stage: deploy
+  image: docker:stable
+  services:
+    - docker:19.03.0-dind
+
+  only:
+    refs:
+      - rustspa
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    SOURCE_TAG: $CI_REGISTRY/sazzer/universe/universe-service
+    TARGET_APP: universe-cd
+
+  before_script:
+    - docker pull $SOURCE_TAG:latest-$CI_COMMIT_REF_SLUG
+    - apk add --no-cache curl
+  script:
+    - docker login --username=graham@grahamcox.co.uk --password=$HEROKU_API_KEY registry.heroku.com
+    - docker tag $SOURCE_TAG:latest-$CI_COMMIT_REF_SLUG registry.heroku.com/$TARGET_APP/web
+    - docker push registry.heroku.com/$TARGET_APP/web
+    - docker inspect registry.heroku.com/$TARGET_APP/web:latest --format={{.Id}} > /tmp/imageid
+    - |-
+      curl -X PATCH https://api.heroku.com/apps/$TARGET_APP/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --user graham@grahamcox.co.uk:${HEROKU_API_KEY} --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat /tmp/imageid)'" } ] }'

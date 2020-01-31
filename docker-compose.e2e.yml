@@ -32,7 +32,7 @@ services:
             - universe-e2e
 
     universe-e2e-selenium:
-        image: selenium/standalone-firefox:3.141.59-zinc
+        image: selenium/standalone-chrome:latest
         networks:
             - universe-e2e
 
@@ -42,6 +42,7 @@ services:
             - DATABASE_URL=postgres://universe:universe@universe-e2e-postgres:5432/universe
             - WEBAPP_URL=http://universe-e2e-webapp/
             - SELENIUM_REMOTE_URL=http://universe-e2e-selenium:4444/wd/hub
+            - SELENIUM_BROWSER=chrome
             - DOCKERIZE_PARAMS=-wait http://universe-e2e-webapp -wait http://universe-e2e-service/health -wait http://universe-e2e-selenium:4444
         depends_on:
             - universe-e2e-postgres

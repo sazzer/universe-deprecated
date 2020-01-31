@@ -47,7 +47,10 @@ export class ProblemResponse<T extends Problem> {
  * Build an API requester to make API calls with
  */
 export async function request<T>(request: Request): Promise<Response<T>> {
-  const serviceUrl = process.env.REACT_APP_SERVICE_URL || ((window || {})._UNIVERSE_CONFIG || {}).serviceUrl;
+  let serviceUrl = process.env.REACT_APP_SERVICE_URL;
+  if (window && window._UNIVERSE_CONFIG && window._UNIVERSE_CONFIG.serviceUrl) {
+    serviceUrl = window._UNIVERSE_CONFIG.serviceUrl;
+  }
 
   const template = rfc6570.init(request.url);
   const expandedUri = template.expand(request.urlParams || {});
