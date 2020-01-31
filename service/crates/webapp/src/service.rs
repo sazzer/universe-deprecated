@@ -1,4 +1,5 @@
 use rocket::{local::Client, Rocket};
+use rocket_cors::CorsOptions;
 use std::boxed::Box;
 use tracing::debug;
 
@@ -21,7 +22,9 @@ impl Service {
             config.port = port_number;
         }
 
+        let cors: CorsOptions = Default::default();
         let rocket = rocket::custom(config)
+            .attach(cors.to_cors().unwrap())
             .manage(healthchecker)
             .manage(Box::new(universe_users::new_user_service(database.clone()))
                 as Box<dyn universe_users::UserService>)

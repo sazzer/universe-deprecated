@@ -11,6 +11,14 @@ COPY ./public /universe/public
 RUN yarn build
 
 FROM nginx:1.17.8-alpine
+RUN set -x && \
+    apk add --update libintl && \
+    apk add --virtual build_deps gettext &&  \
+    cp /usr/bin/envsubst /usr/local/bin/envsubst && \
+    apk del build_deps
+
 COPY --from=builder /universe/build /usr/share/nginx/html
+COPY docker/start.sh /start.sh
+
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/start.sh"]

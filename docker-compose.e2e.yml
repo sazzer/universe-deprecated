@@ -13,7 +13,7 @@ services:
     universe-e2e-service:
         build: service
         environment:
-            - PORT=8000
+            - PORT=80
             - RUST_LOG=info,universe=debug
             - RUST_BACKTRACE=1
             - DATABASE_URL=postgres://universe:universe@universe-e2e-postgres:5432/universe
@@ -24,6 +24,8 @@ services:
 
     universe-e2e-webapp:
         build: webapp
+        environment: 
+            - SERVICE_URL=http://universe-e2e-service
         depends_on:
             - universe-e2e-service
         networks:
@@ -40,7 +42,7 @@ services:
             - DATABASE_URL=postgres://universe:universe@universe-e2e-postgres:5432/universe
             - WEBAPP_URL=http://universe-e2e-webapp/
             - SELENIUM_REMOTE_URL=http://universe-e2e-selenium:4444/wd/hub
-            - DOCKERIZE_PARAMS=-wait http://universe-e2e-webapp -wait http://universe-e2e-service:8000/health -wait http://universe-e2e-selenium:4444
+            - DOCKERIZE_PARAMS=-wait http://universe-e2e-webapp -wait http://universe-e2e-service/health -wait http://universe-e2e-selenium:4444
         depends_on:
             - universe-e2e-postgres
             - universe-e2e-service
