@@ -4,16 +4,17 @@ import useFormal from "@kevinwolf/formal-web";
 import * as yup from "yup";
 
 /** Shape of the properties required for the Start Login Form view */
-export interface StartLoginFormViewProps {
+export interface StartLoginFormProps {
   onSubmit: (username: string) => void,
-  pending: boolean,
 }
 
 /**
  * Render the view for the Start Login Form
  */
-export const StartLoginFormView: React.FC<StartLoginFormViewProps> = ({ onSubmit, pending }) => {
+export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation();
+  const [pending, setPending] = useState(false);
+
   const schema = yup.object().shape({
     username: yup.string()
       .required(t('login.username.errors.required'))
@@ -21,7 +22,10 @@ export const StartLoginFormView: React.FC<StartLoginFormViewProps> = ({ onSubmit
   });
   const formal = useFormal({ username: '' }, {
     schema,
-    onSubmit: ({ username }) => onSubmit(username.trim()),
+    onSubmit: ({ username }) => {
+      setPending(true);
+      onSubmit(username.trim());
+    },
   });
 
   return (
@@ -46,24 +50,4 @@ export const StartLoginFormView: React.FC<StartLoginFormViewProps> = ({ onSubmit
       </form>
     </>
   );
-}
-
-/** Shape of the properties for the Start Login Form */
-export interface StartLoginFormProps {
-  onSubmit: (username: string, known: boolean) => void,
-}
-
-/**
- * Form rendered to collect the username to log in as.
- */
-export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
-  const [pending, setPending] = useState(false);
-
-  return <StartLoginFormView pending={pending} onSubmit={(username) => {
-    setPending(true);
-    setTimeout(() => {
-      setPending(false);
-      onSubmit(username, true);
-    }, 2000);
-  }} />;
 };

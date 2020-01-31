@@ -16,8 +16,8 @@ export const LoginPage: React.FC = () => {
 
   let body;
   if (usernameState === undefined) {
-    body = <StartLoginForm onSubmit={(username, known) => {
-      setUsernameState({ username, known });
+    body = <StartLoginForm onSubmit={(username) => {
+      setUsernameState({ username, known: true });
     }} />;
   } else if (usernameState.known) {
     body = "Log in as: " + usernameState.username;

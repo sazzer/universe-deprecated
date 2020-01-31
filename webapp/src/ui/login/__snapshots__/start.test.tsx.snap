@@ -105,7 +105,7 @@ exports[`The Start Login View Rendering when not pending 1`] = `
 </div>
 `;
 
-exports[`The Start Login View Rendering when pending 1`] = `
+exports[`The Start Login View Submitting a blank username 1`] = `
 <div>
   <h3>
     Login / Register
@@ -123,23 +123,23 @@ exports[`The Start Login View Rendering when pending 1`] = `
         Username
       </label>
       <input
-        class="form-control"
+        class="form-control is-invalid"
+        error="Please enter a username"
         id="username"
         name="username"
         type="text"
         value=""
       />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a username
+      </div>
     </div>
     <button
       class="btn btn-primary"
-      disabled=""
       type="submit"
     >
-      <span
-        aria-hidden="true"
-        class="spinner-border spinner-border-sm"
-        role="status"
-      />
       Login / Register
     </button>
   </form>
@@ -173,8 +173,14 @@ exports[`The Start Login View Submitting a username 1`] = `
     </div>
     <button
       class="btn btn-primary"
+      disabled=""
       type="submit"
     >
+      <span
+        aria-hidden="true"
+        class="spinner-border spinner-border-sm"
+        role="status"
+      />
       Login / Register
     </button>
   </form>
@@ -211,76 +217,6 @@ exports[`The Start Login View Submitting a whitespace-only username 1`] = `
       >
         Please enter a username
       </div>
-    </div>
-    <button
-      class="btn btn-primary"
-      type="submit"
-    >
-      Login / Register
-    </button>
-  </form>
-</div>
-`;
-
-exports[`The Start Login Wrapper Entering a username 1`] = `
-<div>
-  <h3>
-    Login / Register
-  </h3>
-  <form
-    data-test="startLoginForm"
-  >
-    <div
-      class="form-group"
-      data-test="username"
-    >
-      <label
-        for="username"
-      >
-        Username
-      </label>
-      <input
-        class="form-control"
-        id="username"
-        name="username"
-        type="text"
-        value="testuser"
-      />
-    </div>
-    <button
-      class="btn btn-primary"
-      type="submit"
-    >
-      Login / Register
-    </button>
-  </form>
-</div>
-`;
-
-exports[`The Start Login Wrapper Initial Rendering 1`] = `
-<div>
-  <h3>
-    Login / Register
-  </h3>
-  <form
-    data-test="startLoginForm"
-  >
-    <div
-      class="form-group"
-      data-test="username"
-    >
-      <label
-        for="username"
-      >
-        Username
-      </label>
-      <input
-        class="form-control"
-        id="username"
-        name="username"
-        type="text"
-        value=""
-      />
     </div>
     <button
       class="btn btn-primary"
