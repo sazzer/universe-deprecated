@@ -5,7 +5,7 @@ import * as yup from "yup";
 
 /** Shape of the properties required for the Start Login Form view */
 export interface StartLoginFormProps {
-  onSubmit: (username: string) => void,
+  onSubmit: (username: string) => Promise<void>,
 }
 
 /**
@@ -14,6 +14,7 @@ export interface StartLoginFormProps {
 export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation();
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState('');
 
   const schema = yup.object().shape({
     username: yup.string()
@@ -22,12 +23,30 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   });
   const formal = useFormal({ username: '' }, {
     schema,
-    onSubmit: ({ username }) => {
+    onSubmit: async ({ username }) => {
       setPending(true);
-      onSubmit(username.trim());
+      setError('');
+      try {
+        await onSubmit(username.trim());
+      } catch (e) {
+        setPending(false);
+        setError(e.toString());
+      }
     },
   });
 
+  let errorMessage;
+  if (error) {
+    errorMessage = (
+      <div className="form-group">
+        <div className="alert alert-danger" role="alert">
+          {t('errors.unexpected', {
+            message: error,
+          })}
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <h3>{t('login.start.title')}</h3>
@@ -41,12 +60,15 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
             {...formal.getFieldProps('username')} />
           {formal.errors.username && <div className="invalid-feedback">{formal.errors.username}</div>}
         </div>
-        <button type="submit"
-          className="btn btn-primary"
-          disabled={pending}>
-          {pending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
-          {t('login.start.submit')}
-        </button>
+        <div className="form-group">
+          <button type="submit"
+            className="btn btn-primary"
+            disabled={pending}>
+            {pending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+            {t('login.start.submit')}
+          </button>
+        </div>
+        {errorMessage}
       </form>
     </>
   );

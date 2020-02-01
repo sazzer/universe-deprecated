@@ -19,5 +19,8 @@
         "required": "Please enter a username"
       }
     }
+  },
+  "errors": {
+    "unexpected": "An unexpected error occurred: {{message}}"
   }
 }

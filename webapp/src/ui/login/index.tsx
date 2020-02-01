@@ -27,10 +27,10 @@ export const LoginPage: React.FC = () => {
 
       setUsernameState({ username, known: true });
     } catch (e) {
-      if (e instanceof ProblemResponse) {
-        if (e.problem.type === 'tag:universe,2020:users/problems/unknown-user') {
-          setUsernameState({ username, known: false });
-        }
+      if (e instanceof ProblemResponse && e.problem.type === 'tag:universe,2020:users/problems/unknown-user') {
+        setUsernameState({ username, known: false });
+      } else {
+        throw e;
       }
     }
   };
