@@ -34,27 +34,6 @@ build-service:
     paths:
       - service/.cargo
 
-build-webapp:
-  stage: build
-  image: node:13.7.0
-
-  before_script:
-    - cd webapp
-    - yarn install
-
-  script:
-    - yarn test
-    - yarn build
-
-  cache:
-    key: universe-webapp
-    paths:
-      - webapp/node_modules
-
-  artifacts:
-    paths:
-      - webapp/build
-
 build-service-container:
   stage: build
   image: docker:stable
@@ -77,6 +56,27 @@ build-service-container:
     - docker build -t $IMAGE_TAG:latest-$CI_COMMIT_REF_SLUG --cache-from $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG .
     - docker push $IMAGE_TAG:builder-$CI_COMMIT_REF_SLUG
     - docker push $IMAGE_TAG:latest-$CI_COMMIT_REF_SLUG
+
+build-webapp:
+  stage: build
+  image: node:13.7.0
+
+  before_script:
+    - cd webapp
+    - yarn install
+
+  script:
+    - yarn test
+    - yarn build
+
+  cache:
+    key: universe-webapp
+    paths:
+      - webapp/node_modules
+
+  artifacts:
+    paths:
+      - webapp/build
 
 build-webapp-container:
   stage: build

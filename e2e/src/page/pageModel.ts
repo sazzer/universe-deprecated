@@ -2,21 +2,22 @@ import debug from 'debug';
 import { When, Then } from 'cucumber';
 import { WebElement, By } from 'selenium-webdriver';
 import { expect } from 'chai';
+import { wait } from '../browser';
 
-const LOG = debug('universe:e2e:basePage');
+const LOG = debug('universe:e2e:pageModel');
 
 export interface PageModel {
-  url?: string;
   verifyCorrectPage(): Promise<boolean>;
 }
 
 export interface PageModelConstructor<T extends PageModel> {
+  universeUrl?: string;
   new(driver: WebElement): T
 }
 
 export function Url(url: string) {
   return function <T extends PageModel>(constructor: PageModelConstructor<T>) {
-    constructor.prototype.url = url;
+    constructor.universeUrl = url;
   }
 }
 
@@ -25,13 +26,13 @@ export function PageName(name: string) {
     LOG('Building page steps with name "%s" for page model: %o', name, constructor);
 
     When(`I visit the ${name} page`, async function() {
-      LOG('Visiting page: %o', constructor);
+      LOG('Visiting page model: %o', constructor);
+
+      if (constructor.universeUrl) {
+        await this.browser.visitPage(constructor.universeUrl);
+      }
 
       const page = await this.browser.newPageModel(constructor);
-
-      if (page.url) {
-        this.browser.visitPage(page.url);
-      }
 
       const correctPage = await page.verifyCorrectPage();
       expect(correctPage, `Visiting page [${name}]`).to.be.true;
@@ -73,6 +74,9 @@ export class BasePageModel {
    * @return    The element that was found
    */
   protected async findElement(by: By) {
-    return this._baseElement.findElement(by);
+    return await wait(async () => {
+      await this._baseElement.isDisplayed();
+      return await this._baseElement.findElement(by);
+    });
   }
 }

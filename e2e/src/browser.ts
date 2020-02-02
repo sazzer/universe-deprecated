@@ -1,4 +1,4 @@
-import { Builder, WebDriver, By } from 'selenium-webdriver';
+import { Builder, WebDriver, WebElement, By } from 'selenium-webdriver';
 import { AfterAll } from 'cucumber';
 import debug from 'debug';
 import { PageModelConstructor, PageModel } from './page/pageModel';
@@ -24,7 +24,13 @@ async function getWebDriver() {
   return _driver;
 }
 
-
+/**
+ * Wrap a call to look up a web element in a Selenium explicit wait
+ */
+export async function wait(condition: () => Promise<WebElement>): Promise<WebElement> {
+  const driver = await getWebDriver();
+  return await driver.wait(condition);
+}
 /**
  * Destroy the browser so that we can start fresh next time
  */
@@ -74,7 +80,7 @@ export class Browser {
    */
   async newPageModel<T extends PageModel>(constructor: PageModelConstructor<T>): Promise<T> {
     const driver = await getWebDriver();
-    const baseElement = await driver.wait(() => driver.findElement(By.tagName("body")));
+    const baseElement = await driver.wait(() => driver.findElement(By.id("root")));
     return new constructor(baseElement);
   }
 
