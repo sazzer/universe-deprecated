@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LandingPage } from '../landing';
 import { StartLoginForm } from './start';
+import { RegisterForm } from './register';
 import { request, ProblemResponse } from '../../api';
 
 /** The shape of the state for the username */
@@ -14,6 +15,10 @@ interface UsernameState {
  */
 export const LoginPage: React.FC = () => {
   let [usernameState, setUsernameState] = useState<UsernameState | undefined>();
+
+  let onCancel = () => {
+    setUsernameState(undefined);
+  };
 
   let resolveUsername = async (username: string) => {
     try {
@@ -41,7 +46,7 @@ export const LoginPage: React.FC = () => {
   } else if (usernameState.known) {
     body = "Log in as: " + usernameState.username;
   } else {
-    body = "Register as: " + usernameState.username;
+    body = <RegisterForm onSubmit={resolveUsername} onCancel={onCancel} username={usernameState.username} />
   }
 
   return (

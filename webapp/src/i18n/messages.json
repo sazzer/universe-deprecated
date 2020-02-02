@@ -13,10 +13,41 @@
       "title": "Login / Register",
       "submit": "Login / Register"
     },
+    "register": {
+      "title": "Register",
+      "submit": "Register",
+      "cancel": "Cancel"
+    },
     "username": {
       "label": "Username",
       "errors": {
         "required": "Please enter a username"
+      }
+    },
+    "email": {
+      "label": "Email Address",
+      "errors": {
+        "required": "Please enter an email address",
+        "email": "Please enter a valid email address"
+      }
+    },
+    "displayName": {
+      "label": "Display Name",
+      "errors": {
+        "required": "Please enter a display name"
+      }
+    },
+    "password": {
+      "label": "Password",
+      "errors": {
+        "required": "Please enter a password"
+      }
+    },
+    "password2": {
+      "label": "Repeat Password",
+      "errors": {
+        "required": "Please re-enter the password",
+        "different": "Passwords do not match"
       }
     }
   },

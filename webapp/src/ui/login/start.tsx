@@ -19,7 +19,7 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   const schema = yup.object().shape({
     username: yup.string()
       .required(t('login.username.errors.required'))
-      .matches(/\S+/, t('login.username.errors.required')),
+      .trim(),
   });
   const formal = useFormal({ username: '' }, {
     schema,
