@@ -10,7 +10,7 @@ fn test_get_unknown_user() {
     let mut response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
-    404
+    HTTP/1.1 404 .
     Content-Type: application/problem+json
     Server: Rocket
     "###);
@@ -38,7 +38,7 @@ fn test_get_known_user() {
     let response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
-    204
+    HTTP/1.1 204 No Content.
     Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="canonical"
     Server: Rocket
     "###);
@@ -59,7 +59,7 @@ fn test_get_known_user_different_case() {
     let response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
-    204
+    HTTP/1.1 204 No Content.
     Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="canonical"
     Server: Rocket
     "###);

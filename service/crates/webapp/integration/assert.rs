@@ -6,7 +6,13 @@ use std::fmt::Write;
 /// Build the headers that have come out of a response so that they can be asserted on
 pub fn build_headers(response: &LocalResponse) -> String {
     let mut output = String::new();
-    writeln!(output, "{}", response.status().code).unwrap();
+    writeln!(
+        output,
+        "HTTP/1.1 {} {}.", // Bit icky, but the "." means there's no trailing space
+        response.status().code,
+        response.status().reason
+    )
+    .unwrap();
 
     let headers = response.headers().clone();
     for header in headers.iter() {

@@ -9,7 +9,7 @@ fn test_health() {
     let mut response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
-    200
+    HTTP/1.1 200 OK.
     Content-Type: application/json
     Server: Rocket
     "###);

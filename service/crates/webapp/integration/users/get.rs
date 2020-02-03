@@ -12,7 +12,7 @@ fn test_get_unknown_user() {
     let mut response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
-    404
+    HTTP/1.1 404 .
     Content-Type: application/problem+json
     Server: Rocket
     "###);
@@ -44,7 +44,7 @@ fn test_get_known_user() {
     let mut response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
-    200
+    HTTP/1.1 200 OK.
     Content-Type: application/json
     Server: Rocket
     "###);
