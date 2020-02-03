@@ -1,10 +1,10 @@
 Feature: Start Authentication
 
-  @ignore
   Scenario: Starting authentication with an unknown user displays the Register User form
     Given I visit the home page
     When I start logging in as "unknown"
     Then I am displayed the Register User page
+    And the Register User form has no errors
     And the Register User form has details:
       | Username          | unknown |
       | Email Address     |         |
@@ -12,11 +12,11 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
-  @ignore
   Scenario: Starting authentication with an unknown user displays the Register User form - username is padded
     Given I visit the home page
     When I start logging in as "  unknown  "
     Then I am displayed the Register User page
+    And the Register User form has no errors
     And the Register User form has details:
       | Username          | unknown |
       | Email Address     |         |
@@ -64,7 +64,6 @@ Feature: Start Authentication
     And the Start Login form has errors:
       | Username | Please enter a username |
 
-  @ignore
   Scenario Outline: Starting authentication with an unknown user displays the Register User form - username uses nasty characters: <Input>
     Given I visit the home page
     When I start logging in as "<Input>"
@@ -82,6 +81,19 @@ Feature: Start Authentication
       | Snow☃man     | Snow☃man     |
       | <b>hello</b> | <b>hello</b> |
       | \"quoted\"   | "quoted"     |
+      | First/Half   | First/Half   |
+
+    Examples: UTF-8 Test data
+      | Input             | Expected          |
+      | κόσμε             | κόσμε             |
+      | Δημοσθένους       | Δημοσθένους       |
+      | გთხოვთ            | გთხოვთ            |
+      | Десятую           | Десятую           |
+      | พลันลิฉุยกุยกีกลับก่อเหตุ | พลันลิฉุยกุยกีกลับก่อเหตุ |
+      | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ        | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ        |
+      | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌      | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌     |
+      | אודות הקונסורציום | אודות הקונסורציום |
+
 
   @ignore
   Scenario Outline: Starting authentication with a known user displays the Login User form - username uses nasty characters: <Input>

@@ -16,7 +16,10 @@ export function processValue(input: string): string {
 export function processObject(input: { [key: string]: string }): { [key: string]: string } {
   const result: { [key: string]: string } = {};
   Object.keys(input).forEach(key => {
-    result[key] = processValue(input[key]);
+    const inputValue = input[key];
+    if (inputValue) {
+      result[key] = processValue(inputValue);
+    }
   });
   return result;
 }

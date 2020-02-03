@@ -32,7 +32,7 @@ export class FormModel extends BasePageModel {
    * @param  value The new value for the field
    */
   async setField(name: string, value: string) {
-    LOG('Setting field %s to value %s', name, value);
+    LOG('Setting field %s to value "%s"', name, value);
     expect(this._fields).to.haveOwnProperty(name);
 
     const fieldDefinition = this._fields[name];
@@ -76,6 +76,15 @@ export class FormModel extends BasePageModel {
     }
 
     return result;
+  }
+
+  /**
+   * Set all of the values on the form
+   */
+  async setAllValues(input: { [name: string]: string }) {
+    for (const name of Object.keys(input)) {
+      await this.setField(name, input[name]);
+    }
   }
 
   /**
@@ -177,6 +186,13 @@ export function FormPage(name: string) {
 
       const expected = dataTable.rowsHash();
       expect(values).to.contain(processObject(expected));
+    });
+
+    Then(`the ${name} form has no errors`, async function() {
+      const page = await this.browser.newPageModel(constructor);
+      const form = await page.getForm();
+      const values = await form.getAllErrors();
+      expect(values).to.be.empty;
     });
 
     Then(`the ${name} form has errors:`, async function(dataTable: TableDefinition) {
