@@ -32,7 +32,7 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
     setPending(true);
     setError('');
     try {
-      await onSubmit(data.username.trim());
+      await onSubmit(data.username);
     } catch (e) {
       setPending(false);
       setError(e.toString());

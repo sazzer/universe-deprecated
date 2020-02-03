@@ -6,7 +6,7 @@ import * as yup from "yup";
 /** Shape of the properties required for the Register Form view */
 export interface RegisterFormProps {
   username: string,
-  onSubmit: (username: string) => Promise<void>,
+  onSubmit: (username: string, email: string, displayName: string, password: string) => Promise<void>,
   onCancel: () => void,
 }
 
@@ -22,7 +22,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
     setPending(true);
     setError('');
     try {
-      await onSubmit(username.trim());
+      await onSubmit(data.username,
+        data.email,
+        data.displayName,
+        data.password);
     } catch (e) {
       setPending(false);
       setError(e.toString());
@@ -42,14 +45,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
         .required(t('login.displayName.errors.required'))
         .trim(),
       password: yup.string()
-        .required(t('login.password.errors.required'))
-        .trim(),
+        .required(t('login.password.errors.required')),
       password2: yup.string()
         .required(t('login.password2.errors.required'))
         .when(['password'], (password: string, schema: any) => {
           return schema.oneOf([password], t('login.password2.errors.different'));
-        })
-        .trim(),
+        }),
     }),
     validateCriteriaMode: 'all',
     defaultValues: {
