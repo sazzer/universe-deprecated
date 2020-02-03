@@ -45,7 +45,10 @@ impl UserRepository for Database {
         let mut client = self.client().unwrap();
 
         let user = client
-            .query("SELECT * FROM users WHERE username = $1", &[&username])
+            .query(
+                "SELECT * FROM users WHERE UPPER(username) = UPPER($1)",
+                &[&username],
+            )
             .map_err(|e| {
                 warn!("Error loading user from database: {}", e);
                 e
@@ -119,6 +122,36 @@ mod tests {
         seed(&database, vec![&seeded_user]);
 
         let username: Username = seeded_user.username.parse().unwrap();
+        let user = database.wrapper.get_user_by_username(&username);
+        assert_that(&user).is_some();
+
+        let user = user.unwrap();
+        assert_that(&user).is_equal_to(UserEntity {
+            identity: Identity {
+                id: UserID::from_uuid(seeded_user.user_id),
+                version: seeded_user.version,
+                created: seeded_user.created,
+                updated: seeded_user.updated,
+            },
+            data: UserData {
+                username: seeded_user.username.parse().unwrap(),
+                email: seeded_user.email,
+                display_name: seeded_user.display_name,
+                password: Password::from_hash(seeded_user.password),
+            },
+        });
+    }
+
+    #[test]
+    fn test_get_known_user_by_username_different_case() {
+        let database = TestDatabaseWrapper::new();
+        let seeded_user: User = User {
+            username: "TestUser".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&seeded_user]);
+
+        let username: Username = "testuser".parse().unwrap();
         let user = database.wrapper.get_user_by_username(&username);
         assert_that(&user).is_some();
 
