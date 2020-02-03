@@ -22,7 +22,6 @@ exports[`The Start Login View Entering a username 1`] = `
         id="username"
         name="username"
         type="text"
-        value="testuser"
       />
     </div>
     <div
@@ -61,7 +60,6 @@ exports[`The Start Login View Entering a whitespace-only username 1`] = `
         id="username"
         name="username"
         type="text"
-        value="  "
       />
     </div>
     <div
@@ -100,7 +98,6 @@ exports[`The Start Login View Rendering when not pending 1`] = `
         id="username"
         name="username"
         type="text"
-        value=""
       />
     </div>
     <div
@@ -136,11 +133,9 @@ exports[`The Start Login View Submitting a username Submitting a blank username 
       </label>
       <input
         class="form-control is-invalid"
-        error="Please enter a username"
         id="username"
         name="username"
         type="text"
-        value=""
       />
       <div
         class="invalid-feedback"
@@ -181,11 +176,9 @@ exports[`The Start Login View Submitting a username Submitting a whitespace-only
       </label>
       <input
         class="form-control is-invalid"
-        error="Please enter a username"
         id="username"
         name="username"
         type="text"
-        value="  "
       />
       <div
         class="invalid-feedback"
@@ -229,7 +222,6 @@ exports[`The Start Login View Submitting a username Successfully 1`] = `
         id="username"
         name="username"
         type="text"
-        value="testuser"
       />
     </div>
     <div
@@ -274,7 +266,6 @@ exports[`The Start Login View Submitting a username With a network error 1`] = `
         id="username"
         name="username"
         type="text"
-        value="testuser"
       />
     </div>
     <div

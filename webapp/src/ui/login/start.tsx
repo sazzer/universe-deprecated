@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
-import useFormal from "@kevinwolf/formal-web";
+import { useForm, ErrorMessage } from 'react-hook-form';
 import * as yup from "yup";
 
 /** Shape of the properties required for the Start Login Form view */
@@ -16,24 +16,29 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
 
-  const schema = yup.object().shape({
-    username: yup.string()
-      .required(t('login.username.errors.required'))
-      .trim(),
+  const { register, errors, handleSubmit } = useForm({
+    validationSchema: yup.object().shape({
+      username: yup.string()
+        .required(t('login.username.errors.required'))
+        .trim(),
+    }),
+    validateCriteriaMode: 'all',
+    defaultValues: {
+      username: ''
+    }
   });
-  const formal = useFormal({ username: '' }, {
-    schema,
-    onSubmit: async ({ username }) => {
-      setPending(true);
-      setError('');
-      try {
-        await onSubmit(username.trim());
-      } catch (e) {
-        setPending(false);
-        setError(e.toString());
-      }
-    },
-  });
+
+  const onSubmitHandler = async (data: any) => {
+    const username: string = data.username;
+    setPending(true);
+    setError('');
+    try {
+      await onSubmit(username.trim());
+    } catch (e) {
+      setPending(false);
+      setError(e.toString());
+    }
+  };
 
   let errorMessage;
   if (error) {
@@ -50,15 +55,16 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   return (
     <>
       <h3>{t('login.start.title')}</h3>
-      <form {...formal.getFormProps()} data-test="startLoginForm">
+      <form onSubmit={handleSubmit(onSubmitHandler)} data-test="startLoginForm">
         <div className="form-group" data-test="username">
           <label htmlFor="username">{t('login.username.label')}</label>
           <input type="text"
-            className={formal.errors.username ? 'form-control is-invalid' : 'form-control'}
+            className={errors.username ? 'form-control is-invalid' : 'form-control'}
             id="username"
+            name="username"
             autoFocus
-            {...formal.getFieldProps('username')} />
-          {formal.errors.username && <div className="invalid-feedback">{formal.errors.username}</div>}
+            ref={register} />
+          <ErrorMessage errors={errors} name="username" as={<div className="invalid-feedback" />} />
         </div>
         <div className="form-group">
           <button type="submit"

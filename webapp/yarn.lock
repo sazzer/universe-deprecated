@@ -1234,20 +1234,6 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@kevinwolf/formal-web@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@kevinwolf/formal-web/-/formal-web-0.1.3.tgz#e8674eb54555a82dbb153026aba539a13d5de8f9"
-  integrity sha512-oaZ+FCIsXCqE+762Dd03wVfiADRnfVTstNhO3A3Z3jtAcWh0spYVlbaS4UNSryt2T5tycGA1ncTz9A/pHfa+UQ==
-  dependencies:
-    "@kevinwolf/formal" "^0.1.3"
-
-"@kevinwolf/formal@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@kevinwolf/formal/-/formal-0.1.3.tgz#f6923fec41d0da4593d2db64175eed586a47ad1f"
-  integrity sha512-8RCtI56vI9bpZ3ivw3yRhtq+bLbaMOmdOu8JXAQptACoMolHGTVluajsWZL4EPa8hrFlfKB+e8gN1RHfVOk1yg==
-  dependencies:
-    react-fast-compare "^2.0.4"
-
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -6797,6 +6783,11 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
+mutationobserver-shim@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/mutationobserver-shim/-/mutationobserver-shim-0.3.3.tgz#65869630bc89d7bf8c9cd9cb82188cd955aacd2b"
+  integrity sha512-gciOLNN8Vsf7YzcqRjKzlAJ6y7e+B86u7i3KXes0xfxx/nfLmozlW1Vn+Sc9x3tPIePFgc1AeIFhtRgkqTjzDQ==
+
 mute-stream@0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
@@ -8530,10 +8521,10 @@ react-error-overlay@^6.0.4:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.4.tgz#0d165d6d27488e660bc08e57bdabaad741366f7a"
   integrity sha512-ueZzLmHltszTshDMwyfELDq8zOA803wQ1ZuzCccXa1m57k1PxSHfflPD5W9YIiTXLs0JTLzoj6o1LuM5N6zzNA==
 
-react-fast-compare@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
-  integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
+react-hook-form@^4.8.1:
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-4.8.1.tgz#2bcf332a72933337f3773f2265ec477260c45e50"
+  integrity sha512-3DFNKCB+a1RDq7nuQXjvHqzWl6Mt80USts6j47duI0Jn+07T+liXh7JuIOne+Fnb59kSGWCSHMvT0ytqNo7YOg==
 
 react-i18next@^11.3.1:
   version "11.3.1"

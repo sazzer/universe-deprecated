@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
-import useFormal from "@kevinwolf/formal-web";
+import { useForm, ErrorMessage } from 'react-hook-form';
 import * as yup from "yup";
 
 /** Shape of the properties required for the Register Form view */
@@ -18,39 +18,47 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
 
-  const schema = yup.object().shape({
-    username: yup.string()
-      .required(t('login.username.errors.required'))
-      .trim(),
-    email: yup.string()
-      .email(t('login.email.errors.email'))
-      .required(t('login.email.errors.required'))
-      .trim(),
-    displayName: yup.string()
-      .required(t('login.displayName.errors.required'))
-      .trim(),
-    password: yup.string()
-      .required(t('login.password.errors.required'))
-      .trim(),
-    password2: yup.string()
-      .required(t('login.password2.errors.required'))
-      .when(['password'], (password: string, schema: any) => {
-        return schema.oneOf([password], t('login.password2.errors.different'));
-      })
-      .trim(),
-  });
-  const formal = useFormal({ username: username, email: '', displayName: '', password: '', password2: '' }, {
-    schema,
-    onSubmit: async ({ username, email, displayName, password, password2 }) => {
-      setPending(true);
-      setError('');
-      try {
-        await onSubmit(username.trim());
-      } catch (e) {
-        setPending(false);
-        setError(e.toString());
-      }
-    },
+  const onSubmitHandler = async (data: any) => {
+    setPending(true);
+    setError('');
+    try {
+      await onSubmit(username.trim());
+    } catch (e) {
+      setPending(false);
+      setError(e.toString());
+    }
+  };
+
+  const { register, errors, handleSubmit } = useForm({
+    validationSchema: yup.object().shape({
+      username: yup.string()
+        .required(t('login.username.errors.required'))
+        .trim(),
+      email: yup.string()
+        .email(t('login.email.errors.email'))
+        .required(t('login.email.errors.required'))
+        .trim(),
+      displayName: yup.string()
+        .required(t('login.displayName.errors.required'))
+        .trim(),
+      password: yup.string()
+        .required(t('login.password.errors.required'))
+        .trim(),
+      password2: yup.string()
+        .required(t('login.password2.errors.required'))
+        .when(['password'], (password: string, schema: any) => {
+          return schema.oneOf([password], t('login.password2.errors.different'));
+        })
+        .trim(),
+    }),
+    validateCriteriaMode: 'all',
+    defaultValues: {
+      username,
+      email: '',
+      displayName: '',
+      password: '',
+      password2: ''
+    }
   });
 
   let errorMessage;
@@ -68,48 +76,53 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
   return (
     <>
       <h3>{t('login.register.title')}</h3>
-      <form {...formal.getFormProps()} data-test="registerForm">
+      <form onSubmit={handleSubmit(onSubmitHandler)} data-test="registerForm">
         <div className="form-group" data-test="username">
           <label htmlFor="username">{t('login.username.label')}</label>
           <input type="text"
-            className={formal.errors.username ? 'form-control is-invalid' : 'form-control'}
+            className={errors.username ? 'form-control is-invalid' : 'form-control'}
             id="username"
+            name="username"
             readOnly
-            {...formal.getFieldProps('username')} />
-          {formal.errors.username && <div className="invalid-feedback">{formal.errors.username}</div>}
+            ref={register} />
+          <ErrorMessage errors={errors} name="username" as={<div className="invalid-feedback" />} />
         </div>
         <div className="form-group" data-test="email">
           <label htmlFor="email">{t('login.email.label')}</label>
           <input type="text"
-            className={formal.errors.email ? 'form-control is-invalid' : 'form-control'}
+            className={errors.email ? 'form-control is-invalid' : 'form-control'}
             id="email"
+            name="email"
             autoFocus
-            {...formal.getFieldProps('email')} />
-          {formal.errors.email && <div className="invalid-feedback">{formal.errors.email}</div>}
+            ref={register} />
+          <ErrorMessage errors={errors} name="email" as={<div className="invalid-feedback" />} />
         </div>
         <div className="form-group" data-test="displayName">
           <label htmlFor="displayName">{t('login.displayName.label')}</label>
           <input type="text"
-            className={formal.errors.displayName ? 'form-control is-invalid' : 'form-control'}
+            className={errors.displayName ? 'form-control is-invalid' : 'form-control'}
             id="displayName"
-            {...formal.getFieldProps('displayName')} />
-          {formal.errors.displayName && <div className="invalid-feedback">{formal.errors.displayName}</div>}
+            name="displayName"
+            ref={register} />
+          <ErrorMessage errors={errors} name="displayName" as={<div className="invalid-feedback" />} />
         </div>
         <div className="form-group" data-test="password">
           <label htmlFor="password">{t('login.password.label')}</label>
           <input type="password"
-            className={formal.errors.password ? 'form-control is-invalid' : 'form-control'}
+            className={errors.password ? 'form-control is-invalid' : 'form-control'}
             id="password"
-            {...formal.getFieldProps('password')} />
-          {formal.errors.password && <div className="invalid-feedback">{formal.errors.password}</div>}
+            name="password"
+            ref={register} />
+          <ErrorMessage errors={errors} name="password" as={<div className="invalid-feedback" />} />
         </div>
         <div className="form-group" data-test="password2">
           <label htmlFor="password2">{t('login.password2.label')}</label>
           <input type="password"
-            className={formal.errors.password2 ? 'form-control is-invalid' : 'form-control'}
+            className={errors.password2 ? 'form-control is-invalid' : 'form-control'}
             id="password2"
-            {...formal.getFieldProps('password2')} />
-          {formal.errors.password2 && <div className="invalid-feedback">{formal.errors.password2}</div>}
+            name="password2"
+            ref={register} />
+          <ErrorMessage errors={errors} name="password2" as={<div className="invalid-feedback" />} />
         </div>
         <div className="form-group">
           <button type="submit"
