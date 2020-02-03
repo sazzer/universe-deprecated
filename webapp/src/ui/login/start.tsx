@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
-import { useForm, ErrorMessage } from 'react-hook-form';
+import { useForm, ErrorMessage, FieldValues } from 'react-hook-form';
 import * as yup from "yup";
 
 /** Shape of the properties required for the Start Login Form view */
@@ -28,12 +28,11 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
     }
   });
 
-  const onSubmitHandler = async (data: any) => {
-    const username: string = data.username;
+  const onSubmitHandler = async (data: FieldValues) => {
     setPending(true);
     setError('');
     try {
-      await onSubmit(username.trim());
+      await onSubmit(data.username.trim());
     } catch (e) {
       setPending(false);
       setError(e.toString());

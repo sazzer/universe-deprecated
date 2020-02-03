@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
-import { useForm, ErrorMessage } from 'react-hook-form';
+import { useForm, ErrorMessage, FieldValues } from 'react-hook-form';
 import * as yup from "yup";
 
 /** Shape of the properties required for the Register Form view */
@@ -18,7 +18,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
 
-  const onSubmitHandler = async (data: any) => {
+  const onSubmitHandler = async (data: FieldValues) => {
     setPending(true);
     setError('');
     try {
