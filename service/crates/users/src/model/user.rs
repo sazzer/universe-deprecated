@@ -16,3 +16,23 @@ pub struct UserEntity {
     pub identity: Identity<UserID>,
     pub data: UserData,
 }
+
+#[cfg(test)]
+impl From<universe_testdata::User> for UserEntity {
+    fn from(user: universe_testdata::User) -> UserEntity {
+        UserEntity {
+            identity: Identity {
+                id: UserID::from_uuid(user.user_id),
+                version: user.version,
+                created: user.created,
+                updated: user.updated,
+            },
+            data: UserData {
+                username: user.username.parse().unwrap(),
+                email: user.email,
+                display_name: user.display_name,
+                password: Password::from_hash(user.password),
+            },
+        }
+    }
+}

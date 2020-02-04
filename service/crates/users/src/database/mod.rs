@@ -1,5 +1,6 @@
 use crate::model::*;
-use crate::service::repository::UserRepository;
+use crate::service::repository::{CreateError, UserRepository};
+use std::error::Error;
 use tracing::{debug, warn};
 use universe_database::Database;
 use universe_entity::Identity;
@@ -60,13 +61,53 @@ impl UserRepository for Database {
         debug!("User for username {}: {:?}", username, user);
         user
     }
+
+    fn create_user(&self, user: UserEntity) -> Result<UserEntity, CreateError> {
+        debug!("Creating record for user: {:?}", user);
+
+        let mut client = self.client().unwrap();
+        let mut transaction = client.transaction().unwrap();
+
+        let result = transaction.query("INSERT INTO users(user_id, version, created, updated, username, email, display_name, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", &[
+            &user.identity.id,
+            &user.identity.version,
+            &user.identity.created,
+            &user.identity.updated,
+            &user.data.username,
+            &user.data.email,
+            &user.data.display_name,
+            &user.data.password,
+        ])
+        .map(|rows| rows.get(0).unwrap().into())?;
+
+        debug!("Created record for user: {:?}", result);
+
+        transaction.commit().unwrap();
+        Ok(result)
+    }
+}
+
+impl From<postgres::Error> for CreateError {
+    fn from(error: postgres::Error) -> Self {
+        warn!("Error creating user in database: {:?}", error);
+
+        error
+            .source()
+            .and_then(|e| e.downcast_ref::<postgres::error::DbError>())
+            .map(|e| match e.constraint() {
+                Some("users_pkey") => CreateError::DuplicateId,
+                Some("users_username_key") => CreateError::DuplicateUsername,
+                Some("users_email_key") => CreateError::DuplicateEmail,
+                _ => CreateError::UnknownError,
+            })
+            .unwrap_or(CreateError::UnknownError)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use spectral::prelude::*;
-    use universe_entity::Identity;
     use universe_test_database_wrapper::TestDatabaseWrapper;
     use universe_testdata::{seed, User};
 
@@ -90,20 +131,7 @@ mod tests {
         assert_that(&user).is_some();
 
         let user = user.unwrap();
-        assert_that(&user).is_equal_to(UserEntity {
-            identity: Identity {
-                id: UserID::from_uuid(seeded_user.user_id),
-                version: seeded_user.version,
-                created: seeded_user.created,
-                updated: seeded_user.updated,
-            },
-            data: UserData {
-                username: seeded_user.username.parse().unwrap(),
-                email: seeded_user.email,
-                display_name: seeded_user.display_name,
-                password: Password::from_hash(seeded_user.password),
-            },
-        });
+        assert_that(&user).is_equal_to(UserEntity::from(seeded_user));
     }
 
     #[test]
@@ -126,20 +154,7 @@ mod tests {
         assert_that(&user).is_some();
 
         let user = user.unwrap();
-        assert_that(&user).is_equal_to(UserEntity {
-            identity: Identity {
-                id: UserID::from_uuid(seeded_user.user_id),
-                version: seeded_user.version,
-                created: seeded_user.created,
-                updated: seeded_user.updated,
-            },
-            data: UserData {
-                username: seeded_user.username.parse().unwrap(),
-                email: seeded_user.email,
-                display_name: seeded_user.display_name,
-                password: Password::from_hash(seeded_user.password),
-            },
-        });
+        assert_that(&user).is_equal_to(UserEntity::from(seeded_user));
     }
 
     #[test]
@@ -156,19 +171,146 @@ mod tests {
         assert_that(&user).is_some();
 
         let user = user.unwrap();
-        assert_that(&user).is_equal_to(UserEntity {
-            identity: Identity {
-                id: UserID::from_uuid(seeded_user.user_id),
-                version: seeded_user.version,
-                created: seeded_user.created,
-                updated: seeded_user.updated,
-            },
-            data: UserData {
-                username: seeded_user.username.parse().unwrap(),
-                email: seeded_user.email,
-                display_name: seeded_user.display_name,
-                password: Password::from_hash(seeded_user.password),
-            },
-        });
+        assert_that(&user).is_equal_to(UserEntity::from(seeded_user));
+    }
+
+    #[test]
+    fn test_create_user() {
+        let database = TestDatabaseWrapper::new();
+        let seeded_user: User = Default::default();
+
+        let created_user = database
+            .wrapper
+            .create_user(seeded_user.clone().into())
+            .unwrap();
+
+        assert_that(&created_user).is_equal_to(UserEntity::from(seeded_user));
+
+        let loaded_user = database
+            .wrapper
+            .get_user_by_id(&created_user.identity.id)
+            .unwrap();
+        assert_that(&loaded_user).is_equal_to(created_user);
+    }
+
+    #[test]
+    fn test_create_user_duplicate_id() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let seeded_user: User = User {
+            user_id: existing_user.user_id,
+            username: "new_username".to_owned(),
+            email: "new@example.com".to_owned(),
+            ..Default::default()
+        };
+
+        let created_user = database
+            .wrapper
+            .create_user(seeded_user.clone().into())
+            .unwrap_err();
+
+        assert_that(&created_user).is_equal_to(CreateError::DuplicateId);
+    }
+
+    #[test]
+    fn test_create_user_duplicate_username() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let seeded_user: User = User {
+            username: "testuser".to_owned(),
+            email: "new@example.com".to_owned(),
+            ..Default::default()
+        };
+
+        let created_user = database
+            .wrapper
+            .create_user(seeded_user.clone().into())
+            .unwrap_err();
+
+        assert_that(&created_user).is_equal_to(CreateError::DuplicateUsername);
+    }
+
+    #[test]
+    fn test_create_user_duplicate_username_different_case() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let seeded_user: User = User {
+            username: "TestUser".to_owned(),
+            email: "new@example.com".to_owned(),
+            ..Default::default()
+        };
+
+        let created_user = database
+            .wrapper
+            .create_user(seeded_user.clone().into())
+            .unwrap_err();
+
+        assert_that(&created_user).is_equal_to(CreateError::DuplicateUsername);
+    }
+
+    #[test]
+    fn test_create_user_duplicate_email() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let seeded_user: User = User {
+            username: "new_username".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            ..Default::default()
+        };
+
+        let created_user = database
+            .wrapper
+            .create_user(seeded_user.clone().into())
+            .unwrap_err();
+
+        assert_that(&created_user).is_equal_to(CreateError::DuplicateEmail);
+    }
+
+    #[test]
+    fn test_create_user_duplicate_email_different_case() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let seeded_user: User = User {
+            username: "new_username".to_owned(),
+            email: "TestUser@example.com".to_owned(),
+            ..Default::default()
+        };
+
+        let created_user = database
+            .wrapper
+            .create_user(seeded_user.clone().into())
+            .unwrap_err();
+
+        assert_that(&created_user).is_equal_to(CreateError::DuplicateEmail);
     }
 }

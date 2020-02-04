@@ -21,6 +21,8 @@ universe_entity = { path = "../entity" }
 serde_json = "1.0.44"
 spectral = "0.6.0"
 mockall = "0.6.0"
+tracing-log = "0.1.1"
+tracing-subscriber = "0.1.6"
 
 universe_test_database_wrapper = { path = "../test_database_wrapper" }
 universe_testdata = { path = "../testdata" }

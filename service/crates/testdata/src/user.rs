@@ -4,6 +4,7 @@ use postgres_types::ToSql;
 use uuid::Uuid;
 
 /// Test Data for a User record
+#[derive(Debug, PartialEq, Clone)]
 pub struct User {
     pub user_id: Uuid,
     pub version: Uuid,
