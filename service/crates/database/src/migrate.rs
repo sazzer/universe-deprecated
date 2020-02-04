@@ -126,8 +126,11 @@ fn apply_migrations(
         } else {
             debug!("Processing file: {:?}", entry);
             let source: String = fs::read_to_string(&entry)?;
+            let commands = source.split(";\n");
 
-            transaction.query(source.as_str(), &[])?;
+            for command in commands {
+                transaction.query(command, &[])?;
+            }
 
             transaction.execute(
                 "INSERT INTO __migrations(migration_file) VALUES ($1)",
@@ -403,5 +406,40 @@ mod tests {
                             .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap();
 
         assert_that(&tables).is_empty();
+    }
+
+    #[test]
+    fn test_multiple_migrations() {
+        let database = TestDatabase::new();
+        let wrapper = Database::new(database.url).unwrap();
+
+        let result = wrapper.migrate("test_migrations/multiple/**/*.sql");
+
+        assert_that(&result).is_ok_containing(1);
+        let tables: Vec<String> = wrapper
+                                .client().unwrap()
+                                .query("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'postgres' AND table_schema = 'public'", &[]).unwrap()
+                                .into_iter()
+                                .map(|row| row.get::<&str, String>("table_name"))
+                                .collect();
+
+        assert_that(&tables).has_length(3);
+        assert_that(&tables).contains("__migrations".to_owned());
+        assert_that(&tables).contains("third_one".to_owned());
+        assert_that(&tables).contains("third_two".to_owned());
+
+        let migrations: Vec<String> = wrapper
+            .client()
+            .unwrap()
+            .query(
+                "SELECT migration_file FROM __migrations ORDER BY sequence ASC",
+                &[],
+            )
+            .unwrap()
+            .into_iter()
+            .map(|row| row.get::<&str, String>("migration_file"))
+            .collect();
+
+        assert_that(&migrations).is_equal_to(vec!["00001-multiple.sql".to_owned()]);
     }
 }
