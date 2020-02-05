@@ -1,12 +1,12 @@
-use super::{Password, UserID, Username};
+use super::{DisplayName, EmailAddress, Password, UserID, Username};
 use universe_entity::Identity;
 
 /// Struct to represent the data about a single user record
 #[derive(Debug, PartialEq, Clone)]
 pub struct UserData {
     pub username: Username,
-    pub email: String,
-    pub display_name: String,
+    pub email: EmailAddress,
+    pub display_name: DisplayName,
     pub password: Password,
 }
 
@@ -29,8 +29,8 @@ impl From<universe_testdata::User> for UserEntity {
             },
             data: UserData {
                 username: user.username.parse().unwrap(),
-                email: user.email,
-                display_name: user.display_name,
+                email: user.email.parse().unwrap(),
+                display_name: user.display_name.parse().unwrap(),
                 password: Password::from_hash(user.password),
             },
         }

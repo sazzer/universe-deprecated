@@ -76,17 +76,19 @@ mod tests {
 
     #[test]
     fn test_parse_valid_email_address() {
-        let email_address: Result<EmailAddress, EmailAddressParseError> = "Test User".parse();
+        let email_address: Result<EmailAddress, EmailAddressParseError> =
+            "testuser@example.com".parse();
         assert_that(&email_address)
             .is_ok()
-            .is_equal_to(EmailAddress("Test User".to_owned()));
+            .is_equal_to(EmailAddress("testuser@example.com".to_owned()));
     }
     #[test]
     fn test_parse_padded_email_address() {
-        let email_address: Result<EmailAddress, EmailAddressParseError> = "  Test User  ".parse();
+        let email_address: Result<EmailAddress, EmailAddressParseError> =
+            "  testuser@example.com  ".parse();
         assert_that(&email_address)
             .is_ok()
-            .is_equal_to(EmailAddress("Test User".to_owned()));
+            .is_equal_to(EmailAddress("testuser@example.com".to_owned()));
     }
     #[test]
     fn test_parse_blank_email_address() {
@@ -107,11 +109,11 @@ mod tests {
 
     #[test]
     fn test_serialize_valid_email_address() {
-        let email_address = EmailAddress("Test User".parse().unwrap());
+        let email_address = EmailAddress("testuser@example.com".parse().unwrap());
 
         let serialized = serde_json::to_value(email_address);
         assert_that(&serialized)
             .is_ok()
-            .is_equal_to(json!("Test User"));
+            .is_equal_to(json!("testuser@example.com"));
     }
 }

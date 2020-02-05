@@ -85,8 +85,8 @@ mod tests {
             identity: Default::default(),
             data: UserData {
                 username: "testuser".parse().unwrap(),
-                email: "test@example.com".to_owned(),
-                display_name: "Test User".to_owned(),
+                email: "test@example.com".parse().unwrap(),
+                display_name: "Test User".parse().unwrap(),
                 password: Password::from_hash("abc"),
             },
         };
@@ -128,8 +128,8 @@ mod tests {
             identity: Default::default(),
             data: UserData {
                 username: "testuser".parse().unwrap(),
-                email: "test@example.com".to_owned(),
-                display_name: "Test User".to_owned(),
+                email: "test@example.com".parse().unwrap(),
+                display_name: "Test User".parse().unwrap(),
                 password: Password::from_hash("abc"),
             },
         };

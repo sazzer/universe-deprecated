@@ -1,5 +1,5 @@
 use serde::Serialize;
-use universe_users::{UserEntity, UserID, Username};
+use universe_users::{DisplayName, EmailAddress, UserEntity, UserID, Username};
 
 /// Representation of a User to return over the API
 #[derive(Debug, Serialize)]
@@ -8,8 +8,8 @@ pub struct User {
     pub id: UserID,
     pub username: Username,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
-    pub display_name: String,
+    pub email: Option<EmailAddress>,
+    pub display_name: DisplayName,
 }
 
 impl From<UserEntity> for User {
