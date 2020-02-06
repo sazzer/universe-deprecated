@@ -1,5 +1,5 @@
 use crate::model::*;
-use crate::service::repository::{CreateError, UserRepository};
+use crate::service::repository::*;
 use std::error::Error;
 use tracing::{debug, warn};
 use universe_database::Database;
@@ -62,13 +62,12 @@ impl UserRepository for Database {
         user
     }
 
-    fn create_user(&self, user: UserEntity) -> Result<UserEntity, CreateError> {
+    fn create_user(&self, user: UserEntity) -> Result<UserEntity, PersistUserError> {
         debug!("Creating record for user: {:?}", user);
 
         let mut client = self.client().unwrap();
-        let mut transaction = client.transaction().unwrap();
 
-        let result = transaction.query("INSERT INTO users(user_id, version, created, updated, username, email, display_name, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", &[
+        let result = client.query("INSERT INTO users(user_id, version, created, updated, username, email, display_name, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", &[
             &user.identity.id,
             &user.identity.version,
             &user.identity.created,
@@ -82,12 +81,11 @@ impl UserRepository for Database {
 
         debug!("Created record for user: {:?}", result);
 
-        transaction.commit().unwrap();
         Ok(result)
     }
 }
 
-impl From<postgres::Error> for CreateError {
+impl From<postgres::Error> for PersistUserError {
     fn from(error: postgres::Error) -> Self {
         warn!("Error creating user in database: {:?}", error);
 
@@ -95,12 +93,12 @@ impl From<postgres::Error> for CreateError {
             .source()
             .and_then(|e| e.downcast_ref::<postgres::error::DbError>())
             .map(|e| match e.constraint() {
-                Some("users_pkey") => CreateError::DuplicateId,
-                Some("users_username_key") => CreateError::DuplicateUsername,
-                Some("users_email_key") => CreateError::DuplicateEmail,
-                _ => CreateError::UnknownError,
+                Some("users_pkey") => PersistUserError::DuplicateId,
+                Some("users_username_key") => PersistUserError::DuplicateUsername,
+                Some("users_email_key") => PersistUserError::DuplicateEmail,
+                _ => PersistUserError::UnknownError,
             })
-            .unwrap_or(CreateError::UnknownError)
+            .unwrap_or(PersistUserError::UnknownError)
     }
 }
 
@@ -215,7 +213,7 @@ mod tests {
             .create_user(seeded_user.clone().into())
             .unwrap_err();
 
-        assert_that(&created_user).is_equal_to(CreateError::DuplicateId);
+        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateId);
     }
 
     #[test]
@@ -239,7 +237,7 @@ mod tests {
             .create_user(seeded_user.clone().into())
             .unwrap_err();
 
-        assert_that(&created_user).is_equal_to(CreateError::DuplicateUsername);
+        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateUsername);
     }
 
     #[test]
@@ -263,7 +261,7 @@ mod tests {
             .create_user(seeded_user.clone().into())
             .unwrap_err();
 
-        assert_that(&created_user).is_equal_to(CreateError::DuplicateUsername);
+        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateUsername);
     }
 
     #[test]
@@ -287,7 +285,7 @@ mod tests {
             .create_user(seeded_user.clone().into())
             .unwrap_err();
 
-        assert_that(&created_user).is_equal_to(CreateError::DuplicateEmail);
+        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateEmail);
     }
 
     #[test]
@@ -311,6 +309,6 @@ mod tests {
             .create_user(seeded_user.clone().into())
             .unwrap_err();
 
-        assert_that(&created_user).is_equal_to(CreateError::DuplicateEmail);
+        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateEmail);
     }
 }

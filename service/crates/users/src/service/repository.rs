@@ -30,21 +30,22 @@ pub trait UserRepository {
     ///
     /// # Returns
     /// The user that was persisted
-    fn create_user(&self, user: UserEntity) -> Result<UserEntity, CreateError>;
+    fn create_user(&self, user: UserEntity) -> Result<UserEntity, PersistUserError>;
 }
 
+/// Enumeration of reasons why we failed to persist a newly created user
 #[derive(Debug, PartialEq)]
-pub enum CreateError {
+pub enum PersistUserError {
     DuplicateId,
     DuplicateUsername,
     DuplicateEmail,
     UnknownError,
 }
 
-impl std::fmt::Display for CreateError {
+impl std::fmt::Display for PersistUserError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "Error creating user: {}", self)
     }
 }
 
-impl std::error::Error for CreateError {}
+impl std::error::Error for PersistUserError {}
