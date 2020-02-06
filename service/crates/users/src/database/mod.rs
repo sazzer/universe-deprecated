@@ -35,7 +35,7 @@ impl UserRepository for Database {
                 e
             })
             .ok()
-            .filter(|rows| rows.len() > 0)
+            .filter(|rows| !rows.is_empty())
             .and_then(|rows| rows.get(0).map(|row| row.into()));
 
         debug!("User for ID {}: {:?}", user_id, user);
@@ -55,7 +55,7 @@ impl UserRepository for Database {
                 e
             })
             .ok()
-            .filter(|rows| rows.len() > 0)
+            .filter(|rows| !rows.is_empty())
             .and_then(|rows| rows.get(0).map(|row| row.into()));
 
         debug!("User for username {}: {:?}", username, user);

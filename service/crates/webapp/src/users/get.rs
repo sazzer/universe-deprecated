@@ -17,7 +17,7 @@ pub fn get_user_by_id(
 
     let user = user_service
         .get_user_by_id(&user_id)
-        .ok_or_else(|| unknown_user_problem())?;
+        .ok_or_else(unknown_user_problem)?;
 
     Ok(Json(user.into()))
 }
@@ -28,13 +28,13 @@ pub fn get_username(
     user_service: State<Box<dyn UserService>>,
 ) -> Result<Response, Problem> {
     let username: Username = username.parse().map_err(|e| {
-        warn!("Invalid Userna,e: {}", e);
+        warn!("Invalid Username: {}", e);
         unknown_user_problem()
     })?;
 
     let user = user_service
         .get_user_by_username(&username)
-        .ok_or_else(|| unknown_user_problem())?;
+        .ok_or_else(unknown_user_problem)?;
 
     let response = Response::build()
         .status(Status::NoContent)
