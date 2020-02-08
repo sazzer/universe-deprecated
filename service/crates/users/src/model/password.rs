@@ -53,8 +53,13 @@ impl Password {
     where
         S: Into<String>,
     {
-        let hashed = hash(plaintext.into(), DEFAULT_COST)?;
-        Ok(Password(hashed))
+        let plaintext = plaintext.into();
+        if !plaintext.is_empty() {
+            let hashed = hash(plaintext, DEFAULT_COST)?;
+            Ok(Password(hashed))
+        } else {
+            Err(PasswordHashError {})
+        }
     }
 
     /// Verify if our hashed password is consistent with the provided plaintext.
