@@ -32,7 +32,7 @@ impl FromStr for DisplayName {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let trimmed = s.trim();
         if trimmed.is_empty() {
-            Err(DisplayNameParseError {})
+            Err(DisplayNameParseError::Blank)
         } else {
             Ok(DisplayName(trimmed.to_owned()))
         }
@@ -58,7 +58,9 @@ impl ToSql for DisplayName {
 
 /// Errors that can happen when parsing a string into a display name.
 #[derive(Debug, PartialEq, Clone)]
-pub struct DisplayNameParseError {}
+pub enum DisplayNameParseError {
+    Blank,
+}
 
 impl std::fmt::Display for DisplayNameParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -94,7 +96,7 @@ mod tests {
 
         assert_that(&display_name)
             .is_err()
-            .is_equal_to(DisplayNameParseError {});
+            .is_equal_to(DisplayNameParseError::Blank);
     }
     #[test]
     fn test_parse_empty_display_name() {
@@ -102,7 +104,7 @@ mod tests {
 
         assert_that(&display_name)
             .is_err()
-            .is_equal_to(DisplayNameParseError {});
+            .is_equal_to(DisplayNameParseError::Blank);
     }
 
     #[test]

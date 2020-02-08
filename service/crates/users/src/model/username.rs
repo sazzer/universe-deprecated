@@ -32,7 +32,7 @@ impl FromStr for Username {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let trimmed = s.trim();
         if trimmed.is_empty() {
-            Err(UsernameParseError {})
+            Err(UsernameParseError::Blank)
         } else {
             Ok(Username(trimmed.to_owned()))
         }
@@ -58,7 +58,9 @@ impl ToSql for Username {
 
 /// Errors that can happen when parsing a string into a username.
 #[derive(Debug, PartialEq, Clone)]
-pub struct UsernameParseError {}
+pub enum UsernameParseError {
+    Blank,
+}
 
 impl std::fmt::Display for UsernameParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -94,7 +96,7 @@ mod tests {
 
         assert_that(&username)
             .is_err()
-            .is_equal_to(UsernameParseError {});
+            .is_equal_to(UsernameParseError::Blank);
     }
     #[test]
     fn test_parse_empty_username() {
@@ -102,7 +104,7 @@ mod tests {
 
         assert_that(&username)
             .is_err()
-            .is_equal_to(UsernameParseError {});
+            .is_equal_to(UsernameParseError::Blank);
     }
 
     #[test]

@@ -9,7 +9,10 @@ pub struct Password(String);
 
 /// Enumeration of errors that can occur when hashing a password
 #[derive(Debug, PartialEq)]
-pub struct PasswordHashError {}
+pub enum PasswordHashError {
+    Blank,
+    HashError,
+}
 
 impl std::fmt::Display for PasswordHashError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -20,8 +23,9 @@ impl std::fmt::Display for PasswordHashError {
 impl std::error::Error for PasswordHashError {}
 
 impl From<BcryptError> for PasswordHashError {
-    fn from(_: BcryptError) -> Self {
-        PasswordHashError {}
+    fn from(e: BcryptError) -> Self {
+        warn!("Failed to hash password: {}", e);
+        PasswordHashError::HashError
     }
 }
 
@@ -54,11 +58,11 @@ impl Password {
         S: Into<String>,
     {
         let plaintext = plaintext.into();
-        if !plaintext.is_empty() {
+        if plaintext.is_empty() {
+            Err(PasswordHashError::Blank)
+        } else {
             let hashed = hash(plaintext, DEFAULT_COST)?;
             Ok(Password(hashed))
-        } else {
-            Err(PasswordHashError {})
         }
     }
 
@@ -122,7 +126,16 @@ mod tests {
 
         assert_that(&password)
             .is_err()
-            .is_equal_to(PasswordHashError {});
+            .is_equal_to(PasswordHashError::HashError);
+    }
+
+    #[test]
+    fn test_hashing_blank_password() {
+        let password = Password::from_plaintext("");
+
+        assert_that(&password)
+            .is_err()
+            .is_equal_to(PasswordHashError::Blank);
     }
 
     #[test]

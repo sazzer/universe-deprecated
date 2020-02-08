@@ -1,5 +1,6 @@
 use bytes::BytesMut;
 use postgres::types::{accepts, to_sql_checked, FromSql, IsNull, ToSql, Type};
+use regex::Regex;
 use serde::Serialize;
 use std::str::FromStr;
 
@@ -31,8 +32,12 @@ impl FromStr for EmailAddress {
     /// string was not valid.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let trimmed = s.trim();
+        // Exactly one "@" symbol, with at least one character either side
+        let email_regex = Regex::new(r"^[^@]+@[^@]+$").unwrap();
         if trimmed.is_empty() {
-            Err(EmailAddressParseError {})
+            Err(EmailAddressParseError::Blank)
+        } else if !email_regex.is_match(trimmed) {
+            Err(EmailAddressParseError::Malformed)
         } else {
             Ok(EmailAddress(trimmed.to_owned()))
         }
@@ -58,7 +63,10 @@ impl ToSql for EmailAddress {
 
 /// Errors that can happen when parsing a string into a email address.
 #[derive(Debug, PartialEq, Clone)]
-pub struct EmailAddressParseError {}
+pub enum EmailAddressParseError {
+    Blank,
+    Malformed,
+}
 
 impl std::fmt::Display for EmailAddressParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -96,7 +104,7 @@ mod tests {
 
         assert_that(&email_address)
             .is_err()
-            .is_equal_to(EmailAddressParseError {});
+            .is_equal_to(EmailAddressParseError::Blank);
     }
     #[test]
     fn test_parse_empty_email_address() {
@@ -104,7 +112,15 @@ mod tests {
 
         assert_that(&email_address)
             .is_err()
-            .is_equal_to(EmailAddressParseError {});
+            .is_equal_to(EmailAddressParseError::Blank);
+    }
+    #[test]
+    fn test_parse_malformed_email_address() {
+        let email_address: Result<EmailAddress, EmailAddressParseError> = "testuser".parse();
+
+        assert_that(&email_address)
+            .is_err()
+            .is_equal_to(EmailAddressParseError::Malformed);
     }
 
     #[test]

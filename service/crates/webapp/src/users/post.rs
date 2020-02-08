@@ -42,32 +42,35 @@ impl<'a> TryFrom<Registration<'a>> for UserData {
     type Error = Vec<ValidationError>;
 
     fn try_from(input: Registration) -> Result<Self, Self::Error> {
-        let username: Result<Username, ValidationError> = input
-            .username
-            .unwrap_or("")
-            .parse()
-            .map_err(|_| missing_error("username"));
+        let username: Result<Username, ValidationError> =
+            input.username.unwrap_or("").parse().map_err(|e| match e {
+                UsernameParseError::Blank => missing_error("username"),
+            });
         let display_name: Result<DisplayName, ValidationError> = input
             .display_name
             .unwrap_or("")
             .parse()
-            .map_err(|_| missing_error("displayName"));
-        let email: Result<EmailAddress, ValidationError> = input
-            .email
-            .unwrap_or("")
-            .parse()
-            .map_err(|_| missing_error("email"));
-        let password: Result<Password, ValidationError> = input
-            .password
-            .filter(|p| !p.is_empty())
-            .ok_or(missing_error("password"))
-            .and_then(|p| {
-                Password::from_plaintext(p).map_err(|_| ValidationError {
+            .map_err(|e| match e {
+                DisplayNameParseError::Blank => missing_error("displayName"),
+            });
+        let email: Result<EmailAddress, ValidationError> =
+            input.email.unwrap_or("").parse().map_err(|e| match e {
+                EmailAddressParseError::Blank => missing_error("email"),
+                EmailAddressParseError::Malformed => ValidationError {
+                    r#type: "tag:universe,2020:users/validation-errors/email/malformed".to_owned(),
+                    title: "Email Address was malformed".to_owned(),
+                    field: "email".to_owned(),
+                },
+            });
+        let password: Result<Password, ValidationError> =
+            Password::from_plaintext(input.password.unwrap_or("")).map_err(|e| match e {
+                PasswordHashError::Blank => missing_error("password"),
+                PasswordHashError::HashError => ValidationError {
                     r#type: "tag:universe,2020:validation-errors/password/invalid-password"
                         .to_owned(),
                     title: "The password was invalid".to_owned(),
                     field: "password".to_owned(),
-                })
+                },
             });
 
         match (username, email, display_name, password) {

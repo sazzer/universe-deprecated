@@ -154,3 +154,43 @@ fn test_post_all_whitespace() {
     }
     "###);
 }
+
+#[test]
+fn test_post_malformed_email() {
+    let service = ServiceWrapper::default();
+
+    let req = service
+        .client()
+        .post("/users")
+        .header(ContentType::JSON)
+        .body(
+            json!({
+                "username": "testuser",
+                "displayName": "Test User",
+                "email": "testuser",
+                "password": "Pa55word"
+            })
+            .to_string(),
+        );
+    let mut response = req.dispatch();
+
+    assert_snapshot!(build_headers(&response), @r###"
+    HTTP/1.1 422 .
+    Content-Type: application/problem+json
+    Server: Rocket
+    "###);
+    assert_json_snapshot!(build_json_body(&mut response), @r###"
+    {
+      "errors": [
+        {
+          "field": "email",
+          "title": "Email Address was malformed",
+          "type": "tag:universe,2020:users/validation-errors/email/malformed"
+        }
+      ],
+      "status": 422,
+      "title": "The input had validation errors",
+      "type": "tag:universe,2020:problems/validation-error"
+    }
+    "###);
+}
