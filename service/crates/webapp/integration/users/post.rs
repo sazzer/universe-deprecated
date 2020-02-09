@@ -3,6 +3,7 @@ use insta::{assert_json_snapshot, assert_snapshot, dynamic_redaction};
 use rocket::http::ContentType;
 use serde_json::json;
 use spectral::prelude::*;
+use test_env_log::test;
 use universe_testdata::{seed, User};
 
 #[test]

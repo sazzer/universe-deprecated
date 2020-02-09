@@ -99,6 +99,7 @@ mod tests {
     use super::*;
     use serde_json::json;
     use spectral::prelude::*;
+    use test_env_log::test;
 
     #[test]
     fn test_parse_valid_user_id() {

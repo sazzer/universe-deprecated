@@ -67,6 +67,7 @@ mod tests {
     use crate::{Password, UserData, UserEntity, UserID};
     use mockall::*;
     use spectral::prelude::*;
+    use test_env_log::test;
 
     #[test]
     fn test_get_unknown_user_by_id() {

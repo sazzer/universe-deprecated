@@ -78,6 +78,7 @@ impl Database {
 mod tests {
     use super::*;
     use spectral::prelude::*;
+    use test_env_log::test;
     use universe_test_database_container::TestDatabase;
 
     #[test]

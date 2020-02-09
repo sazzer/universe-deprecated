@@ -16,5 +16,8 @@ universe_health = { path = "../health" }
 
 [dev-dependencies]
 spectral = "0.6.0"
+test-env-log = { version = "0.2.2", default-features = false, features = ["trace"] }
+tracing-log = "0.1.1"
+tracing-subscriber = "0.1.6"
 
 universe_test_database_container = { path = "../test_database_container"}

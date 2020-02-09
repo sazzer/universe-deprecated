@@ -1,5 +1,6 @@
 use crate::{build_headers, build_json_body, ServiceWrapper};
 use insta::{assert_json_snapshot, assert_snapshot};
+use test_env_log::test;
 use universe_testdata::{seed, User};
 
 #[test]
