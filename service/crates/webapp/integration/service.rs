@@ -34,6 +34,26 @@ impl<'d> ServiceWrapper<'d> {
         &self.webapp
     }
 
+    pub fn get<'c, 'u: 'c, U: Into<std::borrow::Cow<'u, str>>>(
+        &'c self,
+        uri: U,
+    ) -> rocket::local::LocalRequest<'c> {
+        self.client().get(uri).header(rocket::http::Header::new(
+            "X-Request-Client-Name",
+            "IntegrationTest",
+        ))
+    }
+
+    pub fn post<'c, 'u: 'c, U: Into<std::borrow::Cow<'u, str>>>(
+        &'c self,
+        uri: U,
+    ) -> rocket::local::LocalRequest<'c> {
+        self.client().post(uri).header(rocket::http::Header::new(
+            "X-Request-Client-Name",
+            "IntegrationTest",
+        ))
+    }
+
     /// Get the database the service is using
     pub fn database(&self) -> &TestDatabaseWrapper<'d> {
         &self.database

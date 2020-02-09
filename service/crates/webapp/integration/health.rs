@@ -6,7 +6,7 @@ use test_env_log::test;
 fn test_health() {
     let service = ServiceWrapper::default();
 
-    let req = service.client().get("/health");
+    let req = service.get("/health");
     let mut response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"

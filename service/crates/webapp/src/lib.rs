@@ -2,6 +2,7 @@
 
 mod health;
 mod problem;
+mod request_id;
 mod service;
 mod users;
 

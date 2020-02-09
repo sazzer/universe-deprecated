@@ -1,5 +1,6 @@
 use super::model::User;
 use crate::problem::{missing_error, unexpected_error, validation_error, Problem, ValidationError};
+use crate::request_id::RequestId;
 use rocket::{post, State};
 use rocket_contrib::json::Json;
 use serde::Deserialize;
@@ -8,7 +9,9 @@ use tracing::debug;
 use universe_users::*;
 
 #[post("/users", data = "<registration>")]
+#[tracing::instrument(skip(user_service))]
 pub fn register_user(
+    _request_id: RequestId,
     registration: Json<Registration>,
     user_service: State<Box<dyn UserService>>,
 ) -> Result<Json<User>, Problem> {

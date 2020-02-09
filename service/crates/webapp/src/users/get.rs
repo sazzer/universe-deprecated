@@ -1,12 +1,15 @@
 use super::model::User;
 use crate::problem::Problem;
+use crate::request_id::RequestId;
 use rocket::{get, http::Status, Response, State};
 use rocket_contrib::json::Json;
 use tracing::warn;
 use universe_users::{UserID, UserService, Username};
 
 #[get("/users/<user_id>")]
+#[tracing::instrument(skip(user_service))]
 pub fn get_user_by_id(
+    _request_id: RequestId,
     user_id: String,
     user_service: State<Box<dyn UserService>>,
 ) -> Result<Json<User>, Problem> {
@@ -23,7 +26,9 @@ pub fn get_user_by_id(
 }
 
 #[get("/usernames/<username>")]
+#[tracing::instrument(skip(user_service))]
 pub fn get_username(
+    _request_id: RequestId,
     username: String,
     user_service: State<Box<dyn UserService>>,
 ) -> Result<Response, Problem> {

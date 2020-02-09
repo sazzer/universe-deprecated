@@ -1,4 +1,5 @@
 use super::healthchecker::Healthchecker;
+use crate::request_id::RequestId;
 use rocket::{get, http::Status, response::status, routes, Route, State};
 use rocket_contrib::json::Json;
 use serde::Serialize;
@@ -38,7 +39,11 @@ impl HealthcheckResponse {
 }
 
 #[get("/health")]
-fn get_health(healthchecker: State<Healthchecker>) -> status::Custom<Json<HealthcheckResponse>> {
+#[tracing::instrument(skip(healthchecker))]
+fn get_health(
+    _request_id: RequestId,
+    healthchecker: State<Healthchecker>,
+) -> status::Custom<Json<HealthcheckResponse>> {
     let health = healthchecker.check_health();
 
     let mut status: HealthcheckStatus = HealthcheckStatus::OK;

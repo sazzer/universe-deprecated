@@ -14,7 +14,8 @@ pub fn build_headers(response: &LocalResponse) -> String {
     )
     .unwrap();
 
-    let headers = response.headers().clone();
+    let mut headers = response.headers().clone();
+    headers.remove("X-Request-ID");
     for header in headers.iter() {
         writeln!(output, "{}", header).unwrap();
     }

@@ -7,7 +7,7 @@ use universe_testdata::{seed, User};
 fn test_get_unknown_user() {
     let service = ServiceWrapper::default();
 
-    let req = service.client().get("/usernames/testuser");
+    let req = service.get("/usernames/testuser");
     let mut response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
@@ -35,7 +35,7 @@ fn test_get_known_user() {
     };
     seed(service.database(), vec![&user]);
 
-    let req = service.client().get("/usernames/testuser");
+    let req = service.get("/usernames/testuser");
     let response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
@@ -56,7 +56,7 @@ fn test_get_known_user_different_case() {
     };
     seed(service.database(), vec![&user]);
 
-    let req = service.client().get("/usernames/testuser");
+    let req = service.get("/usernames/testuser");
     let response = req.dispatch();
 
     assert_snapshot!(build_headers(&response), @r###"
