@@ -44,7 +44,16 @@ pub enum PersistUserError {
 
 impl std::fmt::Display for PersistUserError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error creating user: {}", self)
+        write!(
+            f,
+            "{}",
+            match self {
+                PersistUserError::DuplicateId => "Duplicate User ID",
+                PersistUserError::DuplicateUsername => "Duplicate Username",
+                PersistUserError::DuplicateEmail => "Duplicate Email Address",
+                PersistUserError::UnknownError => "An unknown error occurred",
+            }
+        )
     }
 }
 

@@ -1,31 +1,57 @@
 use super::model::User;
-use crate::problem::{missing_error, validation_error, Problem, ValidationError};
+use crate::problem::{missing_error, unexpected_error, validation_error, Problem, ValidationError};
 use rocket::{post, State};
 use rocket_contrib::json::Json;
 use serde::Deserialize;
 use std::convert::{TryFrom, TryInto};
-use tracing::warn;
+use tracing::debug;
 use universe_users::*;
 
 #[post("/users", data = "<registration>")]
 pub fn register_user(
     registration: Json<Registration>,
-    _user_service: State<Box<dyn UserService>>,
+    user_service: State<Box<dyn UserService>>,
 ) -> Result<Json<User>, Problem> {
-    warn!("Registration: {:?}", registration);
+    debug!("Registration: {:?}", registration);
 
     let user: UserData = registration
         .into_inner()
         .try_into()
         .map_err(validation_error)?;
-    warn!("User Data: {:?}", user);
+    debug!("User Data: {:?}", user);
 
-    Err(Problem {
-        r#type: "not-implemented".to_owned(),
-        title: "Not Implemented".to_owned(),
-        status: 500,
-        ..Default::default()
-    })
+    let result = user_service.register_user(user)?;
+    debug!("Registered user: {:?}", result);
+
+    Ok(Json(result.into()))
+}
+
+impl From<RegisterUserError> for Problem {
+    fn from(e: RegisterUserError) -> Self {
+        match e {
+            RegisterUserError::ValidationError(errors) => {
+                let validation_errors = errors
+                    .iter()
+                    .map(|e| match e {
+                        UserValidationError::DuplicateUsername => ValidationError {
+                            r#type: "tag:universe,2020:users/validation-errors/username/duplicate"
+                                .to_owned(),
+                            title: "The username is already registered".to_owned(),
+                            field: "username".to_owned(),
+                        },
+                        UserValidationError::DuplicateEmail => ValidationError {
+                            r#type: "tag:universe,2020:users/validation-errors/email/duplicate"
+                                .to_owned(),
+                            title: "The email address is already registered".to_owned(),
+                            field: "email".to_owned(),
+                        },
+                    })
+                    .collect();
+                validation_error(validation_errors)
+            }
+            _ => unexpected_error(),
+        }
+    }
 }
 
 /// Struct representing the input data for registering a new user
