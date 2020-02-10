@@ -1,20 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from "react-i18next";
 import { useForm, ErrorMessage, FieldValues } from 'react-hook-form';
 import * as yup from "yup";
-
-/** Shape of the properties required for the Start Login Form view */
-export interface StartLoginFormProps {
-  onSubmit: (username: string) => Promise<void>,
-}
+import { useOvermind } from '../../overmind';
 
 /**
  * Render the view for the Start Login Form
  */
-export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
+export const StartLoginForm: React.FC = () => {
   const { t } = useTranslation();
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState('');
+  const { state, actions } = useOvermind();
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -29,28 +24,22 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    setPending(true);
-    setError('');
-    try {
-      await onSubmit(data.username);
-    } catch (e) {
-      setPending(false);
-      setError(e.toString());
-    }
+    actions.login.checkUsername(data.username);
   };
 
   let errorMessage;
-  if (error) {
+  if (state.login.error) {
     errorMessage = (
       <div className="form-group">
         <div className="alert alert-danger" role="alert">
           {t('errors.unexpected', {
-            message: error,
+            message: state.login.error,
           })}
         </div>
       </div>
     );
   }
+
   return (
     <>
       <h3>{t('login.start.title')}</h3>
@@ -68,8 +57,8 @@ export const StartLoginForm: React.FC<StartLoginFormProps> = ({ onSubmit }) => {
         <div className="form-group">
           <button type="submit"
             className="btn btn-primary"
-            disabled={pending}>
-            {pending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+            disabled={state.login.isLoading}>
+            {state.login.isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
             {t('login.start.submit')}
           </button>
         </div>

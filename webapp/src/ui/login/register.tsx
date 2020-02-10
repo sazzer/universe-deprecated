@@ -1,35 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from "react-i18next";
 import { useForm, ErrorMessage, FieldValues } from 'react-hook-form';
 import * as yup from "yup";
-
-/** Shape of the properties required for the Register Form view */
-export interface RegisterFormProps {
-  username: string,
-  onSubmit: (username: string, email: string, displayName: string, password: string) => Promise<void>,
-  onCancel: () => void,
-}
+import { useOvermind } from '../../overmind';
 
 /**
  * Render the view for the Register Form
  */
-export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, username }) => {
+export const RegisterForm: React.FC = () => {
   const { t } = useTranslation();
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState('');
+  const { state, actions } = useOvermind();
 
   const onSubmitHandler = async (data: FieldValues) => {
-    setPending(true);
-    setError('');
-    try {
-      await onSubmit(data.username,
-        data.email,
-        data.displayName,
-        data.password);
-    } catch (e) {
-      setPending(false);
-      setError(e.toString());
-    }
   };
 
   const { register, errors, handleSubmit } = useForm({
@@ -54,7 +36,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
     }),
     validateCriteriaMode: 'all',
     defaultValues: {
-      username,
+      username: state.login.username || '',
       email: '',
       displayName: '',
       password: '',
@@ -63,17 +45,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
   });
 
   let errorMessage;
-  if (error) {
-    errorMessage = (
-      <div className="form-group">
-        <div className="alert alert-danger" role="alert">
-          {t('errors.unexpected', {
-            message: error,
-          })}
-        </div>
-      </div>
-    );
-  }
+
   return (
     <>
       <h3>{t('login.register.title')}</h3>
@@ -128,14 +100,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onCancel, 
         <div className="form-group">
           <button type="submit"
             className="btn btn-primary"
-            disabled={pending}>
-            {pending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+            disabled={state.login.isLoading}>
+            {state.login.isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
             {t('login.register.submit')}
           </button>
           <button type="button"
             className="btn btn-link"
-            disabled={pending}
-            onClick={onCancel}>
+            disabled={state.login.isLoading}
+            onClick={actions.login.cancelLogin}>
             {t('login.register.cancel')}
           </button>
         </div>

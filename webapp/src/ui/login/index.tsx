@@ -1,52 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { LandingPage } from '../landing';
 import { StartLoginForm } from './start';
 import { RegisterForm } from './register';
-import { request, ProblemResponse } from '../../api';
-
-/** The shape of the state for the username */
-interface UsernameState {
-  username: string,
-  known: boolean,
-}
+import { useOvermind } from '../../overmind';
 
 /**
  * Component to represent the page that is used for logging in
  */
 export const LoginPage: React.FC = () => {
-  let [usernameState, setUsernameState] = useState<UsernameState | undefined>();
+  const { state, actions } = useOvermind();
 
-  let onCancel = () => {
-    setUsernameState(undefined);
-  };
-
-  let resolveUsername = async (username: string) => {
-    try {
-      await request({
-        url: '/usernames/{username}',
-        urlParams: {
-          username
-        },
-        method: 'GET',
-      });
-
-      setUsernameState({ username, known: true });
-    } catch (e) {
-      if (e instanceof ProblemResponse && e.problem.type === 'tag:universe,2020:users/problems/unknown-user') {
-        setUsernameState({ username, known: false });
-      } else {
-        throw e;
-      }
-    }
-  };
+  useEffect(() => {
+    actions.login.resetLogin();
+  }, [actions.login]);
 
   let body;
-  if (usernameState === undefined) {
-    body = <StartLoginForm onSubmit={resolveUsername} />;
-  } else if (usernameState.known) {
-    body = "Log in as: " + usernameState.username;
+
+  if (state.login.isRegistering) {
+    body = <RegisterForm />;
+  } else if (state.login.isAuthenticating) {
+    body = "Log in as: " + state.login.username;
   } else {
-    body = <RegisterForm onSubmit={resolveUsername} onCancel={onCancel} username={usernameState.username} />
+    body = <StartLoginForm />;
   }
 
   return (
