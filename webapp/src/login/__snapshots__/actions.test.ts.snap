@@ -1,0 +1,629 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cancelLogin Cancelling from the authenticating state 1`] = `
+Array [
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`cancelLogin Cancelling from the authenticating state 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "initial",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`cancelLogin Cancelling from the initial state 1`] = `
+Array [
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`cancelLogin Cancelling from the initial state 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "initial",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`cancelLogin Cancelling from the registering state 1`] = `
+Array [
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`cancelLogin Cancelling from the registering state 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "initial",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`checkUsername When the server call fails 1`] = `
+Array [
+  Object {
+    "args": Array [
+      "loading",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`checkUsername When the server call fails 2`] = `
+Object {
+  "login": Object {
+    "error": "Error: Network Error",
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "initial",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`checkUsername When the username is known 1`] = `
+Array [
+  Object {
+    "args": Array [
+      "loading",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "authenticating",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "authenticating",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`checkUsername When the username is known 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "authenticating",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
+    },
+    "username": "testuser",
+  },
+}
+`;
+
+exports[`checkUsername When the username is not known 1`] = `
+Array [
+  Object {
+    "args": Array [
+      "loading",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "registering",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "registering",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`checkUsername When the username is not known 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "registering",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
+    },
+    "username": "testuser",
+  },
+}
+`;
+
+exports[`resetLogin Resetting from the authenticating state 1`] = `
+Array [
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`resetLogin Resetting from the authenticating state 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "initial",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`resetLogin Resetting from the initial state 1`] = `
+Array [
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`resetLogin Resetting from the initial state 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "initial",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`resetLogin Resetting from the registering state 1`] = `
+Array [
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`resetLogin Resetting from the registering state 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "isAuthenticating": false,
+    "isLoading": false,
+    "isRegistering": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "initial",
+      "initial": [Function],
+      "loading": [Function],
+      "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
+    },
+    "username": null,
+  },
+}
+`;
