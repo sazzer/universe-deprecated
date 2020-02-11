@@ -1,0 +1,453 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StartLoginForm Initial render 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`StartLoginForm Submitting the form Submit with a pure whitespace username 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="username"
+        name="username"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a username
+      </div>
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`StartLoginForm Submitting the form Submit with a valid username - is known 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`StartLoginForm Submitting the form Submit with a valid username - is known 2`] = `
+Array [
+  Object {
+    "args": Array [
+      "loading",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "authenticating",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "authenticating",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`StartLoginForm Submitting the form Submit with a valid username - network error 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+    <div
+      class="form-group"
+    >
+      <div
+        class="alert alert-danger"
+        role="alert"
+      >
+        An unexpected error occurred: Error: Network Error
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`StartLoginForm Submitting the form Submit with a valid username - network error 2`] = `
+Array [
+  Object {
+    "args": Array [
+      "loading",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`StartLoginForm Submitting the form Submit with a valid username - not known 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`StartLoginForm Submitting the form Submit with a valid username - not known 2`] = `
+Array [
+  Object {
+    "args": Array [
+      "loading",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "registering",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "registering",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "testuser",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.username",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`StartLoginForm Submitting the form Submit without entering anything 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="username"
+        name="username"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a username
+      </div>
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
