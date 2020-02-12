@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  render,
-  wait,
-  fireEvent,
-  createEvent,
-  getByLabelText
-} from "@testing-library/react";
+import { render, wait, fireEvent } from "@testing-library/react";
 import { Provider } from "overmind-react";
 import { StartLoginForm } from "./start";
 import { createTestOvermind } from "../../overmind/test";
