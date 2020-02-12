@@ -15,25 +15,47 @@ export const RegisterForm: React.FC = () => {
     validationSchema: yup.object().shape({
       username: yup
         .string()
-        .required(t("login.username.errors.required"))
+        .required(
+          t("login.username.errors.tag:universe,2020:validation-errors/missing")
+        )
         .trim(),
       email: yup
         .string()
-        .email(t("login.email.errors.email"))
-        .required(t("login.email.errors.required"))
+        .email(
+          t(
+            "login.email.errors.tag:universe,2020:users/validation-errors/email/malformed"
+          )
+        )
+        .required(
+          t("login.email.errors.tag:universe,2020:validation-errors/missing")
+        )
         .trim(),
       displayName: yup
         .string()
-        .required(t("login.displayName.errors.required"))
+        .required(
+          t(
+            "login.displayName.errors.tag:universe,2020:validation-errors/missing"
+          )
+        )
         .trim(),
-      password: yup.string().required(t("login.password.errors.required")),
+      password: yup
+        .string()
+        .required(
+          t("login.password.errors.tag:universe,2020:validation-errors/missing")
+        ),
       password2: yup
         .string()
-        .required(t("login.password2.errors.required"))
+        .required(
+          t(
+            "login.password2.errors.tag:universe,2020:validation-errors/missing"
+          )
+        )
         .when(["password"], (password: string, schema: any) => {
           return schema.oneOf(
             [password],
-            t("login.password2.errors.different")
+            t(
+              "login.password2.errors.tag:universe,2020:validation-errors/password/invalid-password"
+            )
           );
         })
     }),
@@ -64,6 +86,17 @@ export const RegisterForm: React.FC = () => {
   };
 
   let errorMessage;
+  if (state.login.error) {
+    errorMessage = (
+      <div className="form-group">
+        <div className="alert alert-danger" role="alert">
+          {t("errors.unexpected", {
+            message: state.login.error
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

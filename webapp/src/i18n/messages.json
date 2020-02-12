@@ -21,34 +21,35 @@
     "username": {
       "label": "Username",
       "errors": {
-        "required": "Please enter a username"
+        "tag:universe,2020:validation-errors/missing": "Please enter a username",
+        "tag:universe,2020:users/validation-errors/username/duplicate": "Username is already registered"
       }
     },
     "email": {
       "label": "Email Address",
       "errors": {
-        "required": "Please enter an email address",
-        "email": "Please enter a valid email address",
+        "tag:universe,2020:validation-errors/missing": "Please enter an email address",
+        "tag:universe,2020:users/validation-errors/email/malformed": "Please enter a valid email address",
         "tag:universe,2020:users/validation-errors/email/duplicate": "Email Address is already registered"
       }
     },
     "displayName": {
       "label": "Display Name",
       "errors": {
-        "required": "Please enter a display name"
+        "tag:universe,2020:validation-errors/missing": "Please enter a display name"
       }
     },
     "password": {
       "label": "Password",
       "errors": {
-        "required": "Please enter a password"
+        "tag:universe,2020:validation-errors/missing": "Please enter a password"
       }
     },
     "password2": {
       "label": "Repeat Password",
       "errors": {
-        "required": "Please re-enter the password",
-        "different": "Passwords do not match"
+        "tag:universe,2020:validation-errors/missing": "Please re-enter the password",
+        "tag:universe,2020:validation-errors/password/invalid-password": "Passwords do not match"
       }
     }
   },

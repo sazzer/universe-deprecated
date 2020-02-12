@@ -31,7 +31,7 @@ async function registerUser(
   password: string
 ) {
   try {
-    const result = await request({
+    await request({
       url: "/users",
       method: "POST",
       data: {
@@ -41,8 +41,6 @@ async function registerUser(
         password
       }
     });
-
-    console.log(result);
   } catch (e) {
     if (
       e instanceof ProblemResponse &&

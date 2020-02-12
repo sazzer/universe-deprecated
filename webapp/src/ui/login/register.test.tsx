@@ -4,6 +4,7 @@ import { Provider } from "overmind-react";
 import { RegisterForm } from "./register";
 import { createTestOvermind } from "../../overmind/test";
 import { OvermindMock, Config } from "overmind";
+import { ValidationErrors } from "../../api/validation";
 
 describe("RegisterForm", () => {
   test("Initial render", () => {
@@ -48,11 +49,20 @@ describe("RegisterForm", () => {
     expect(overmind.mutations).toMatchSnapshot();
   });
   describe("Submitting the form", () => {
+    let registerEffect: jest.Mock;
     let overmind: OvermindMock<Config>;
 
     beforeEach(() => {
+      registerEffect = jest.fn();
+
       overmind = createTestOvermind(
-        {},
+        {
+          login: {
+            api: {
+              registerUser: registerEffect
+            }
+          }
+        },
         {
           login: {
             mode: {
@@ -73,6 +83,7 @@ describe("RegisterForm", () => {
         fireEvent.click(getByText("Register", { selector: "button" }))
       );
       expect(container).toMatchSnapshot();
+      expect(registerEffect).toBeCalledTimes(0);
     });
     test("Submit with whitespace for everything", async () => {
       const { container, getByText, getByLabelText } = render(
@@ -96,6 +107,7 @@ describe("RegisterForm", () => {
         fireEvent.click(getByText("Register", { selector: "button" }));
       });
       expect(container).toMatchSnapshot();
+      expect(registerEffect).toBeCalledTimes(0);
     });
     test("Submit with invalid email address", async () => {
       const { container, getByText, getByLabelText } = render(
@@ -119,6 +131,7 @@ describe("RegisterForm", () => {
         fireEvent.click(getByText("Register", { selector: "button" }));
       });
       expect(container).toMatchSnapshot();
+      expect(registerEffect).toBeCalledTimes(0);
     });
     test("Submit with mismatched passwords", async () => {
       const { container, getByText, getByLabelText } = render(
@@ -142,6 +155,113 @@ describe("RegisterForm", () => {
         fireEvent.click(getByText("Register", { selector: "button" }));
       });
       expect(container).toMatchSnapshot();
+      expect(registerEffect).toBeCalledTimes(0);
+    });
+
+    test("Submit successfully", async () => {
+      const { container, getByText, getByLabelText } = render(
+        <Provider value={overmind}>
+          <RegisterForm />
+        </Provider>
+      );
+      registerEffect.mockResolvedValueOnce(undefined);
+
+      await wait(() => {
+        fireEvent.change(getByLabelText("Email Address"), {
+          target: { value: "testuser@example.com" }
+        });
+        fireEvent.change(getByLabelText("Display Name"), {
+          target: { value: "Test User" }
+        });
+        fireEvent.change(getByLabelText("Password"), {
+          target: { value: "Pa55word" }
+        });
+        fireEvent.change(getByLabelText("Repeat Password"), {
+          target: { value: "Pa55word" }
+        });
+        fireEvent.click(getByText("Register", { selector: "button" }));
+      });
+      expect(container).toMatchSnapshot();
+      expect(registerEffect).toBeCalledTimes(1);
+      expect(registerEffect).toBeCalledWith(
+        "testuser",
+        "testuser@example.com",
+        "Test User",
+        "Pa55word"
+      );
+    });
+
+    test("Submit with network error", async () => {
+      const { container, getByText, getByLabelText } = render(
+        <Provider value={overmind}>
+          <RegisterForm />
+        </Provider>
+      );
+      registerEffect.mockRejectedValueOnce(new Error("Network Error"));
+
+      await wait(() => {
+        fireEvent.change(getByLabelText("Email Address"), {
+          target: { value: "testuser@example.com" }
+        });
+        fireEvent.change(getByLabelText("Display Name"), {
+          target: { value: "Test User" }
+        });
+        fireEvent.change(getByLabelText("Password"), {
+          target: { value: "Pa55word" }
+        });
+        fireEvent.change(getByLabelText("Repeat Password"), {
+          target: { value: "Pa55word" }
+        });
+        fireEvent.click(getByText("Register", { selector: "button" }));
+      });
+      expect(container).toMatchSnapshot();
+      expect(registerEffect).toBeCalledTimes(1);
+      expect(registerEffect).toBeCalledWith(
+        "testuser",
+        "testuser@example.com",
+        "Test User",
+        "Pa55word"
+      );
+    });
+
+    test("Submit with duplicate email address", async () => {
+      const { container, getByText, getByLabelText } = render(
+        <Provider value={overmind}>
+          <RegisterForm />
+        </Provider>
+      );
+      registerEffect.mockRejectedValueOnce(
+        new ValidationErrors([
+          {
+            type: "tag:universe,2020:users/validation-errors/email/duplicate",
+            field: "email"
+          }
+        ])
+      );
+
+      await wait(() => {
+        fireEvent.change(getByLabelText("Email Address"), {
+          target: { value: "testuser@example.com" }
+        });
+        fireEvent.change(getByLabelText("Display Name"), {
+          target: { value: "Test User" }
+        });
+        fireEvent.change(getByLabelText("Password"), {
+          target: { value: "Pa55word" }
+        });
+        fireEvent.change(getByLabelText("Repeat Password"), {
+          target: { value: "Pa55word" }
+        });
+        fireEvent.click(getByText("Register", { selector: "button" }));
+      });
+      expect(container).toMatchSnapshot();
+      expect(registerEffect).toBeCalledTimes(1);
+      expect(registerEffect).toBeCalledWith(
+        "testuser",
+        "testuser@example.com",
+        "Test User",
+        "Pa55word"
+      );
     });
   });
 });

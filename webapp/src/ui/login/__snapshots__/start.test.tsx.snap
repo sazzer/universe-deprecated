@@ -64,7 +64,7 @@ exports[`StartLoginForm Submitting the form Submit with a pure whitespace userna
       <div
         class="invalid-feedback"
       >
-        Please enter a username
+        !!login.username.errors.required!!
       </div>
     </div>
     <div
@@ -489,7 +489,7 @@ exports[`StartLoginForm Submitting the form Submit without entering anything 1`]
       <div
         class="invalid-feedback"
       >
-        Please enter a username
+        !!login.username.errors.required!!
       </div>
     </div>
     <div

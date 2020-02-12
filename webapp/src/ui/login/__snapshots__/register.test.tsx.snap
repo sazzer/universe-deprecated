@@ -186,6 +186,229 @@ exports[`RegisterForm Initial render 1`] = `
 </div>
 `;
 
+exports[`RegisterForm Submitting the form Submit successfully 1`] = `
+<div>
+  <h3>
+    Register
+  </h3>
+  <form
+    data-test="registerForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control"
+        id="email"
+        name="email"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="password"
+    >
+      <label
+        for="password"
+      >
+        Password
+      </label>
+      <input
+        class="form-control"
+        id="password"
+        name="password"
+        type="password"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="password2"
+    >
+      <label
+        for="password2"
+      >
+        Repeat Password
+      </label>
+      <input
+        class="form-control"
+        id="password2"
+        name="password2"
+        type="password"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Register
+      </button>
+      <button
+        class="btn btn-link"
+        type="button"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`RegisterForm Submitting the form Submit with duplicate email address 1`] = `
+<div>
+  <h3>
+    Register
+  </h3>
+  <form
+    data-test="registerForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="email"
+        name="email"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Email Address is already registered
+      </div>
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="password"
+    >
+      <label
+        for="password"
+      >
+        Password
+      </label>
+      <input
+        class="form-control"
+        id="password"
+        name="password"
+        type="password"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="password2"
+    >
+      <label
+        for="password2"
+      >
+        Repeat Password
+      </label>
+      <input
+        class="form-control"
+        id="password2"
+        name="password2"
+        type="password"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Register
+      </button>
+      <button
+        class="btn btn-link"
+        type="button"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
 exports[`RegisterForm Submitting the form Submit with invalid email address 1`] = `
 <div>
   <h3>
@@ -409,6 +632,125 @@ exports[`RegisterForm Submitting the form Submit with mismatched passwords 1`] =
       >
         Cancel
       </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`RegisterForm Submitting the form Submit with network error 1`] = `
+<div>
+  <h3>
+    Register
+  </h3>
+  <form
+    data-test="registerForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control"
+        id="email"
+        name="email"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="password"
+    >
+      <label
+        for="password"
+      >
+        Password
+      </label>
+      <input
+        class="form-control"
+        id="password"
+        name="password"
+        type="password"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="password2"
+    >
+      <label
+        for="password2"
+      >
+        Repeat Password
+      </label>
+      <input
+        class="form-control"
+        id="password2"
+        name="password2"
+        type="password"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Register
+      </button>
+      <button
+        class="btn btn-link"
+        type="button"
+      >
+        Cancel
+      </button>
+    </div>
+    <div
+      class="form-group"
+    >
+      <div
+        class="alert alert-danger"
+        role="alert"
+      >
+        An unexpected error occurred: Error: Network Error
+      </div>
     </div>
   </form>
 </div>
