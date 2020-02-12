@@ -11,6 +11,9 @@ describe("RegisterForm", () => {
       {},
       {
         login: {
+          mode: {
+            current: "registering"
+          },
           username: "testuser"
         }
       }
@@ -22,7 +25,28 @@ describe("RegisterForm", () => {
     );
     expect(container).toMatchSnapshot();
   });
-
+  test("Cancelling Registration", async () => {
+    const overmind = createTestOvermind(
+      {},
+      {
+        login: {
+          mode: {
+            current: "registering"
+          },
+          username: "testuser"
+        }
+      }
+    );
+    const { getByText } = render(
+      <Provider value={overmind}>
+        <RegisterForm />
+      </Provider>
+    );
+    await wait(() =>
+      fireEvent.click(getByText("Cancel", { selector: "button" }))
+    );
+    expect(overmind.mutations).toMatchSnapshot();
+  });
   describe("Submitting the form", () => {
     let overmind: OvermindMock<Config>;
 
@@ -31,6 +55,9 @@ describe("RegisterForm", () => {
         {},
         {
           login: {
+            mode: {
+              current: "registering"
+            },
             username: "testuser"
           }
         }
