@@ -1,4 +1,5 @@
 import { request, ProblemResponse } from "../api";
+import { ValidationErrors } from "../api/validation";
 
 async function checkUsername(username: string): Promise<boolean> {
   try {
@@ -47,7 +48,7 @@ async function registerUser(
       e instanceof ProblemResponse &&
       e.problem.type === "tag:universe,2020:problems/validation-error"
     ) {
-      throw e.problem.errors;
+      throw new ValidationErrors(e.problem.errors);
     } else {
       throw e;
     }

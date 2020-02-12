@@ -28,7 +28,8 @@
       "label": "Email Address",
       "errors": {
         "required": "Please enter an email address",
-        "email": "Please enter a valid email address"
+        "email": "Please enter a valid email address",
+        "tag:universe,2020:users/validation-errors/email/duplicate": "Email Address is already registered"
       }
     },
     "displayName": {

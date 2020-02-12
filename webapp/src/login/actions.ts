@@ -1,5 +1,5 @@
 import { Action } from "overmind";
-
+import { ValidationErrors } from "../api/validation";
 /**
  * Check if the given username is already registered or not
  * @param  username The username to check
@@ -48,18 +48,30 @@ export interface RegisterValue {
 /**
  * Attempt to register a new user
  */
-export const register: Action<RegisterValue, Promise<void>> = async (
+export const register: Action<
+  RegisterValue,
+  Promise<ValidationErrors | undefined>
+> = async (
   { state, effects },
   details: RegisterValue
-) => {
+): Promise<ValidationErrors | undefined> => {
   state.login.loading = true;
-  await effects.login.api.registerUser(
-    details.username,
-    details.email,
-    details.displayName,
-    details.password
-  );
-  state.login.loading = false;
+  try {
+    await effects.login.api.registerUser(
+      details.username,
+      details.email,
+      details.displayName,
+      details.password
+    );
+    state.login.loading = false;
+  } catch (e) {
+    state.login.loading = false;
+    if (e instanceof ValidationErrors) {
+      return e;
+    } else {
+      state.login.error = e.toString();
+    }
+  }
 };
 
 /**

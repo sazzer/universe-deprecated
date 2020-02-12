@@ -11,16 +11,7 @@ export const RegisterForm: React.FC = () => {
   const { t } = useTranslation();
   const { state, actions } = useOvermind();
 
-  const onSubmitHandler = async (data: FieldValues) => {
-    await actions.login.register({
-      username: data.username,
-      email: data.email,
-      displayName: data.displayName,
-      password: data.password
-    });
-  };
-
-  const { register, errors, handleSubmit } = useForm({
+  const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
       username: yup
         .string()
@@ -55,6 +46,22 @@ export const RegisterForm: React.FC = () => {
       password2: ""
     }
   });
+
+  const onSubmitHandler = async (data: FieldValues) => {
+    const validationErrors = await actions.login.register({
+      username: data.username,
+      email: data.email,
+      displayName: data.displayName,
+      password: data.password
+    });
+
+    if (validationErrors !== undefined) {
+      validationErrors.errors.forEach(error => {
+        const message = t(`login.${error.field}.errors.${error.type}`);
+        setError(error.field, error.type, message);
+      });
+    }
+  };
 
   let errorMessage;
 
