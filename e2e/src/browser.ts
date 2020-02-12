@@ -1,9 +1,9 @@
-import { Builder, WebDriver, WebElement, By } from 'selenium-webdriver';
-import { AfterAll } from 'cucumber';
-import debug from 'debug';
-import { PageModelConstructor, PageModel } from './page/pageModel';
+import { Builder, WebDriver, By } from "selenium-webdriver";
+import { AfterAll } from "cucumber";
+import debug from "debug";
+import { PageModelConstructor, PageModel } from "./page/pageModel";
 
-const LOG = debug('universe:e2e:browser');
+const LOG = debug("universe:e2e:browser");
 
 /** The raw web driver */
 let _driver: WebDriver | undefined;
@@ -14,10 +14,8 @@ let _driver: WebDriver | undefined;
  */
 async function getWebDriver() {
   if (_driver === undefined) {
-    LOG('Creating new Web Driver');
-    _driver = await new Builder()
-      .forBrowser('chrome')
-      .build();
+    LOG("Creating new Web Driver");
+    _driver = await new Builder().forBrowser("chrome").build();
     _driver.manage().setTimeouts({ implicit: 20000, pageLoad: 10000 });
   }
 
@@ -27,7 +25,7 @@ async function getWebDriver() {
 /**
  * Wrap a call to look up a web element in a Selenium explicit wait
  */
-export async function wait(condition: () => Promise<WebElement>): Promise<WebElement> {
+export async function wait<T>(condition: () => Promise<T>): Promise<T> {
   const driver = await getWebDriver();
   return await driver.wait(condition);
 }
@@ -36,7 +34,7 @@ export async function wait(condition: () => Promise<WebElement>): Promise<WebEle
  */
 async function destroyWebDriver() {
   if (_driver !== undefined) {
-    LOG('Destroying Web Driver');
+    LOG("Destroying Web Driver");
     await _driver.close();
     _driver = undefined;
   }
@@ -44,7 +42,7 @@ async function destroyWebDriver() {
 
 AfterAll(async () => {
   await destroyWebDriver();
-})
+});
 
 /**
  * Wrapper around the web browser, via Selenium
@@ -69,7 +67,7 @@ export class Browser {
    * @return The screenshot
    */
   async screenshot() {
-    LOG('Taking screenshot');
+    LOG("Taking screenshot");
     const driver = await getWebDriver();
     return await driver.takeScreenshot();
   }
@@ -78,9 +76,13 @@ export class Browser {
    * Construct a new page model for the given constructor
    * @return The constructor of the Page Model class
    */
-  async newPageModel<T extends PageModel>(constructor: PageModelConstructor<T>): Promise<T> {
+  async newPageModel<T extends PageModel>(
+    constructor: PageModelConstructor<T>
+  ): Promise<T> {
     const driver = await getWebDriver();
-    const baseElement = await driver.wait(() => driver.findElement(By.id("root")));
+    const baseElement = await driver.wait(() =>
+      driver.findElement(By.id("root"))
+    );
     return new constructor(baseElement);
   }
 
@@ -91,7 +93,7 @@ export class Browser {
   async visitPage(url: string) {
     const urlBase = process.env.WEBAPP_URL;
     const realUrl = urlBase + url;
-    LOG('Visiting page: %s', realUrl);
+    LOG("Visiting page: %s", realUrl);
 
     const driver = await getWebDriver();
     await driver.get(realUrl);

@@ -1,17 +1,18 @@
-import { BasePageModel, PageModel } from './pageModel';
-import { WebElement, By } from 'selenium-webdriver';
-import { expect } from 'chai';
-import { Then, TableDefinition } from 'cucumber';
-import debug from 'debug';
-import { processObject } from '../table';
+import { BasePageModel, PageModel } from "./pageModel";
+import { WebElement, By } from "selenium-webdriver";
+import { expect } from "chai";
+import { Then, TableDefinition } from "cucumber";
+import debug from "debug";
+import { processObject } from "../table";
+import { wait } from "../browser";
 
-const LOG = debug('universe:e2e:form');
+const LOG = debug("universe:e2e:form");
 
 interface FormField {
-  selector: By,
-  setter: (value: string) => Promise<any>,
-  getter: () => Promise<string>,
-  errorGetter?: () => Promise<string | undefined>,
+  selector: By;
+  setter: (value: string) => Promise<any>;
+  getter: () => Promise<string>;
+  errorGetter?: () => Promise<string | undefined>;
 }
 
 /**
@@ -44,10 +45,10 @@ export class FormModel extends BasePageModel {
    * @param  name The name of the field
    */
   async getField(name: string) {
-    LOG('Getting value of field: %s', name);
+    LOG("Getting value of field: %s", name);
     const field = this._fields[name];
     const result = await field.getter();
-    LOG('Retrieved value of field %s: %s', name, result);
+    LOG("Retrieved value of field %s: %s", name, result);
     return result;
   }
 
@@ -56,13 +57,13 @@ export class FormModel extends BasePageModel {
    * @param  name The name of the field
    */
   async getError(name: string) {
-    LOG('Getting error of field: %s', name);
+    LOG("Getting error of field: %s", name);
     const field = this._fields[name];
     let result;
     if (field.errorGetter) {
       result = await field.errorGetter();
     }
-    LOG('Retrieved error of field %s: %s', name, result);
+    LOG("Retrieved error of field %s: %s", name, result);
     return result;
   }
 
@@ -106,8 +107,22 @@ export class FormModel extends BasePageModel {
    * Submit the form
    */
   async submit() {
-    const form = await this.findElement(By.css('button[type="submit"]'));
-    await form.click();
+    const submitButton = await this.findElement(
+      By.css('button[type="submit"]')
+    );
+    await submitButton.click();
+
+    await wait(async () => {
+      try {
+        const disabled = await submitButton.getAttribute("disabled");
+        return disabled !== "true";
+      } catch (e) {
+        if (e.name === "StaleElementReferenceError") {
+          return true;
+        }
+        throw e;
+      }
+    });
   }
 }
 
@@ -134,21 +149,23 @@ export class FormModelBuilder {
       selector,
       setter: async (value: string) => {
         const element = await this._baseElement.findElement(selector);
-        const input = await element.findElement(By.tagName('input'));
+        const input = await element.findElement(By.tagName("input"));
         await input.clear();
         await input.sendKeys(value);
       },
       getter: async () => {
         const element = await this._baseElement.findElement(selector);
-        const input = await element.findElement(By.tagName('input'));
+        const input = await element.findElement(By.tagName("input"));
         return await input.getAttribute("value");
       },
       errorGetter: async () => {
         const element = await this._baseElement.findElement(selector);
-        const input = await element.findElement(By.tagName('input'));
-        const cssClasses = await input.getAttribute('class');
-        if (cssClasses.split(' ').includes('is-invalid')) {
-          const error = await element.findElement(By.className('invalid-feedback'));
+        const input = await element.findElement(By.tagName("input"));
+        const cssClasses = await input.getAttribute("class");
+        if (cssClasses.split(" ").includes("is-invalid")) {
+          const error = await element.findElement(
+            By.className("invalid-feedback")
+          );
           return await error.getText();
         } else {
           return undefined;
@@ -171,15 +188,22 @@ export interface FormPageModel extends PageModel {
 }
 
 export interface FormPageModelConstructor<T extends FormPageModel> {
-  new(driver: WebElement): T
+  new (driver: WebElement): T;
 }
 
-
 export function FormPage(name: string) {
-  return function <T extends FormPageModel>(constructor: FormPageModelConstructor<T>) {
-    LOG('Building form steps with name "%s" for page model: %o', name, constructor);
+  return function<T extends FormPageModel>(
+    constructor: FormPageModelConstructor<T>
+  ) {
+    LOG(
+      'Building form steps with name "%s" for page model: %o',
+      name,
+      constructor
+    );
 
-    Then(`the ${name} form has details:`, async function(dataTable: TableDefinition) {
+    Then(`the ${name} form has details:`, async function(
+      dataTable: TableDefinition
+    ) {
       const page = await this.browser.newPageModel(constructor);
       const form = await page.getForm();
       const values = await form.getAllValues();
@@ -195,7 +219,9 @@ export function FormPage(name: string) {
       expect(values).to.be.empty;
     });
 
-    Then(`the ${name} form has errors:`, async function(dataTable: TableDefinition) {
+    Then(`the ${name} form has errors:`, async function(
+      dataTable: TableDefinition
+    ) {
       const page = await this.browser.newPageModel(constructor);
       const form = await page.getForm();
       const values = await form.getAllErrors();
@@ -203,5 +229,5 @@ export function FormPage(name: string) {
       const expected = dataTable.rowsHash();
       expect(values).to.contain(processObject(expected));
     });
-  }
+  };
 }
