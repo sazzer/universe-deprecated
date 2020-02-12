@@ -40,6 +40,24 @@ Array [
   },
   Object {
     "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
       "initial",
     ],
     "hasChangedValue": true,
@@ -63,14 +81,11 @@ exports[`cancelLogin Cancelling from the authenticating state 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "initial",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
       Symbol(CURRENT_EXIT): undefined,
     },
@@ -117,6 +132,42 @@ Array [
     "path": "login.error",
     "revert": [Function],
   },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
 ]
 `;
 
@@ -124,15 +175,13 @@ exports[`cancelLogin Cancelling from the initial state 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "initial",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
     },
     "username": null,
   },
@@ -179,6 +228,24 @@ Array [
   },
   Object {
     "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
       "initial",
     ],
     "hasChangedValue": true,
@@ -202,14 +269,11 @@ exports[`cancelLogin Cancelling from the registering state 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "initial",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
       Symbol(CURRENT_EXIT): undefined,
     },
@@ -222,11 +286,11 @@ exports[`checkUsername When the server call fails 1`] = `
 Array [
   Object {
     "args": Array [
-      "loading",
+      true,
     ],
     "hasChangedValue": true,
     "method": "set",
-    "path": "login.mode.current",
+    "path": "login.loading",
     "revert": [Function],
   },
   Object {
@@ -251,7 +315,7 @@ Array [
     "args": Array [
       "initial",
     ],
-    "hasChangedValue": true,
+    "hasChangedValue": false,
     "method": "set",
     "path": "login.mode.current",
     "revert": [Function],
@@ -260,7 +324,7 @@ Array [
     "args": Array [
       "initial",
     ],
-    "hasChangedValue": true,
+    "hasChangedValue": false,
     "method": "set",
     "path": "login.mode.current",
     "revert": [Function],
@@ -281,6 +345,24 @@ Array [
     "hasChangedValue": true,
     "method": "set",
     "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
     "revert": [Function],
   },
 ]
@@ -290,14 +372,11 @@ exports[`checkUsername When the server call fails 2`] = `
 Object {
   "login": Object {
     "error": "Error: Network Error",
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "initial",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
       Symbol(CURRENT_EXIT): undefined,
     },
@@ -310,11 +389,11 @@ exports[`checkUsername When the username is known 1`] = `
 Array [
   Object {
     "args": Array [
-      "loading",
+      true,
     ],
     "hasChangedValue": true,
     "method": "set",
-    "path": "login.mode.current",
+    "path": "login.loading",
     "revert": [Function],
   },
   Object {
@@ -371,6 +450,24 @@ Array [
     "path": "login.username",
     "revert": [Function],
   },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
 ]
 `;
 
@@ -378,14 +475,11 @@ exports[`checkUsername When the username is known 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "authenticating",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
       Symbol(CURRENT_EXIT): undefined,
     },
@@ -398,11 +492,11 @@ exports[`checkUsername When the username is not known 1`] = `
 Array [
   Object {
     "args": Array [
-      "loading",
+      true,
     ],
     "hasChangedValue": true,
     "method": "set",
-    "path": "login.mode.current",
+    "path": "login.loading",
     "revert": [Function],
   },
   Object {
@@ -459,6 +553,24 @@ Array [
     "path": "login.username",
     "revert": [Function],
   },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
 ]
 `;
 
@@ -466,14 +578,11 @@ exports[`checkUsername When the username is not known 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "registering",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
       Symbol(CURRENT_EXIT): undefined,
     },
@@ -504,6 +613,15 @@ Array [
   },
   Object {
     "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
       "initial",
     ],
     "hasChangedValue": true,
@@ -518,14 +636,11 @@ exports[`resetLogin Resetting from the authenticating state 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "initial",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
       Symbol(CURRENT_EXIT): undefined,
     },
@@ -554,6 +669,24 @@ Array [
     "path": "login.error",
     "revert": [Function],
   },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "initial",
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.mode.current",
+    "revert": [Function],
+  },
 ]
 `;
 
@@ -561,15 +694,13 @@ exports[`resetLogin Resetting from the initial state 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "initial",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
+      Symbol(CURRENT_EXIT): undefined,
     },
     "username": null,
   },
@@ -598,6 +729,15 @@ Array [
   },
   Object {
     "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
       "initial",
     ],
     "hasChangedValue": true,
@@ -612,14 +752,11 @@ exports[`resetLogin Resetting from the registering state 2`] = `
 Object {
   "login": Object {
     "error": null,
-    "isAuthenticating": false,
-    "isLoading": false,
-    "isRegistering": false,
+    "loading": false,
     "mode": StateMachine {
       "authenticating": [Function],
       "current": "initial",
       "initial": [Function],
-      "loading": [Function],
       "registering": [Function],
       Symbol(CURRENT_EXIT): undefined,
     },

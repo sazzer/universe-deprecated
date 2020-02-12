@@ -1,31 +1,65 @@
-import { Action } from 'overmind'
+import { Action } from "overmind";
 
 /**
  * Check if the given username is already registered or not
  * @param  username The username to check
  */
-export const checkUsername: Action<string, Promise<void>> = async ({ state, effects }, username: string) => {
-  return state.login.mode.loading(async () => {
-    state.login.error = null;
-    state.login.username = null;
-    try {
-      const usernameKnown = await effects.login.api.checkUsername(username);
-      if (usernameKnown) {
-        return state.login.mode.authenticating(() => {
-          state.login.username = username;
-        });
-      } else {
-        return state.login.mode.registering(() => {
-          state.login.username = username;
-        });
-      }
-    } catch (e) {
-      return state.login.mode.initial(() => {
-        state.login.error = e.toString();
+export const checkUsername: Action<string, Promise<void>> = async (
+  { state, effects },
+  username: string
+) => {
+  state.login.loading = true;
+  state.login.error = null;
+  state.login.username = null;
+  try {
+    const usernameKnown = await effects.login.api.checkUsername(username);
+    if (usernameKnown) {
+      return state.login.mode.authenticating(() => {
+        state.login.username = username;
+        state.login.loading = false;
+      });
+    } else {
+      return state.login.mode.registering(() => {
+        state.login.username = username;
+        state.login.loading = false;
       });
     }
-  });
+  } catch (e) {
+    return state.login.mode.initial(() => {
+      state.login.error = e.toString();
+      state.login.loading = false;
+    });
+  }
+};
+
+/**
+ * Shape of the input value for registering a new user
+ */
+export interface RegisterValue {
+  /** The username to register */
+  username: string;
+  /** The email address to register */
+  email: string;
+  /** The display name to register */
+  displayName: string;
+  /** The password to register */
+  password: string;
 }
+/**
+ * Attempt to register a new user
+ */
+export const register: Action<RegisterValue, Promise<void>> = async (
+  { state, effects },
+  details: RegisterValue
+) => {
+  state.login.loading = true;
+  await new Promise(resolve => {
+    setTimeout(() => {
+      state.login.loading = false;
+      resolve();
+    }, 2000);
+  });
+};
 
 /**
  * Reset the login process back to the start
@@ -33,12 +67,13 @@ export const checkUsername: Action<string, Promise<void>> = async ({ state, effe
 export const resetLogin: Action = ({ state }) => {
   state.login.username = null;
   state.login.error = null;
+  state.login.loading = false;
   return state.login.mode.initial();
-}
+};
 
 /**
  * Cancel a login process we're in the middle of performing
  */
 export const cancelLogin: Action = ({ actions }) => {
   return actions.login.resetLogin();
-}
+};

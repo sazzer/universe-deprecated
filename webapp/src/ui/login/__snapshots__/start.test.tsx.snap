@@ -123,11 +123,11 @@ exports[`StartLoginForm Submitting the form Submit with a valid username - is kn
 Array [
   Object {
     "args": Array [
-      "loading",
+      true,
     ],
     "hasChangedValue": true,
     "method": "set",
-    "path": "login.mode.current",
+    "path": "login.loading",
     "revert": [Function],
   },
   Object {
@@ -182,6 +182,24 @@ Array [
     "hasChangedValue": true,
     "method": "set",
     "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
     "revert": [Function],
   },
 ]
@@ -239,11 +257,11 @@ exports[`StartLoginForm Submitting the form Submit with a valid username - netwo
 Array [
   Object {
     "args": Array [
-      "loading",
+      true,
     ],
     "hasChangedValue": true,
     "method": "set",
-    "path": "login.mode.current",
+    "path": "login.loading",
     "revert": [Function],
   },
   Object {
@@ -268,7 +286,7 @@ Array [
     "args": Array [
       "initial",
     ],
-    "hasChangedValue": true,
+    "hasChangedValue": false,
     "method": "set",
     "path": "login.mode.current",
     "revert": [Function],
@@ -277,7 +295,7 @@ Array [
     "args": Array [
       "initial",
     ],
-    "hasChangedValue": true,
+    "hasChangedValue": false,
     "method": "set",
     "path": "login.mode.current",
     "revert": [Function],
@@ -298,6 +316,24 @@ Array [
     "hasChangedValue": true,
     "method": "set",
     "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
     "revert": [Function],
   },
 ]
@@ -345,11 +381,11 @@ exports[`StartLoginForm Submitting the form Submit with a valid username - not k
 Array [
   Object {
     "args": Array [
-      "loading",
+      true,
     ],
     "hasChangedValue": true,
     "method": "set",
-    "path": "login.mode.current",
+    "path": "login.loading",
     "revert": [Function],
   },
   Object {
@@ -404,6 +440,24 @@ Array [
     "hasChangedValue": true,
     "method": "set",
     "path": "login.username",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
     "revert": [Function],
   },
 ]

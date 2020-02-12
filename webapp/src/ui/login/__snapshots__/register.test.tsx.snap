@@ -40,6 +40,24 @@ Array [
   },
   Object {
     "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
       "initial",
     ],
     "hasChangedValue": true,

@@ -1,40 +1,24 @@
-import { statemachine, Statemachine } from 'overmind';
+import { statemachine, Statemachine } from "overmind";
 
-type Mode = 'initial' | 'loading' | 'registering' | 'authenticating';
+type Mode = "initial" | "registering" | "authenticating";
 
 type State = {
-  username: string | null,
-  mode: Statemachine<Mode>,
-  error: string | null,
-
-  readonly isLoading: boolean,
-  readonly isRegistering: boolean,
-  readonly isAuthenticating: boolean,
+  username: string | null;
+  mode: Statemachine<Mode>;
+  loading: boolean;
+  error: string | null;
 };
-
 
 export const state: State = {
   mode: statemachine<Mode>({
-    initial: 'initial',
+    initial: "initial",
     states: {
-      initial: ['loading'],
-      loading: ['initial', 'registering', 'authenticating'],
-      registering: ['initial'],
-      authenticating: ['initial'],
+      initial: ["initial", "registering", "authenticating"],
+      registering: ["initial"],
+      authenticating: ["initial"]
     }
   }),
+  loading: false,
   username: null,
-  error: null,
-
-  get isRegistering() {
-    return this.mode.current === 'registering';
-  },
-
-  get isAuthenticating() {
-    return this.mode.current === 'authenticating';
-  },
-
-  get isLoading() {
-    return this.mode.current === 'loading';
-  },
+  error: null
 };
