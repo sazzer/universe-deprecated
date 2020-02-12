@@ -53,12 +53,13 @@ export const register: Action<RegisterValue, Promise<void>> = async (
   details: RegisterValue
 ) => {
   state.login.loading = true;
-  await new Promise(resolve => {
-    setTimeout(() => {
-      state.login.loading = false;
-      resolve();
-    }, 2000);
-  });
+  await effects.login.api.registerUser(
+    details.username,
+    details.email,
+    details.displayName,
+    details.password
+  );
+  state.login.loading = false;
 };
 
 /**
