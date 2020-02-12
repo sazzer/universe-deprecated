@@ -15,7 +15,9 @@ export const StartLoginForm: React.FC = () => {
     validationSchema: yup.object().shape({
       username: yup
         .string()
-        .required(t("login.username.errors.required"))
+        .required(
+          t("login.username.errors.tag:universe,2020:validation-errors/missing")
+        )
         .trim()
     }),
     validateCriteriaMode: "all",
