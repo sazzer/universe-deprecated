@@ -35,8 +35,9 @@ export async function wait<T>(condition: () => Promise<T>): Promise<T> {
 async function destroyWebDriver() {
   if (_driver !== undefined) {
     LOG("Destroying Web Driver");
-    await _driver.close();
+    const driver = _driver;
     _driver = undefined;
+    await driver.close();
   }
 }
 

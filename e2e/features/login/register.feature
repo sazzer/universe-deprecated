@@ -89,7 +89,6 @@ Feature: User Registration
       | Password          | Password             |
       | Re-enter Password | Password             |
 
-  @wip
   Scenario: Successfully registering a user
     Given I visit the home page
     And I start logging in as "unknown"
@@ -103,3 +102,34 @@ Feature: User Registration
       | Username      | unknown              |
       | Email Address | testuser@example.com |
       | Display Name  | Test User            |
+
+
+  Scenario Outline: Successfully registering a user - uses nasty characters: <Input>
+    Given I visit the home page
+    And I start logging in as "<Input>"
+    And I am displayed the Register User page
+    When I register with details:
+      | Email Address     | <Expected>@example.com |
+      | Display Name      | <Expected>             |
+      | Password          | <Expected>             |
+      | Re-enter Password | <Expected>             |
+    And a user exists with details:
+      | Username      | <Expected>             |
+      | Email Address | <Expected>@example.com |
+      | Display Name  | <Expected>             |
+
+    Examples:
+      | Input      | Expected   |
+      | !#$%^&*    | !#$%^&*    |
+      | Snow☃man  | Snow☃man  |
+      # | \"quoted\" | "quoted"   |
+      | First/Half | First/Half |
+
+    Examples: UTF-8 Test data
+      | Input                                              | Expected                                           |
+      | κόσμε                                         | κόσμε                                         |
+      | Δημοσθένους                             | Δημοσθένους                             |
+      | გთხოვთ                                       | გთხოვთ                                       |
+      | Десятую                                     | Десятую                                     |
+      | พลันลิฉุยกุยกีกลับก่อเหตุ | พลันลิฉุยกุยกีกลับก่อเหตุ |
+      | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ                             | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ                             |

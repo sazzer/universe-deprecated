@@ -1,4 +1,5 @@
 import { Seed, extractData } from "./seed";
+import { Loadable } from "./load";
 import uuid from "uuid/v4";
 
 /**
@@ -54,3 +55,16 @@ export class UserSeed {
     ];
   }
 }
+
+Loadable("user", "SELECT * FROM users", (input: { [field: string]: any }) => {
+  return {
+    "User ID": input.user_id,
+    Version: input.version,
+    Created: input.created,
+    Updated: input.updated,
+    Username: input.username,
+    "Email Address": input.email,
+    "Display Name": input.display_name,
+    Password: input.password
+  };
+});
