@@ -49,7 +49,7 @@ Feature: User Registration
       | test@example     | Test User    | Pa55word | Pa55word          | Please enter a valid email address |                             |                |                         | No Display Name     |
 
   Scenario: Registering a user with a duplicate email address
-    Given a user exists with details:
+    Given a user already exists with details:
       | Username      | known                |
       | Email Address | testuser@example.com |
     Given I visit the home page
@@ -73,7 +73,7 @@ Feature: User Registration
     Given I visit the home page
     And I start logging in as "known"
     And I am displayed the Register User page
-    And a user exists with details:
+    And a user already exists with details:
       | Username | known |
     When I register with details:
       | Email Address     | testuser@example.com |
@@ -88,3 +88,18 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
+
+  @wip
+  Scenario: Successfully registering a user
+    Given I visit the home page
+    And I start logging in as "unknown"
+    And I am displayed the Register User page
+    When I register with details:
+      | Email Address     | testuser@example.com |
+      | Display Name      | Test User            |
+      | Password          | Password             |
+      | Re-enter Password | Password             |
+    And a user exists with details:
+      | Username      | unknown              |
+      | Email Address | testuser@example.com |
+      | Display Name  | Test User            |

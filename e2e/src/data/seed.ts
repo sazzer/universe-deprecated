@@ -29,7 +29,7 @@ export function Seed(name: string) {
     LOG("Building seed data for name %s and type: %o", name, constructor);
 
     Given(
-      `a ${name} exists with details:`,
+      `a ${name} already exists with details:`,
       async (dataTable: TableDefinition) => {
         const data = dataTable.rowsHash();
         LOG("Seeding %s with data: %o", name, data);
