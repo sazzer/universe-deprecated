@@ -2,7 +2,7 @@ import { Before } from "cucumber";
 import { Pool } from "pg";
 import debug from "debug";
 
-const LOG = debug("universe:e2e:browser");
+const LOG = debug("universe:e2e:database");
 
 /** The raw database connection */
 let _pool: Pool | undefined;
@@ -29,7 +29,7 @@ function getDatabaseConnection() {
  * @param sql The SQL to execute
  * @param binds Any binds for the SQL
  */
-async function query(sql: string, binds?: any[]) {
+export async function query(sql: string, binds?: any[]) {
   const pool = getDatabaseConnection();
   LOG("Executing query: %s with binds: %o", sql, binds);
   return await pool.query(sql, binds);

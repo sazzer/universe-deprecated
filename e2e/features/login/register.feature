@@ -48,11 +48,10 @@ Feature: User Registration
       | test@example.com | {space}      | Pa55word | Pa55word          |                                    | Please enter a display name |                |                         | No Display Name     |
       | test@example     | Test User    | Pa55word | Pa55word          | Please enter a valid email address |                             |                |                         | No Display Name     |
 
-  @wip
   Scenario: Registering a user with a duplicate email address
-    # Given a user exists with details:
-    #   | Username      | known                |
-    #   | Email Address | testuser@example.com |
+    Given a user exists with details:
+      | Username      | known                |
+      | Email Address | testuser@example.com |
     Given I visit the home page
     And I start logging in as "unknown"
     And I am displayed the Register User page
@@ -65,6 +64,26 @@ Feature: User Registration
       | Email Address | Email Address is already registered |
     And the Register User form has details:
       | Username          | unknown              |
+      | Email Address     | testuser@example.com |
+      | Display Name      | Test User            |
+      | Password          | Password             |
+      | Re-enter Password | Password             |
+
+  Scenario: Registering a user with a duplicate username
+    Given I visit the home page
+    And I start logging in as "known"
+    And I am displayed the Register User page
+    And a user exists with details:
+      | Username | known |
+    When I register with details:
+      | Email Address     | testuser@example.com |
+      | Display Name      | Test User            |
+      | Password          | Password             |
+      | Re-enter Password | Password             |
+    And the Register User form has errors:
+      | Username | Username is already registered |
+    And the Register User form has details:
+      | Username          | known                |
       | Email Address     | testuser@example.com |
       | Display Name      | Test User            |
       | Password          | Password             |
