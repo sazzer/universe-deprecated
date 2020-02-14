@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { LandingPage } from "../landing";
 import { StartLoginForm } from "./start";
 import { RegisterForm } from "./register";
+import { AuthenticateForm } from "./authenticate";
 import { useOvermind } from "../../overmind";
 
 /**
@@ -19,7 +20,7 @@ export const LoginPage: React.FC = () => {
   if (state.login.mode.current === "registering") {
     body = <RegisterForm />;
   } else if (state.login.mode.current === "authenticating") {
-    body = "Log in as: " + state.login.username;
+    body = <AuthenticateForm />;
   } else {
     body = <StartLoginForm />;
   }

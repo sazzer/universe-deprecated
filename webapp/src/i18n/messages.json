@@ -13,6 +13,11 @@
       "title": "Login / Register",
       "submit": "Login / Register"
     },
+    "authenticate": {
+      "title": "Login",
+      "submit": "Login",
+      "cancel": "Cancel"
+    },
     "register": {
       "title": "Register",
       "submit": "Register",

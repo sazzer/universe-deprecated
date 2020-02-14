@@ -24,16 +24,15 @@ Feature: Start Authentication
       | Password          |         |
       | Re-enter Password |         |
 
-  @ignore
   Scenario: Starting authentication with a known user displays the Login User form
-    Given a user exists with details:
+    Given a user already exists with details:
       | Username | known |
     And I visit the home page
     When I start logging in as "known"
-    Then I am displayed the Login User page
-    And the Login User form has details:
-      | Username          | known |
-      | Password          |       |
+    Then I am displayed the Authenticate User page
+    And the Authenticate User form has details:
+      | Username | known |
+      | Password |       |
 
   @ignore
   Scenario: Starting authentication with a known user displays the Login User form - username is padded
@@ -43,15 +42,15 @@ Feature: Start Authentication
     When I start logging in as "  known  "
     Then I am displayed the Login User page
     And the Login User form has details:
-      | Username          | known |
-      | Password          |       |
+      | Username | known |
+      | Password |       |
 
   Scenario: Starting authentication with an a blank username displays an error
     Given I visit the home page
     When I start logging in as ""
     Then I am displayed the Start Login page
     And the Start Login form has details:
-      | Username | |
+      | Username |  |
     And the Start Login form has errors:
       | Username | Please enter a username |
 
@@ -60,7 +59,7 @@ Feature: Start Authentication
     When I start logging in as "  "
     Then I am displayed the Start Login page
     And the Start Login form has details:
-      | Username          | {space}{space} |
+      | Username | {space}{space} |
     And the Start Login form has errors:
       | Username | Please enter a username |
 
@@ -78,37 +77,47 @@ Feature: Start Authentication
     Examples:
       | Input        | Expected     |
       | !@#$%^&*     | !@#$%^&*     |
-      | Snow☃man     | Snow☃man     |
+      | Snow☃man    | Snow☃man    |
       | <b>hello</b> | <b>hello</b> |
       | \"quoted\"   | "quoted"     |
       | First/Half   | First/Half   |
 
     Examples: UTF-8 Test data
-      | Input             | Expected          |
-      | κόσμε             | κόσμε             |
-      | Δημοσθένους       | Δημοσθένους       |
-      | გთხოვთ            | გთხოვთ            |
-      | Десятую           | Десятую           |
+      | Input                                              | Expected                                           |
+      | κόσμε                                         | κόσμε                                         |
+      | Δημοσθένους                             | Δημοσθένους                             |
+      | გთხოვთ                                       | გთხოვთ                                       |
+      | Десятую                                     | Десятую                                     |
       | พลันลิฉุยกุยกีกลับก่อเหตุ | พลันลิฉุยกุยกีกลับก่อเหตุ |
-      | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ        | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ        |
-      | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌      | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌     |
-      | אודות הקונסורציום | אודות הקונסורציום |
+      | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ                             | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ                             |
+      | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌                              | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌                              |
+      | אודות הקונסורציום                  | אודות הקונסורציום                  |
 
 
-  @ignore
   Scenario Outline: Starting authentication with a known user displays the Login User form - username uses nasty characters: <Input>
-    Given a user exists with details:
+    Given a user already exists with details:
       | Username | <Expected> |
     And I visit the home page
     When I start logging in as "<Input>"
-    Then I am displayed the Login User page
-    And the Login User form has details:
-      | Username          | <Expected> |
-      | Password          |            |
+    Then I am displayed the Authenticate User page
+    And the Authenticate User form has details:
+      | Username | <Expected> |
+      | Password |            |
 
     Examples:
       | Input        | Expected     |
       | !@#$%^&*     | !@#$%^&*     |
-      | Snow☃man     | Snow☃man     |
+      | Snow☃man    | Snow☃man    |
       | <b>hello</b> | <b>hello</b> |
       | \"quoted\"   | "quoted"     |
+
+    Examples: UTF-8 Test data
+      | Input                                              | Expected                                           |
+      | κόσμε                                         | κόσμε                                         |
+      | Δημοσθένους                             | Δημοσθένους                             |
+      | გთხოვთ                                       | გთხოვთ                                       |
+      | Десятую                                     | Десятую                                     |
+      | พลันลิฉุยกุยกีกลับก่อเหตุ | พลันลิฉุยกุยกีกลับก่อเหตุ |
+      | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ                             | ᚾᚩᚱᚦᚹᛖᚪᚱᛞᚢᛗ                             |
+      | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌                              | ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌                              |
+      | אודות הקונסורציום                  | אודות הקונסורציום                  |
