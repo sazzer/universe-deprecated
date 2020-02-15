@@ -1,0 +1,15 @@
+[package]
+name = "universe_authentication"
+version = "0.1.0"
+authors = ["Graham Cox <graham@grahamcox.co.uk>"]
+edition = "2018"
+
+[dependencies]
+universe_users = { path = "../users" }
+
+[dev-dependencies]
+spectral = "0.6.0"
+test-env-log = { version = "0.2.2", default-features = false, features = ["trace"] }
+tracing-log = "0.1.1"
+tracing-subscriber = "0.2.1"
+

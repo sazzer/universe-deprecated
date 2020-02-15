@@ -2130,6 +2130,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe_authentication"
+version = "0.1.0"
+dependencies = [
+ "spectral",
+ "test-env-log",
+ "tracing-log",
+ "tracing-subscriber",
+ "universe_users",
+]
+
+[[package]]
 name = "universe_database"
 version = "0.1.0"
 dependencies = [

@@ -6,6 +6,7 @@ members = [
   "crates/testdata",
   "crates/entity",
   "crates/users",
+  "crates/authentication",
   "crates/webapp",
   "crates/universe"
 ]
