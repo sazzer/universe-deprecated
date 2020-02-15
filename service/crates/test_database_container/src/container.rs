@@ -1,6 +1,7 @@
+use crate::postgres::Postgres;
 use lazy_static::lazy_static;
 use postgres::{Client, NoTls};
-use testcontainers::{clients::Cli, images::postgres::Postgres, Container, Docker};
+use testcontainers::{clients::Cli, Container, Docker};
 use tracing::info;
 
 lazy_static! {
@@ -24,6 +25,7 @@ impl<'d> Default for TestDatabase<'d> {
 
 impl<'d> TestDatabase<'d> {
     pub fn new() -> Self {
+        info!("Starting Postgres database");
         let node = DOCKER.run(Postgres::default());
 
         let host = std::env::var("DOCKER_HOSTNAME").unwrap_or_else(|_| "localhost".to_owned());
