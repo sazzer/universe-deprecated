@@ -11,7 +11,7 @@ export const AuthenticateForm: React.FC = () => {
   const { t } = useTranslation();
   const { state, actions } = useOvermind();
 
-  const { register, errors, handleSubmit, setError } = useForm({
+  const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
       username: yup
         .string()
