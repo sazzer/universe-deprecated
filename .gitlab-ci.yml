@@ -8,7 +8,7 @@ build-service:
   image: rustlang/rust:nightly-slim
 
   services:
-    - docker:19.03.0-dind
+    - docker:19.03.1-dind
 
   variables:
     DOCKER_HOSTNAME: docker
@@ -24,6 +24,7 @@ build-service:
     - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
     - apt update
     - apt -y install docker-ce-cli
+    - docker pull postgres:11-alpine
 
   script:
     - cd service
@@ -39,7 +40,7 @@ build-service-container:
   image: docker:stable
 
   services:
-    - docker:19.03.0-dind
+    - docker:19.03.1-dind
 
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -83,7 +84,7 @@ build-webapp-container:
   image: docker:stable
 
   services:
-    - docker:19.03.0-dind
+    - docker:19.03.1-dind
 
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -106,7 +107,7 @@ build-e2e-container:
   image: docker:stable
 
   services:
-    - docker:19.03.0-dind
+    - docker:19.03.1-dind
 
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -127,7 +128,7 @@ run-e2e:
   image: docker/compose:latest
 
   services: 
-    - docker:19.03.0-dind
+    - docker:19.03.1-dind
 
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -185,7 +186,7 @@ deploy-service:
   stage: deploy
   image: docker:stable
   services:
-    - docker:19.03.0-dind
+    - docker:19.03.1-dind
 
   only:
     refs:
