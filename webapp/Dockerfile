@@ -1,4 +1,4 @@
-FROM node:13.7.0-slim AS builder
+FROM node:13.8.0-slim AS builder
 
 WORKDIR /universe
 

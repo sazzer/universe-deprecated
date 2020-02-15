@@ -6,8 +6,8 @@ edition = "2018"
 
 [dependencies]
 lazy_static = "1.4.0"
-postgres = { version="0.17.0", features=["with-uuid-0_8", "with-chrono-0_4"] }
-tracing = "0.1.11"
+postgres = { version="0.17.1", features=["with-uuid-0_8", "with-chrono-0_4"] }
+tracing = "0.1.12"
 testcontainers = "0.8.1"
 
 [dev-dependencies]

@@ -6,9 +6,7 @@ mod settings;
 fn main() {
     dotenv().ok();
 
-    tracing_subscriber::fmt::Builder::default()
-        .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
-        .init();
+    tracing_subscriber::fmt::init();
 
     let service_base = std::fs::canonicalize(".").unwrap();
     let migrations_path = service_base.join("migrations");

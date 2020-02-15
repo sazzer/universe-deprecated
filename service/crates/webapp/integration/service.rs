@@ -10,9 +10,7 @@ pub struct ServiceWrapper<'d> {
 
 impl<'d> Default for ServiceWrapper<'d> {
     fn default() -> Self {
-        let _ = tracing_subscriber::fmt::Builder::default()
-            .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
-            .try_init();
+        let _ = tracing_subscriber::fmt::try_init();
 
         let service_base = std::fs::canonicalize("../..").unwrap();
         let migrations_path = service_base.join("migrations");
