@@ -661,9 +661,9 @@ dependencies = [
 
 [[package]]
 name = "insta"
-version = "0.13.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8df742abee84dbf27d20869c9adf77b0d8f7ea3eead13c2c9e3998d136a97058"
+checksum = "0d499dc062e841590a67230d853bce62d0abeb91304927871670b7c55c461349"
 dependencies = [
  "console",
  "difference",
@@ -673,6 +673,7 @@ dependencies = [
  "serde 1.0.104",
  "serde_json",
  "serde_yaml",
+ "uuid",
 ]
 
 [[package]]
