@@ -2133,11 +2133,16 @@ dependencies = [
 name = "universe_authentication"
 version = "0.1.0"
 dependencies = [
+ "chrono",
+ "serde 1.0.104",
+ "serde_json",
  "spectral",
  "test-env-log",
+ "tracing",
  "tracing-log",
  "tracing-subscriber",
  "universe_users",
+ "uuid",
 ]
 
 [[package]]

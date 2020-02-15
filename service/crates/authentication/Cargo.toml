@@ -5,9 +5,15 @@ authors = ["Graham Cox <graham@grahamcox.co.uk>"]
 edition = "2018"
 
 [dependencies]
+chrono = "0.4.10"
+serde = "1.0.104"
+tracing = "0.1.12"
+uuid = {version = "0.8.1", features=["serde", "v4"] }
+
 universe_users = { path = "../users" }
 
 [dev-dependencies]
+serde_json = "1.0.48"
 spectral = "0.6.0"
 test-env-log = { version = "0.2.2", default-features = false, features = ["trace"] }
 tracing-log = "0.1.1"
