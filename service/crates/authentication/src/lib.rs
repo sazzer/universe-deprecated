@@ -1,6 +1,7 @@
 mod access_token;
 mod access_token_id;
 mod encoded_access_token;
+pub mod encoder;
 
 pub use access_token::*;
 pub use access_token_id::*;
