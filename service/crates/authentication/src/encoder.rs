@@ -33,7 +33,7 @@ impl AccessTokenEncoder {
   ///
   /// # Returns
   /// The result of encoding the access token
-  pub fn encode(&self, input: &AccessToken) -> EncodedAccessToken {
+  pub fn encode(&self, input: &AccessToken) -> Result<EncodedAccessToken, EncodeError> {
     let payload = json!({
       "iss": "universe",
       "aud": "universe",
@@ -44,9 +44,31 @@ impl AccessTokenEncoder {
       "iat": input.created.timestamp(),
     });
 
-    let jwt = encode(json!({}), &self.key, &payload, self.algorithm).unwrap();
+    let jwt = encode(json!({}), &self.key, &payload, self.algorithm)?;
 
-    EncodedAccessToken::new(jwt)
+    Ok(EncodedAccessToken::new(jwt))
+  }
+}
+
+/// Error caused by failing to encode an access token
+#[derive(Debug, PartialEq)]
+pub struct EncodeError {
+  message: String,
+}
+
+impl std::fmt::Display for EncodeError {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    write!(f, "Error encoding access token: {}", self.message)
+  }
+}
+
+impl std::error::Error for EncodeError {}
+
+impl From<frank_jwt::Error> for EncodeError {
+  fn from(e: frank_jwt::Error) -> Self {
+    Self {
+      message: format!("{}", e),
+    }
   }
 }
 
@@ -68,7 +90,7 @@ mod tests {
     };
 
     let encoder = AccessTokenEncoder::new("key");
-    let encoded = encoder.encode(&access_token);
+    let encoded = encoder.encode(&access_token).expect("Encode Access Token");
     let raw_jwt = format!("{}", encoded);
 
     let (header, payload) = decode(
