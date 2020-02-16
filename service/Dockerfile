@@ -10,6 +10,8 @@ FROM rustlang/rust:nightly-slim AS builder
 
 WORKDIR /universe
 
+RUN apt update -y && apt install -y pkg-config libssl-dev
+
 # We do a non-code build to get all the dependencies. This allows us to benefit from layer caching
 COPY --from=package-cache /universe /universe
 RUN cargo build --release
