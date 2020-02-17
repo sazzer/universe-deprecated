@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 /// Representation of an encode Access Token.
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct EncodedAccessToken(String);
+pub struct EncodedAccessToken(pub(crate) String);
 
 impl EncodedAccessToken {
   /// Create a new EncodedAccessToken from a bare string
