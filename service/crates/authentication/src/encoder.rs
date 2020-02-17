@@ -2,6 +2,7 @@ use crate::{AccessToken, AccessTokenID, EncodedAccessToken};
 use chrono::{DateTime, TimeZone, Utc};
 use frank_jwt::{decode, encode, Algorithm, ValidationOptions};
 use serde_json::json;
+use tracing::warn;
 use universe_users::UserID;
 
 /// Means by which we can convert an Access Token to and from the Encoded form
@@ -64,25 +65,25 @@ impl AccessTokenEncoder {
       .filter(|v| v.is_string())
       .map(|v| v.as_str().unwrap().to_owned())
       .map(AccessTokenID::new)
-      .ok_or(DecodeError::MissingAccessTokenField("jti".to_owned()))?;
+      .ok_or(DecodeError::MissingAccessTokenField("jti"))?;
     let sub: UserID = payload
       .get("sub")
       .filter(|v| v.is_string())
       .map(|v| v.as_str().unwrap())
-      .ok_or(DecodeError::MissingAccessTokenField("sub".to_owned()))?
+      .ok_or(DecodeError::MissingAccessTokenField("sub"))?
       .parse()?;
     let exp: DateTime<Utc> = payload
       .get("exp")
       .filter(|v| v.is_number())
       .map(|v| v.as_i64().unwrap())
       .map(|v| Utc.timestamp(v, 0))
-      .ok_or(DecodeError::MissingAccessTokenField("exp".to_owned()))?;
+      .ok_or(DecodeError::MissingAccessTokenField("exp"))?;
     let iat: DateTime<Utc> = payload
       .get("iat")
       .filter(|v| v.is_number())
       .map(|v| v.as_i64().unwrap())
       .map(|v| Utc.timestamp(v, 0))
-      .ok_or(DecodeError::MissingAccessTokenField("iat".to_owned()))?;
+      .ok_or(DecodeError::MissingAccessTokenField("iat"))?;
 
     Ok(AccessToken {
       user_id: sub,
@@ -109,6 +110,7 @@ impl std::error::Error for EncodeError {}
 
 impl From<frank_jwt::Error> for EncodeError {
   fn from(e: frank_jwt::Error) -> Self {
+    warn!("Error encoding Access Token as JWT: {:?}", e);
     Self {
       message: format!("{}", e),
     }
@@ -120,7 +122,7 @@ impl From<frank_jwt::Error> for EncodeError {
 pub enum DecodeError {
   ExpiredAccessToken,
   MalformedAccessToken,
-  MissingAccessTokenField(String),
+  MissingAccessTokenField(&'static str),
 }
 
 impl std::fmt::Display for DecodeError {
@@ -133,16 +135,19 @@ impl std::error::Error for DecodeError {}
 
 impl From<frank_jwt::Error> for DecodeError {
   fn from(e: frank_jwt::Error) -> Self {
+    warn!("Error decoding Access Token as JWT: {}", e);
     match e {
       frank_jwt::Error::SignatureExpired => DecodeError::ExpiredAccessToken,
+      frank_jwt::Error::ExpirationInvalid => DecodeError::ExpiredAccessToken,
       _ => DecodeError::MalformedAccessToken,
     }
   }
 }
 
 impl From<universe_users::UserIDParseError> for DecodeError {
-  fn from(_e: universe_users::UserIDParseError) -> Self {
-    DecodeError::MissingAccessTokenField("sub".to_owned())
+  fn from(e: universe_users::UserIDParseError) -> Self {
+    warn!("Malformed User ID decoding Access Token: {:?}", e);
+    DecodeError::MissingAccessTokenField("sub")
   }
 }
 #[cfg(test)]
@@ -150,6 +155,7 @@ mod tests {
   use super::*;
   use chrono::{Duration, Timelike};
   use spectral::prelude::*;
+  use test_env_log::test;
 
   #[test]
   fn test_encode() {
@@ -196,8 +202,248 @@ mod tests {
 
     let encoder = AccessTokenEncoder::new("key");
     let encoded = encoder.encode(&access_token).expect("Encode Access Token");
-    let decoded = encoder.decode(encoded).expect("Decode Access Token");
+    let decoded = encoder.decode(encoded);
 
-    assert_that(&decoded).is_equal_to(access_token);
+    assert_that(&decoded).is_ok().is_equal_to(access_token);
+  }
+
+  #[test]
+  fn test_decode_expired() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap() - Duration::days(2),
+      expires: Utc::now().with_nanosecond(0).unwrap() - Duration::days(1),
+    };
+
+    let encoder = AccessTokenEncoder::new("key");
+    let encoded = encoder.encode(&access_token).expect("Encode Access Token");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::ExpiredAccessToken);
+  }
+
+  #[test]
+  fn test_decode_future() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap() + Duration::days(2),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+
+    let encoder = AccessTokenEncoder::new("key");
+    let encoded = encoder.encode(&access_token).expect("Encode Access Token");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded).is_ok().is_equal_to(access_token);
+  }
+
+  #[test]
+  fn test_decode_wrong_format() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap(),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+    let payload = json!({
+      "iss": "universe",
+      "aud": "universe",
+      "sub": access_token.user_id,
+      "jti": access_token.access_token_id,
+      "exp": access_token.expires.timestamp(),
+      "nbf": access_token.created.timestamp(),
+      "iat": access_token.created.timestamp(),
+    });
+
+    let jwt = encode(json!({}), &"key", &payload, Algorithm::HS256).unwrap();
+
+    let encoded = EncodedAccessToken::new(jwt);
+
+    let encoder = AccessTokenEncoder::new("key");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::MalformedAccessToken);
+  }
+
+  #[test]
+  fn test_decode_wrong_key() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap(),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+    let payload = json!({
+      "iss": "universe",
+      "aud": "universe",
+      "sub": access_token.user_id,
+      "jti": access_token.access_token_id,
+      "exp": access_token.expires.timestamp(),
+      "nbf": access_token.created.timestamp(),
+      "iat": access_token.created.timestamp(),
+    });
+
+    let jwt = encode(json!({}), &"wrong", &payload, Algorithm::HS512).unwrap();
+
+    let encoded = EncodedAccessToken::new(jwt);
+
+    let encoder = AccessTokenEncoder::new("key");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::MalformedAccessToken);
+  }
+
+  #[test]
+  fn test_decode_missing_subject() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap(),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+    let payload = json!({
+      "iss": "universe",
+      "aud": "universe",
+      "jti": access_token.access_token_id,
+      "exp": access_token.expires.timestamp(),
+      "nbf": access_token.created.timestamp(),
+      "iat": access_token.created.timestamp(),
+    });
+
+    let jwt = encode(json!({}), &"key", &payload, Algorithm::HS512).unwrap();
+
+    let encoded = EncodedAccessToken::new(jwt);
+
+    let encoder = AccessTokenEncoder::new("key");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::MissingAccessTokenField("sub"));
+  }
+
+  #[test]
+  fn test_decode_missing_id() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap(),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+    let payload = json!({
+      "iss": "universe",
+      "aud": "universe",
+      "sub": access_token.user_id,
+      "exp": access_token.expires.timestamp(),
+      "nbf": access_token.created.timestamp(),
+      "iat": access_token.created.timestamp(),
+    });
+
+    let jwt = encode(json!({}), &"key", &payload, Algorithm::HS512).unwrap();
+
+    let encoded = EncodedAccessToken::new(jwt);
+
+    let encoder = AccessTokenEncoder::new("key");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::MissingAccessTokenField("jti"));
+  }
+
+  #[test]
+  fn test_decode_missing_expiry() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap(),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+    let payload = json!({
+      "iss": "universe",
+      "aud": "universe",
+      "jti": access_token.access_token_id,
+      "sub": access_token.user_id,
+      "nbf": access_token.created.timestamp(),
+      "iat": access_token.created.timestamp(),
+    });
+
+    let jwt = encode(json!({}), &"key", &payload, Algorithm::HS512).unwrap();
+
+    let encoded = EncodedAccessToken::new(jwt);
+
+    let encoder = AccessTokenEncoder::new("key");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::ExpiredAccessToken);
+  }
+
+  #[test]
+  fn test_decode_missing_created() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap(),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+    let payload = json!({
+      "iss": "universe",
+      "aud": "universe",
+      "jti": access_token.access_token_id,
+      "sub": access_token.user_id,
+      "exp": access_token.expires.timestamp(),
+      "nbf": access_token.created.timestamp(),
+    });
+
+    let jwt = encode(json!({}), &"key", &payload, Algorithm::HS512).unwrap();
+
+    let encoded = EncodedAccessToken::new(jwt);
+
+    let encoder = AccessTokenEncoder::new("key");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::MissingAccessTokenField("iat"));
+  }
+
+  #[test]
+  fn test_decode_malformed_user() {
+    let access_token = AccessToken {
+      access_token_id: Default::default(),
+      user_id: Default::default(),
+      created: Utc::now().with_nanosecond(0).unwrap(),
+      expires: Utc::now().with_nanosecond(0).unwrap() + Duration::days(1),
+    };
+    let payload = json!({
+      "iss": "universe",
+      "aud": "universe",
+      "jti": access_token.access_token_id,
+      "sub": "userid",
+      "exp": access_token.expires.timestamp(),
+      "iat": access_token.created.timestamp(),
+      "nbf": access_token.created.timestamp(),
+    });
+
+    let jwt = encode(json!({}), &"key", &payload, Algorithm::HS512).unwrap();
+
+    let encoded = EncodedAccessToken::new(jwt);
+
+    let encoder = AccessTokenEncoder::new("key");
+    let decoded = encoder.decode(encoded);
+
+    assert_that(&decoded)
+      .is_err()
+      .is_equal_to(DecodeError::MissingAccessTokenField("sub"));
   }
 }
