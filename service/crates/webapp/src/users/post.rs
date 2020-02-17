@@ -1,4 +1,4 @@
-use super::model::User;
+use super::model::{AccessToken, AuthenticatedUser};
 use crate::problem::{missing_error, unexpected_error, validation_error, Problem, ValidationError};
 use crate::request_id::RequestId;
 use rocket::{post, State};
@@ -6,15 +6,18 @@ use rocket_contrib::json::Json;
 use serde::Deserialize;
 use std::convert::{TryFrom, TryInto};
 use tracing::debug;
+use universe_authentication::{encoder::AccessTokenEncoder, AccessTokenFactory};
 use universe_users::*;
 
 #[post("/users", data = "<registration>")]
-#[tracing::instrument(skip(user_service))]
+#[tracing::instrument(skip(user_service, access_token_factory, access_token_encoder))]
 pub fn register_user(
     _request_id: RequestId,
     registration: Json<Registration>,
     user_service: State<Box<dyn UserService>>,
-) -> Result<Json<User>, Problem> {
+    access_token_factory: State<AccessTokenFactory>,
+    access_token_encoder: State<AccessTokenEncoder>,
+) -> Result<Json<AuthenticatedUser>, Problem> {
     debug!("Registration: {:?}", registration);
 
     let user: UserData = registration
@@ -26,7 +29,19 @@ pub fn register_user(
     let result = user_service.register_user(user)?;
     debug!("Registered user: {:?}", result);
 
-    Ok(Json(result.into()))
+    let access_token = access_token_factory.build(&result.identity.id);
+    debug!(
+        "Access Token for user {:?}: {:?}",
+        result.identity.id, access_token
+    );
+
+    Ok(Json(AuthenticatedUser {
+        user: result.into(),
+        access_token: AccessToken {
+            token: access_token_encoder.encode(&access_token).unwrap(),
+            expiry: access_token.expires,
+        },
+    }))
 }
 
 impl From<RegisterUserError> for Problem {

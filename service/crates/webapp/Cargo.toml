@@ -9,6 +9,7 @@ name = "universe_integration"
 path = "integration/tests.rs"
 
 [dependencies]
+chrono = { version = "0.4.10", features = ["serde"] }
 http = "0.2.0"
 rocket = "0.4.2"
 rocket_contrib = "0.4.2"
@@ -18,6 +19,7 @@ serde_json = "1.0.48"
 tracing = "0.1.12"
 uuid = {version = "0.8.1", features=["serde", "v4"] }
 
+universe_authentication = { path = "../authentication" }
 universe_database = { path = "../database" }
 universe_health = { path = "../health" }
 universe_users = { path = "../users" }

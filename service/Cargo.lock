@@ -187,6 +187,7 @@ checksum = "31850b4a4d6bae316f7a09e691c944c28299298837edc0a03f755618c23cbc01"
 dependencies = [
  "num-integer",
  "num-traits 0.2.11",
+ "serde 1.0.104",
  "time",
 ]
 
@@ -2299,6 +2300,7 @@ dependencies = [
 name = "universe_webapp"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "http",
  "insta",
  "rocket",
@@ -2311,6 +2313,7 @@ dependencies = [
  "tracing",
  "tracing-log",
  "tracing-subscriber",
+ "universe_authentication",
  "universe_database",
  "universe_health",
  "universe_test_database_wrapper",

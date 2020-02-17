@@ -27,6 +27,12 @@ impl Service {
             .attach(cors.to_cors().unwrap())
             .attach(crate::request_id::RequestIdFairing {})
             .manage(healthchecker)
+            .manage(universe_authentication::AccessTokenFactory::new(
+                chrono::Duration::days(365),
+            ))
+            .manage(universe_authentication::encoder::AccessTokenEncoder::new(
+                "key",
+            ))
             .manage(Box::new(universe_users::new_user_service(database))
                 as Box<dyn universe_users::UserService>)
             .mount("/", crate::health::routes())
