@@ -29,6 +29,9 @@ RUN cargo build --release
 FROM debian:stretch-slim
 
 WORKDIR /universe
+
+RUN apt update -y && apt install -y openssl
+
 COPY --from=builder /universe/target/release/universe /universe/universe
 COPY migrations /universe/migrations/
 
