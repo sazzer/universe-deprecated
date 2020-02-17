@@ -18,7 +18,12 @@ impl<'d> Default for ServiceWrapper<'d> {
 
         let database = TestDatabaseWrapper::new();
 
-        let webapp = Service::new(&database.url(), None, &migrations_glob);
+        let webapp = Service::new(
+            &database.url(),
+            None,
+            "accessTokenSecretKey",
+            &migrations_glob,
+        );
         Self {
             database,
             webapp: webapp.client(),

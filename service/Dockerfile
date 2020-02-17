@@ -32,4 +32,6 @@ WORKDIR /universe
 COPY --from=builder /universe/target/release/universe /universe/universe
 COPY migrations /universe/migrations/
 
+ENV ACCESS_TOKEN_KEY=resetThisKey
+
 CMD ["/universe/universe"]
