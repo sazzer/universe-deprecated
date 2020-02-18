@@ -1,4 +1,4 @@
-FROM debian:stretch-slim AS package-cache
+FROM debian:buster-slim AS package-cache
 
 WORKDIR /universe
 COPY Cargo.lock Cargo.toml docker/package.sh /universe/
@@ -26,7 +26,7 @@ RUN cargo build --release
 
 
 # Next build a container with the build artifact but no code
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 WORKDIR /universe
 
