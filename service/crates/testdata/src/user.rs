@@ -1,6 +1,8 @@
 use crate::testdata::TestData;
+use bcrypt::{hash, DEFAULT_COST};
 use chrono::{DateTime, Timelike, Utc};
 use postgres_types::ToSql;
+use std::boxed::Box;
 use uuid::Uuid;
 
 /// Test Data for a User record
@@ -37,16 +39,18 @@ impl TestData for User {
         "INSERT INTO users(user_id, version, created, updated, username, email, display_name, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)".to_owned()
     }
 
-    fn binds(&self) -> Vec<&(dyn ToSql + Sync)> {
+    fn binds(&self) -> Vec<Box<(dyn ToSql + Sync)>> {
+        let hashed_password = hash(&self.password, DEFAULT_COST).unwrap();
+
         vec![
-            &self.user_id,
-            &self.version,
-            &self.created,
-            &self.updated,
-            &self.username,
-            &self.email,
-            &self.display_name,
-            &self.password,
+            Box::new(self.user_id),
+            Box::new(self.version),
+            Box::new(self.created),
+            Box::new(self.updated),
+            Box::new(self.username.clone()),
+            Box::new(self.email.clone()),
+            Box::new(self.display_name.clone()),
+            Box::new(hashed_password),
         ]
     }
 }

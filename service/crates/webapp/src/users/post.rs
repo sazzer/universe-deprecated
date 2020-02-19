@@ -1,4 +1,4 @@
-use super::model::{AccessToken, AuthenticatedUser};
+use crate::authentication::model::{AccessToken, AuthenticatedUser};
 use crate::problem::{missing_error, unexpected_error, validation_error, Problem, ValidationError};
 use crate::request_id::RequestId;
 use rocket::{post, State};

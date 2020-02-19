@@ -41,7 +41,8 @@ impl Service {
             .manage(Box::new(universe_users::new_user_service(database))
                 as Box<dyn universe_users::UserService>)
             .mount("/", crate::health::routes())
-            .mount("/", crate::users::routes());
+            .mount("/", crate::users::routes())
+            .mount("/", crate::authentication::routes());
 
         Service { rocket }
     }

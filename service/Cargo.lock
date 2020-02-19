@@ -2263,6 +2263,7 @@ dependencies = [
 name = "universe_testdata"
 version = "0.1.0"
 dependencies = [
+ "bcrypt",
  "chrono",
  "postgres",
  "postgres-types",

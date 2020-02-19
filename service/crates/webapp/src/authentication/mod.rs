@@ -1,4 +1,3 @@
-mod get;
 pub(crate) mod model;
 mod post;
 mod routes;

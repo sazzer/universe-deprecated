@@ -1,4 +1,5 @@
 mod assert;
+mod authentication;
 mod health;
 mod service;
 mod users;
