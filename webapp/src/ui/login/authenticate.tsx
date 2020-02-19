@@ -11,7 +11,7 @@ export const AuthenticateForm: React.FC = () => {
   const { t } = useTranslation();
   const { state, actions } = useOvermind();
 
-  const { register, errors, handleSubmit } = useForm({
+  const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
       username: yup
         .string()
@@ -32,7 +32,23 @@ export const AuthenticateForm: React.FC = () => {
     }
   });
 
-  const onSubmitHandler = async (data: FieldValues) => {};
+  const onSubmitHandler = async (data: FieldValues) => {
+    const error = await actions.login.authenticate({
+      username: data.username,
+      password: data.password
+    });
+
+    if (error !== undefined) {
+      const message = t(
+        "login.password.errors.tag:universe,2020:users/problems/login_failure"
+      );
+      setError(
+        "password",
+        "tag:universe,2020:users/problems/login_failure",
+        message
+      );
+    }
+  };
 
   let errorMessage;
   if (state.login.error) {

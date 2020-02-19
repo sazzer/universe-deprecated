@@ -1,5 +1,194 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`authenticate Invalid Password 1`] = `
+Array [
+  Object {
+    "args": Array [
+      true,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`authenticate Invalid Password 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "loading": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "authenticating",
+      "initial": [Function],
+      "registering": [Function],
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`authenticate Network Error 1`] = `
+Array [
+  Object {
+    "args": Array [
+      true,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`authenticate Network Error 2`] = `
+Object {
+  "login": Object {
+    "error": "Error: Network Error",
+    "loading": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "authenticating",
+      "initial": [Function],
+      "registering": [Function],
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`authenticate Successfully 1`] = `
+Array [
+  Object {
+    "args": Array [
+      true,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`authenticate Successfully 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "loading": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "authenticating",
+      "initial": [Function],
+      "registering": [Function],
+    },
+    "username": null,
+  },
+}
+`;
+
 exports[`cancelLogin Cancelling from the authenticating state 1`] = `
 Array [
   Object {
@@ -587,6 +776,195 @@ Object {
       Symbol(CURRENT_EXIT): undefined,
     },
     "username": "testuser",
+  },
+}
+`;
+
+exports[`register Invalid Password 1`] = `
+Array [
+  Object {
+    "args": Array [
+      true,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`register Invalid Password 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "loading": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "registering",
+      "initial": [Function],
+      "registering": [Function],
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`register Network Error 1`] = `
+Array [
+  Object {
+    "args": Array [
+      true,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: Network Error",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`register Network Error 2`] = `
+Object {
+  "login": Object {
+    "error": "Error: Network Error",
+    "loading": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "registering",
+      "initial": [Function],
+      "registering": [Function],
+    },
+    "username": null,
+  },
+}
+`;
+
+exports[`register Successfully 1`] = `
+Array [
+  Object {
+    "args": Array [
+      true,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      null,
+    ],
+    "hasChangedValue": false,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+]
+`;
+
+exports[`register Successfully 2`] = `
+Object {
+  "login": Object {
+    "error": null,
+    "loading": false,
+    "mode": StateMachine {
+      "authenticating": [Function],
+      "current": "registering",
+      "initial": [Function],
+      "registering": [Function],
+    },
+    "username": null,
   },
 }
 `;

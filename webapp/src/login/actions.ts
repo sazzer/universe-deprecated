@@ -1,5 +1,6 @@
 import { Action } from "overmind";
 import { ValidationErrors } from "../api/validation";
+import { AuthenticationError } from "./effects";
 /**
  * Check if the given username is already registered or not
  * @param  username The username to check
@@ -45,6 +46,7 @@ export interface RegisterValue {
   /** The password to register */
   password: string;
 }
+
 /**
  * Attempt to register a new user
  */
@@ -56,6 +58,7 @@ export const register: Action<
   details: RegisterValue
 ): Promise<ValidationErrors | undefined> => {
   state.login.loading = true;
+  state.login.error = null;
   try {
     await effects.login.api.registerUser(
       details.username,
@@ -67,6 +70,44 @@ export const register: Action<
   } catch (e) {
     state.login.loading = false;
     if (e instanceof ValidationErrors) {
+      return e;
+    } else {
+      state.login.error = e.toString();
+    }
+  }
+};
+
+/**
+ * Shape of the input value for authenticating as an existing user
+ */
+export interface AuthenticateValue {
+  /** The username to use */
+  username: string;
+  /** The password to use */
+  password: string;
+}
+
+/**
+ * Attempt to authenticate as an existinguser
+ */
+export const authenticate: Action<
+  AuthenticateValue,
+  Promise<AuthenticationError | undefined>
+> = async (
+  { state, effects },
+  details: AuthenticateValue
+): Promise<AuthenticationError | undefined> => {
+  state.login.loading = true;
+  state.login.error = null;
+  try {
+    await effects.login.api.authenticateUser(
+      details.username,
+      details.password
+    );
+    state.login.loading = false;
+  } catch (e) {
+    state.login.loading = false;
+    if (e instanceof AuthenticationError) {
       return e;
     } else {
       state.login.error = e.toString();

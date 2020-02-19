@@ -1,7 +1,7 @@
-import { createOvermindMock, OvermindMock, Config } from "overmind";
-import { config } from "../overmind";
-import { cloneDeep, merge } from "lodash";
+import { OvermindMock, Config } from "overmind";
 import { createTestOvermind } from "../overmind/test";
+import { AuthenticationError } from "./effects";
+import { ValidationErrors } from "../api/validation";
 
 describe("checkUsername", () => {
   let checkUsernameEffect: jest.Mock;
@@ -116,5 +116,172 @@ describe("cancelLogin", () => {
     overmind.actions.login.cancelLogin();
     expect(overmind.mutations).toMatchSnapshot();
     expect(overmind.state).toMatchSnapshot();
+  });
+});
+
+describe("authenticate", () => {
+  let authenticateUserEffect: jest.Mock;
+  let overmind: OvermindMock<Config>;
+
+  beforeEach(() => {
+    authenticateUserEffect = jest.fn();
+
+    overmind = createTestOvermind(
+      {
+        login: {
+          api: {
+            authenticateUser: authenticateUserEffect
+          }
+        }
+      },
+      {
+        login: {
+          mode: {
+            current: "authenticating"
+          }
+        }
+      }
+    );
+  });
+  test("Successfully", async () => {
+    authenticateUserEffect.mockReturnValueOnce(Promise.resolve(undefined));
+    const result = await overmind.actions.login.authenticate({
+      username: "testuser",
+      password: "Pa55word"
+    });
+    expect(result).toBeUndefined;
+    expect(overmind.mutations).toMatchSnapshot();
+    expect(overmind.state).toMatchSnapshot();
+    expect(authenticateUserEffect).toBeCalledTimes(1);
+    expect(authenticateUserEffect).toBeCalledWith("testuser", "Pa55word");
+  });
+  test("Invalid Password", async () => {
+    authenticateUserEffect.mockReturnValueOnce(
+      Promise.reject(new AuthenticationError())
+    );
+    const result = await overmind.actions.login.authenticate({
+      username: "testuser",
+      password: "Pa55word"
+    });
+    expect(result).toEqual(new AuthenticationError());
+    expect(overmind.mutations).toMatchSnapshot();
+    expect(overmind.state).toMatchSnapshot();
+    expect(authenticateUserEffect).toBeCalledTimes(1);
+    expect(authenticateUserEffect).toBeCalledWith("testuser", "Pa55word");
+  });
+  test("Network Error", async () => {
+    authenticateUserEffect.mockReturnValueOnce(
+      Promise.reject(new Error("Network Error"))
+    );
+    const result = await overmind.actions.login.authenticate({
+      username: "testuser",
+      password: "Pa55word"
+    });
+    expect(result).toEqual(undefined);
+    expect(overmind.mutations).toMatchSnapshot();
+    expect(overmind.state).toMatchSnapshot();
+    expect(authenticateUserEffect).toBeCalledTimes(1);
+    expect(authenticateUserEffect).toBeCalledWith("testuser", "Pa55word");
+  });
+});
+
+describe("register", () => {
+  let registerUserEffect: jest.Mock;
+  let overmind: OvermindMock<Config>;
+
+  beforeEach(() => {
+    registerUserEffect = jest.fn();
+
+    overmind = createTestOvermind(
+      {
+        login: {
+          api: {
+            registerUser: registerUserEffect
+          }
+        }
+      },
+      {
+        login: {
+          mode: {
+            current: "registering"
+          }
+        }
+      }
+    );
+  });
+  test("Successfully", async () => {
+    registerUserEffect.mockReturnValueOnce(Promise.resolve(undefined));
+    const result = await overmind.actions.login.register({
+      username: "testuser",
+      email: "test@example.com",
+      displayName: "Test User",
+      password: "Pa55word"
+    });
+    expect(result).toBeUndefined;
+    expect(overmind.mutations).toMatchSnapshot();
+    expect(overmind.state).toMatchSnapshot();
+    expect(registerUserEffect).toBeCalledTimes(1);
+    expect(registerUserEffect).toBeCalledWith(
+      "testuser",
+      "test@example.com",
+      "Test User",
+      "Pa55word"
+    );
+  });
+  test("Invalid Password", async () => {
+    registerUserEffect.mockReturnValueOnce(
+      Promise.reject(
+        new ValidationErrors([
+          {
+            field: "email",
+            type: "tag:universe,2020:users/validation-errors/email/duplicate"
+          }
+        ])
+      )
+    );
+    const result = await overmind.actions.login.register({
+      username: "testuser",
+      email: "test@example.com",
+      displayName: "Test User",
+      password: "Pa55word"
+    });
+    expect(result).toEqual(
+      new ValidationErrors([
+        {
+          field: "email",
+          type: "tag:universe,2020:users/validation-errors/email/duplicate"
+        }
+      ])
+    );
+    expect(overmind.mutations).toMatchSnapshot();
+    expect(overmind.state).toMatchSnapshot();
+    expect(registerUserEffect).toBeCalledTimes(1);
+    expect(registerUserEffect).toBeCalledWith(
+      "testuser",
+      "test@example.com",
+      "Test User",
+      "Pa55word"
+    );
+  });
+  test("Network Error", async () => {
+    registerUserEffect.mockReturnValueOnce(
+      Promise.reject(new Error("Network Error"))
+    );
+    const result = await overmind.actions.login.register({
+      username: "testuser",
+      email: "test@example.com",
+      displayName: "Test User",
+      password: "Pa55word"
+    });
+    expect(result).toEqual(undefined);
+    expect(overmind.mutations).toMatchSnapshot();
+    expect(overmind.state).toMatchSnapshot();
+    expect(registerUserEffect).toBeCalledTimes(1);
+    expect(registerUserEffect).toBeCalledWith(
+      "testuser",
+      "test@example.com",
+      "Test User",
+      "Pa55word"
+    );
   });
 });

@@ -52,7 +52,33 @@ async function registerUser(
     }
   }
 }
+
+export class AuthenticationError extends Error {}
+
+async function authenticateUser(username: string, password: string) {
+  try {
+    await request({
+      url: "/login",
+      method: "POST",
+      data: {
+        username,
+        password
+      }
+    });
+  } catch (e) {
+    if (
+      e instanceof ProblemResponse &&
+      e.problem.type === "tag:universe,2020:users/problems/login_failure"
+    ) {
+      throw new AuthenticationError();
+    } else {
+      throw e;
+    }
+  }
+}
+
 export const api = {
+  authenticateUser,
   checkUsername,
   registerUser
 };

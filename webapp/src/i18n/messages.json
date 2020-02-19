@@ -47,7 +47,8 @@
     "password": {
       "label": "Password",
       "errors": {
-        "tag:universe,2020:validation-errors/missing": "Please enter a password"
+        "tag:universe,2020:validation-errors/missing": "Please enter a password",
+        "tag:universe,2020:users/problems/login_failure": "Invalid username or password"
       }
     },
     "password2": {
