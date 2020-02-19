@@ -130,7 +130,13 @@ mod tests {
         assert_that(&user).is_some();
 
         let user = user.unwrap();
-        assert_that(&user).is_equal_to(UserEntity::from(seeded_user));
+        let seeded_password = seeded_user.password.clone();
+        let seeded_user_entity = UserEntity::from(seeded_user);
+        assert_that(&user.identity).is_equal_to(seeded_user_entity.identity);
+        assert_that(&user.data.username).is_equal_to(seeded_user_entity.data.username);
+        assert_that(&user.data.email).is_equal_to(seeded_user_entity.data.email);
+        assert_that(&user.data.display_name).is_equal_to(seeded_user_entity.data.display_name);
+        assert_that(&user.data.password.verify(seeded_password)).is_equal_to(true);
     }
 
     #[test]
@@ -153,7 +159,13 @@ mod tests {
         assert_that(&user).is_some();
 
         let user = user.unwrap();
-        assert_that(&user).is_equal_to(UserEntity::from(seeded_user));
+        let seeded_password = seeded_user.password.clone();
+        let seeded_user_entity = UserEntity::from(seeded_user);
+        assert_that(&user.identity).is_equal_to(seeded_user_entity.identity);
+        assert_that(&user.data.username).is_equal_to(seeded_user_entity.data.username);
+        assert_that(&user.data.email).is_equal_to(seeded_user_entity.data.email);
+        assert_that(&user.data.display_name).is_equal_to(seeded_user_entity.data.display_name);
+        assert_that(&user.data.password.verify(seeded_password)).is_equal_to(true);
     }
 
     #[test]
@@ -170,7 +182,13 @@ mod tests {
         assert_that(&user).is_some();
 
         let user = user.unwrap();
-        assert_that(&user).is_equal_to(UserEntity::from(seeded_user));
+        let seeded_password = seeded_user.password.clone();
+        let seeded_user_entity = UserEntity::from(seeded_user);
+        assert_that(&user.identity).is_equal_to(seeded_user_entity.identity);
+        assert_that(&user.data.username).is_equal_to(seeded_user_entity.data.username);
+        assert_that(&user.data.email).is_equal_to(seeded_user_entity.data.email);
+        assert_that(&user.data.display_name).is_equal_to(seeded_user_entity.data.display_name);
+        assert_that(&user.data.password.verify(seeded_password)).is_equal_to(true);
     }
 
     #[test]
