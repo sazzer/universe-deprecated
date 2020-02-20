@@ -1,6 +1,7 @@
 import { Seed, extractData } from "./seed";
 import { Loadable } from "./load";
 import uuid from "uuid/v4";
+import * as bcrypt from "bcrypt";
 
 /**
  * Seed Data for a User
@@ -43,6 +44,8 @@ export class UserSeed {
   }
 
   get binds() {
+    const hash = bcrypt.hashSync(this._password, 10);
+
     return [
       this._id,
       this._version,
@@ -51,7 +54,7 @@ export class UserSeed {
       this._username,
       this._email,
       this._displayName,
-      this._password
+      hash
     ];
   }
 }
@@ -64,7 +67,6 @@ Loadable("user", "SELECT * FROM users", (input: { [field: string]: any }) => {
     Updated: input.updated,
     Username: input.username,
     "Email Address": input.email,
-    "Display Name": input.display_name,
-    Password: input.password
+    "Display Name": input.display_name
   };
 });

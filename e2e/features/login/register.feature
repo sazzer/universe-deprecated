@@ -9,7 +9,7 @@ Feature: User Registration
       | Display Name      |  |
       | Password          |  |
       | Re-enter Password |  |
-    And the Register User form has errors:
+    Then the Register User form has errors:
       | Email Address     | Please enter an email address |
       | Display Name      | Please enter a display name   |
       | Password          | Please enter a password       |
@@ -30,7 +30,7 @@ Feature: User Registration
       | Display Name      | <Display Name>      |
       | Password          | <Password>          |
       | Re-enter Password | <Re-enter Password> |
-    And the Register User form has errors:
+    Then the Register User form has errors:
       | Email Address     | <Email Address Error>     |
       | Display Name      | <Display Name Error>      |
       | Password          | <Password Error>          |
@@ -60,7 +60,7 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
-    And the Register User form has errors:
+    Then the Register User form has errors:
       | Email Address | Email Address is already registered |
     And the Register User form has details:
       | Username          | unknown              |
@@ -80,7 +80,7 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
-    And the Register User form has errors:
+    Then the Register User form has errors:
       | Username | Username is already registered |
     And the Register User form has details:
       | Username          | known                |
@@ -98,7 +98,7 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
-    And a user exists with details:
+    Then a user exists with details:
       | Username      | unknown              |
       | Email Address | testuser@example.com |
       | Display Name  | Test User            |
@@ -113,7 +113,7 @@ Feature: User Registration
       | Display Name      | <Expected>             |
       | Password          | <Expected>             |
       | Re-enter Password | <Expected>             |
-    And a user exists with details:
+    Then a user exists with details:
       | Username      | <Expected>             |
       | Email Address | <Expected>@example.com |
       | Display Name  | <Expected>             |
