@@ -5,6 +5,7 @@ import { RegisterForm } from "./register";
 import { createTestOvermind } from "../../overmind/test";
 import { OvermindMock, Config } from "overmind";
 import { ValidationErrors } from "../../api/validation";
+import { MemoryRouter } from "react-router-dom";
 
 describe("RegisterForm", () => {
   test("Initial render", () => {
@@ -21,7 +22,9 @@ describe("RegisterForm", () => {
     );
     const { container } = render(
       <Provider value={overmind}>
-        <RegisterForm />
+        <MemoryRouter>
+          <RegisterForm />
+        </MemoryRouter>
       </Provider>
     );
     expect(container).toMatchSnapshot();
@@ -40,7 +43,9 @@ describe("RegisterForm", () => {
     );
     const { getByText } = render(
       <Provider value={overmind}>
-        <RegisterForm />
+        <MemoryRouter>
+          <RegisterForm />
+        </MemoryRouter>
       </Provider>
     );
     await wait(() =>
@@ -76,7 +81,9 @@ describe("RegisterForm", () => {
     test("Submit without entering anything", async () => {
       const { container, getByText } = render(
         <Provider value={overmind}>
-          <RegisterForm />
+          <MemoryRouter>
+            <RegisterForm />
+          </MemoryRouter>
         </Provider>
       );
       await wait(() =>
@@ -88,7 +95,9 @@ describe("RegisterForm", () => {
     test("Submit with whitespace for everything", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <RegisterForm />
+          <MemoryRouter>
+            <RegisterForm />
+          </MemoryRouter>
         </Provider>
       );
       await wait(() => {
@@ -112,7 +121,9 @@ describe("RegisterForm", () => {
     test("Submit with invalid email address", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <RegisterForm />
+          <MemoryRouter>
+            <RegisterForm />
+          </MemoryRouter>
         </Provider>
       );
       await wait(() => {
@@ -136,7 +147,9 @@ describe("RegisterForm", () => {
     test("Submit with mismatched passwords", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <RegisterForm />
+          <MemoryRouter>
+            <RegisterForm />
+          </MemoryRouter>
         </Provider>
       );
       await wait(() => {
@@ -161,7 +174,9 @@ describe("RegisterForm", () => {
     test("Submit successfully", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <RegisterForm />
+          <MemoryRouter>
+            <RegisterForm />
+          </MemoryRouter>
         </Provider>
       );
       registerEffect.mockResolvedValueOnce(undefined);
@@ -194,7 +209,9 @@ describe("RegisterForm", () => {
     test("Submit with network error", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <RegisterForm />
+          <MemoryRouter>
+            <RegisterForm />
+          </MemoryRouter>
         </Provider>
       );
       registerEffect.mockRejectedValueOnce(new Error("Network Error"));
@@ -227,7 +244,9 @@ describe("RegisterForm", () => {
     test("Submit with duplicate email address", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <RegisterForm />
+          <MemoryRouter>
+            <RegisterForm />
+          </MemoryRouter>
         </Provider>
       );
       registerEffect.mockRejectedValueOnce(

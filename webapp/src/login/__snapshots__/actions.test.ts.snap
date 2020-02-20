@@ -43,6 +43,10 @@ Array [
 
 exports[`authenticate Invalid Password 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -118,6 +122,10 @@ Array [
 
 exports[`authenticate Network Error 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": "Error: Network Error",
     "loading": false,
@@ -154,6 +162,87 @@ Array [
   },
   Object {
     "args": Array [
+      Object {
+        "accessToken": "some.token.id",
+        "expires": "2021-02-19T18:43:41.310201Z",
+      },
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.accessToken",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      Object {
+        "accessToken": "some.token.id",
+        "expires": "2021-02-19T18:43:41.310201Z",
+      },
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.accessToken",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      Object {
+        "accessToken": "some.token.id",
+        "expires": "2021-02-19T18:43:41.310201Z",
+      },
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.accessToken",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "some-user-id",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.userId",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "some-user-id",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.userId",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "some-user-id",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.userId",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
       false,
     ],
     "hasChangedValue": true,
@@ -175,6 +264,13 @@ Array [
 
 exports[`authenticate Successfully 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": Object {
+      "accessToken": "some.token.id",
+      "expires": "2021-02-19T18:43:41.310201Z",
+    },
+    "userId": "some-user-id",
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -268,6 +364,10 @@ Array [
 
 exports[`cancelLogin Cancelling from the authenticating state 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -362,6 +462,10 @@ Array [
 
 exports[`cancelLogin Cancelling from the initial state 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -456,6 +560,10 @@ Array [
 
 exports[`cancelLogin Cancelling from the registering state 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -559,6 +667,10 @@ Array [
 
 exports[`checkUsername When the server call fails 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": "Error: Network Error",
     "loading": false,
@@ -662,6 +774,10 @@ Array [
 
 exports[`checkUsername When the username is known 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -765,6 +881,10 @@ Array [
 
 exports[`checkUsername When the username is not known 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -823,6 +943,10 @@ Array [
 
 exports[`register Invalid Password 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -898,6 +1022,10 @@ Array [
 
 exports[`register Network Error 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": "Error: Network Error",
     "loading": false,
@@ -934,6 +1062,87 @@ Array [
   },
   Object {
     "args": Array [
+      Object {
+        "accessToken": "some.token.id",
+        "expires": "2021-02-19T18:43:41.310201Z",
+      },
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.accessToken",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      Object {
+        "accessToken": "some.token.id",
+        "expires": "2021-02-19T18:43:41.310201Z",
+      },
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.accessToken",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      Object {
+        "accessToken": "some.token.id",
+        "expires": "2021-02-19T18:43:41.310201Z",
+      },
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.accessToken",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "some-user-id",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.userId",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "some-user-id",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.userId",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "some-user-id",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "authentication.userId",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      false,
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.loading",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
       false,
     ],
     "hasChangedValue": true,
@@ -955,6 +1164,13 @@ Array [
 
 exports[`register Successfully 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": Object {
+      "accessToken": "some.token.id",
+      "expires": "2021-02-19T18:43:41.310201Z",
+    },
+    "userId": "some-user-id",
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -1012,6 +1228,10 @@ Array [
 
 exports[`resetLogin Resetting from the authenticating state 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -1070,6 +1290,10 @@ Array [
 
 exports[`resetLogin Resetting from the initial state 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,
@@ -1128,6 +1352,10 @@ Array [
 
 exports[`resetLogin Resetting from the registering state 2`] = `
 Object {
+  "authentication": Object {
+    "accessToken": null,
+    "userId": null,
+  },
   "login": Object {
     "error": null,
     "loading": false,

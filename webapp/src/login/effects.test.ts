@@ -67,10 +67,28 @@ describe("authenticateUser", () => {
     nock(URL_BASE)
       .defaultReplyHeaders({ "access-control-allow-origin": "*" })
       .post("/login", { username: "testuser", password: "Pa55word" })
-      .reply(200, {});
+      .reply(200, {
+        id: "some-user-id",
+        username: "testuser",
+        email: "test@example.com",
+        displayName: "Test User",
+        accessToken: {
+          token: "some.token.id",
+          expiry: "2021-02-19T18:43:41.310201Z"
+        }
+      });
 
     const result = await api.authenticateUser("testuser", "Pa55word");
-    expect(result).toBe(undefined);
+    expect(result).toStrictEqual({
+      id: "some-user-id",
+      username: "testuser",
+      email: "test@example.com",
+      displayName: "Test User",
+      accessToken: {
+        token: "some.token.id",
+        expiry: "2021-02-19T18:43:41.310201Z"
+      }
+    });
   });
 
   test("Unsuccessfully", async () => {
@@ -130,7 +148,16 @@ describe("registerUser", () => {
         displayName: "Test User",
         password: "Pa55word"
       })
-      .reply(200, {});
+      .reply(200, {
+        id: "some-user-id",
+        username: "testuser",
+        email: "test@example.com",
+        displayName: "Test User",
+        accessToken: {
+          token: "some.token.id",
+          expiry: "2021-02-19T18:43:41.310201Z"
+        }
+      });
 
     const result = await api.registerUser(
       "testuser",
@@ -138,7 +165,16 @@ describe("registerUser", () => {
       "Test User",
       "Pa55word"
     );
-    expect(result).toBe(undefined);
+    expect(result).toStrictEqual({
+      id: "some-user-id",
+      username: "testuser",
+      email: "test@example.com",
+      displayName: "Test User",
+      accessToken: {
+        token: "some.token.id",
+        expiry: "2021-02-19T18:43:41.310201Z"
+      }
+    });
   });
 
   test("Unsuccessfully", async () => {

@@ -24,14 +24,27 @@ async function checkUsername(username: string): Promise<boolean> {
   }
 }
 
+export interface AccessToken {
+  token: string;
+  expiry: string;
+}
+
+export interface AuthenticatedUser {
+  id: string;
+  email: string;
+  displayName: string;
+  username: string;
+  accessToken: AccessToken;
+}
+
 async function registerUser(
   username: string,
   email: string,
   displayName: string,
   password: string
-) {
+): Promise<AuthenticatedUser> {
   try {
-    await request({
+    const user = await request<AuthenticatedUser>({
       url: "/users",
       method: "POST",
       data: {
@@ -41,6 +54,7 @@ async function registerUser(
         password
       }
     });
+    return user.data;
   } catch (e) {
     if (
       e instanceof ProblemResponse &&
@@ -55,9 +69,12 @@ async function registerUser(
 
 export class AuthenticationError extends Error {}
 
-async function authenticateUser(username: string, password: string) {
+async function authenticateUser(
+  username: string,
+  password: string
+): Promise<AuthenticatedUser> {
   try {
-    await request({
+    const user = await request<AuthenticatedUser>({
       url: "/login",
       method: "POST",
       data: {
@@ -65,6 +82,7 @@ async function authenticateUser(username: string, password: string) {
         password
       }
     });
+    return user.data;
   } catch (e) {
     if (
       e instanceof ProblemResponse &&

@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import * as yup from "yup";
 import { useOvermind } from "../../overmind";
+import { useHistory } from "react-router-dom";
+import { AuthenticationError } from "../../login/effects";
 
 /**
  * Render the view for the Authenticate Form
@@ -10,6 +12,7 @@ import { useOvermind } from "../../overmind";
 export const AuthenticateForm: React.FC = () => {
   const { t } = useTranslation();
   const { state, actions } = useOvermind();
+  const history = useHistory();
 
   const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
@@ -33,12 +36,12 @@ export const AuthenticateForm: React.FC = () => {
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    const error = await actions.login.authenticate({
+    const result = await actions.login.authenticate({
       username: data.username,
       password: data.password
     });
 
-    if (error !== undefined) {
+    if (result instanceof AuthenticationError) {
       const message = t(
         "login.password.errors.tag:universe,2020:users/problems/login_failure"
       );
@@ -47,6 +50,8 @@ export const AuthenticateForm: React.FC = () => {
         "tag:universe,2020:users/problems/login_failure",
         message
       );
+    } else if (result === true) {
+      history.push("/profile");
     }
   };
 

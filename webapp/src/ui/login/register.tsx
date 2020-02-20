@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import * as yup from "yup";
 import { useOvermind } from "../../overmind";
+import { useHistory } from "react-router-dom";
+import { ValidationErrors } from "../../api/validation";
 
 /**
  * Render the view for the Register Form
@@ -10,6 +12,7 @@ import { useOvermind } from "../../overmind";
 export const RegisterForm: React.FC = () => {
   const { t } = useTranslation();
   const { state, actions } = useOvermind();
+  const history = useHistory();
 
   const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
@@ -70,18 +73,20 @@ export const RegisterForm: React.FC = () => {
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    const validationErrors = await actions.login.register({
+    const result = await actions.login.register({
       username: data.username,
       email: data.email,
       displayName: data.displayName,
       password: data.password
     });
 
-    if (validationErrors !== undefined) {
-      validationErrors.errors.forEach(error => {
+    if (result instanceof ValidationErrors) {
+      result.errors.forEach(error => {
         const message = t(`login.${error.field}.errors.${error.type}`);
         setError(error.field, error.type, message);
       });
+    } else if (result === true) {
+      history.push("/profile");
     }
   };
 

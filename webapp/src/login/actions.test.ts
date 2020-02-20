@@ -144,7 +144,18 @@ describe("authenticate", () => {
     );
   });
   test("Successfully", async () => {
-    authenticateUserEffect.mockReturnValueOnce(Promise.resolve(undefined));
+    authenticateUserEffect.mockReturnValueOnce(
+      Promise.resolve({
+        id: "some-user-id",
+        username: "testuser",
+        email: "test@example.com",
+        displayName: "Test User",
+        accessToken: {
+          token: "some.token.id",
+          expiry: "2021-02-19T18:43:41.310201Z"
+        }
+      })
+    );
     const result = await overmind.actions.login.authenticate({
       username: "testuser",
       password: "Pa55word"
@@ -177,7 +188,7 @@ describe("authenticate", () => {
       username: "testuser",
       password: "Pa55word"
     });
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(false);
     expect(overmind.mutations).toMatchSnapshot();
     expect(overmind.state).toMatchSnapshot();
     expect(authenticateUserEffect).toBeCalledTimes(1);
@@ -210,14 +221,25 @@ describe("register", () => {
     );
   });
   test("Successfully", async () => {
-    registerUserEffect.mockReturnValueOnce(Promise.resolve(undefined));
+    registerUserEffect.mockReturnValueOnce(
+      Promise.resolve({
+        id: "some-user-id",
+        username: "testuser",
+        email: "test@example.com",
+        displayName: "Test User",
+        accessToken: {
+          token: "some.token.id",
+          expiry: "2021-02-19T18:43:41.310201Z"
+        }
+      })
+    );
     const result = await overmind.actions.login.register({
       username: "testuser",
       email: "test@example.com",
       displayName: "Test User",
       password: "Pa55word"
     });
-    expect(result).toBeUndefined;
+    expect(result).toBe(true);
     expect(overmind.mutations).toMatchSnapshot();
     expect(overmind.state).toMatchSnapshot();
     expect(registerUserEffect).toBeCalledTimes(1);
@@ -273,7 +295,7 @@ describe("register", () => {
       displayName: "Test User",
       password: "Pa55word"
     });
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(false);
     expect(overmind.mutations).toMatchSnapshot();
     expect(overmind.state).toMatchSnapshot();
     expect(registerUserEffect).toBeCalledTimes(1);

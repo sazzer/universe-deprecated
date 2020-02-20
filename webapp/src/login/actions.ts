@@ -1,6 +1,7 @@
 import { Action } from "overmind";
 import { ValidationErrors } from "../api/validation";
 import { AuthenticationError } from "./effects";
+
 /**
  * Check if the given username is already registered or not
  * @param  username The username to check
@@ -52,27 +53,34 @@ export interface RegisterValue {
  */
 export const register: Action<
   RegisterValue,
-  Promise<ValidationErrors | undefined>
+  Promise<ValidationErrors | boolean>
 > = async (
-  { state, effects },
+  { state, effects, actions },
   details: RegisterValue
-): Promise<ValidationErrors | undefined> => {
+): Promise<ValidationErrors | boolean> => {
   state.login.loading = true;
   state.login.error = null;
   try {
-    await effects.login.api.registerUser(
+    const user = await effects.login.api.registerUser(
       details.username,
       details.email,
       details.displayName,
       details.password
     );
+    actions.authentication.login({
+      userId: user.id,
+      accessToken: user.accessToken.token,
+      expires: user.accessToken.expiry
+    });
     state.login.loading = false;
+    return true;
   } catch (e) {
     state.login.loading = false;
     if (e instanceof ValidationErrors) {
       return e;
     } else {
       state.login.error = e.toString();
+      return false;
     }
   }
 };
@@ -92,25 +100,32 @@ export interface AuthenticateValue {
  */
 export const authenticate: Action<
   AuthenticateValue,
-  Promise<AuthenticationError | undefined>
+  Promise<AuthenticationError | boolean>
 > = async (
-  { state, effects },
+  { state, effects, actions },
   details: AuthenticateValue
-): Promise<AuthenticationError | undefined> => {
+): Promise<AuthenticationError | boolean> => {
   state.login.loading = true;
   state.login.error = null;
   try {
-    await effects.login.api.authenticateUser(
+    const user = await effects.login.api.authenticateUser(
       details.username,
       details.password
     );
+    actions.authentication.login({
+      userId: user.id,
+      accessToken: user.accessToken.token,
+      expires: user.accessToken.expiry
+    });
     state.login.loading = false;
+    return true;
   } catch (e) {
     state.login.loading = false;
     if (e instanceof AuthenticationError) {
       return e;
     } else {
       state.login.error = e.toString();
+      return false;
     }
   }
 };

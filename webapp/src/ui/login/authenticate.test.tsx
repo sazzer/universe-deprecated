@@ -4,8 +4,8 @@ import { Provider } from "overmind-react";
 import { AuthenticateForm } from "./authenticate";
 import { createTestOvermind } from "../../overmind/test";
 import { OvermindMock, Config } from "overmind";
-import { ValidationErrors } from "../../api/validation";
 import { AuthenticationError } from "../../login/effects";
+import { MemoryRouter } from "react-router-dom";
 
 describe("AuthenticateForm", () => {
   test("Initial render", () => {
@@ -22,7 +22,9 @@ describe("AuthenticateForm", () => {
     );
     const { container } = render(
       <Provider value={overmind}>
-        <AuthenticateForm />
+        <MemoryRouter>
+          <AuthenticateForm />
+        </MemoryRouter>
       </Provider>
     );
     expect(container).toMatchSnapshot();
@@ -41,7 +43,9 @@ describe("AuthenticateForm", () => {
     );
     const { getByText } = render(
       <Provider value={overmind}>
-        <AuthenticateForm />
+        <MemoryRouter>
+          <AuthenticateForm />
+        </MemoryRouter>
       </Provider>
     );
     await wait(() =>
@@ -77,7 +81,9 @@ describe("AuthenticateForm", () => {
     test("Submit without entering anything", async () => {
       const { container, getByText } = render(
         <Provider value={overmind}>
-          <AuthenticateForm />
+          <MemoryRouter>
+            <AuthenticateForm />
+          </MemoryRouter>
         </Provider>
       );
       await wait(() =>
@@ -89,7 +95,9 @@ describe("AuthenticateForm", () => {
     test("Submit with whitespace password", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <AuthenticateForm />
+          <MemoryRouter>
+            <AuthenticateForm />
+          </MemoryRouter>
         </Provider>
       );
       await wait(() => {
@@ -106,7 +114,9 @@ describe("AuthenticateForm", () => {
     test("Submit successfully", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <AuthenticateForm />
+          <MemoryRouter>
+            <AuthenticateForm />
+          </MemoryRouter>
         </Provider>
       );
       authenticateEffect.mockResolvedValueOnce(undefined);
@@ -125,7 +135,9 @@ describe("AuthenticateForm", () => {
     test("Submit with network error", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <AuthenticateForm />
+          <MemoryRouter>
+            <AuthenticateForm />
+          </MemoryRouter>
         </Provider>
       );
       authenticateEffect.mockRejectedValueOnce(new Error("Network Error"));
@@ -144,7 +156,9 @@ describe("AuthenticateForm", () => {
     test("Submit with invalid password", async () => {
       const { container, getByText, getByLabelText } = render(
         <Provider value={overmind}>
-          <AuthenticateForm />
+          <MemoryRouter>
+            <AuthenticateForm />
+          </MemoryRouter>
         </Provider>
       );
       authenticateEffect.mockRejectedValueOnce(new AuthenticationError());
