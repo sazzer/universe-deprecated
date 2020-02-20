@@ -2,7 +2,7 @@ use crate::{AccessToken, AccessTokenID, EncodedAccessToken};
 use chrono::{DateTime, TimeZone, Utc};
 use frank_jwt::{decode, encode, Algorithm, ValidationOptions};
 use serde_json::json;
-use tracing::warn;
+use tracing::{debug, warn};
 use universe_users::UserID;
 
 /// Means by which we can convert an Access Token to and from the Encoded form
@@ -53,9 +53,10 @@ impl AccessTokenEncoder {
   }
 
   pub fn decode(&self, input: EncodedAccessToken) -> Result<AccessToken, DecodeError> {
+    debug!("Decoding access token: {:?}", input);
     let (_, payload) = decode(
       input.0.as_str(),
-      &"key",
+      &self.key,
       Algorithm::HS512,
       &ValidationOptions::default(),
     )?;
@@ -135,7 +136,7 @@ impl std::error::Error for DecodeError {}
 
 impl From<frank_jwt::Error> for DecodeError {
   fn from(e: frank_jwt::Error) -> Self {
-    warn!("Error decoding Access Token as JWT: {}", e);
+    warn!("Error decoding Access Token as JWT: {:?}", e);
     match e {
       frank_jwt::Error::SignatureExpired => DecodeError::ExpiredAccessToken,
       frank_jwt::Error::ExpirationInvalid => DecodeError::ExpiredAccessToken,
