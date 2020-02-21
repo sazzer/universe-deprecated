@@ -67,6 +67,12 @@ export const register: Action<
       details.displayName,
       details.password
     );
+    actions.users.storeUser({
+      userId: user.id,
+      username: user.username,
+      displayName: user.displayName,
+      email: user.email
+    });
     actions.authentication.login({
       userId: user.id,
       accessToken: user.accessToken.token,
@@ -112,6 +118,12 @@ export const authenticate: Action<
       details.username,
       details.password
     );
+    actions.users.storeUser({
+      userId: user.id,
+      username: user.username,
+      displayName: user.displayName,
+      email: user.email
+    });
     actions.authentication.login({
       userId: user.id,
       accessToken: user.accessToken.token,

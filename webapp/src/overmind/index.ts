@@ -3,10 +3,12 @@ import { createHook } from "overmind-react";
 import { IConfig } from "overmind";
 import * as login from "./login";
 import * as authentication from "./authentication";
+import * as users from "./users";
 
 export const config = namespaced({
   login,
-  authentication
+  authentication,
+  users
 });
 
 export const useOvermind = createHook<typeof config>();
