@@ -23,7 +23,7 @@ export interface LoginInput {
 /**
  * Overmind action for logging in
  */
-export const login: Action<LoginValue> = ({ state }, details: LoginInput) => {
+export const login: Action<LoginInput> = ({ state }, details: LoginInput) => {
   state.authentication.accessToken = {
     accessToken: details.accessToken,
     expires: details.expires
