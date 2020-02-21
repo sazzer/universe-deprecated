@@ -1,5 +1,5 @@
-import { request, ProblemResponse } from "../api";
-import { ValidationErrors } from "../api/validation";
+import { request, ProblemResponse } from "../../api";
+import { ValidationErrors } from "../../api/validation";
 
 async function checkUsername(username: string): Promise<boolean> {
   try {

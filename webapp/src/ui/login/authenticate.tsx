@@ -4,7 +4,7 @@ import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import * as yup from "yup";
 import { useOvermind } from "../../overmind";
 import { useHistory } from "react-router-dom";
-import { AuthenticationError } from "../../login/effects";
+import { AuthenticationError } from "../../overmind/login/effects";
 
 /**
  * Render the view for the Authenticate Form

@@ -1,6 +1,6 @@
 import nock from "nock";
 import { api, AuthenticationError } from "./effects";
-import { ValidationErrors } from "../api/validation";
+import { ValidationErrors } from "../../api/validation";
 
 const URL_BASE = "http://api.test.example.com";
 

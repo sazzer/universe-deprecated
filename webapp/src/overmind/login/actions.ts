@@ -1,5 +1,5 @@
 import { Action } from "overmind";
-import { ValidationErrors } from "../api/validation";
+import { ValidationErrors } from "../../api/validation";
 import { AuthenticationError } from "./effects";
 
 /**

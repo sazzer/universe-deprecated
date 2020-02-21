@@ -1,8 +1,8 @@
 import { namespaced } from "overmind/config";
 import { createHook } from "overmind-react";
 import { IConfig } from "overmind";
-import * as login from "../login";
-import * as authentication from "../authentication";
+import * as login from "./login";
+import * as authentication from "./authentication";
 
 export const config = namespaced({
   login,

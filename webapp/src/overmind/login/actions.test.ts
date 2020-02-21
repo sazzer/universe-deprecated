@@ -1,7 +1,7 @@
 import { OvermindMock, Config } from "overmind";
-import { createTestOvermind } from "../overmind/test";
+import { createTestOvermind } from "../test";
 import { AuthenticationError } from "./effects";
-import { ValidationErrors } from "../api/validation";
+import { ValidationErrors } from "../../api/validation";
 
 describe("checkUsername", () => {
   let checkUsernameEffect: jest.Mock;

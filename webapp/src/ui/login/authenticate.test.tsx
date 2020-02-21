@@ -4,7 +4,7 @@ import { Provider } from "overmind-react";
 import { AuthenticateForm } from "./authenticate";
 import { createTestOvermind } from "../../overmind/test";
 import { OvermindMock, Config } from "overmind";
-import { AuthenticationError } from "../../login/effects";
+import { AuthenticationError } from "../../overmind/login/effects";
 import { MemoryRouter } from "react-router-dom";
 
 describe("AuthenticateForm", () => {
