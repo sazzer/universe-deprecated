@@ -2,6 +2,9 @@ import { createOvermindMock, OvermindMock, Config } from "overmind";
 import { config } from "../overmind";
 import { cloneDeep, merge } from "lodash";
 
+/**
+ * NestedPartial is stolen from Overmind to represent a part of the Overmind structure
+ */
 export declare type NestedPartial<T> = T extends Function
   ? T
   : Partial<

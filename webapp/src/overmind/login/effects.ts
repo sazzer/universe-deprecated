@@ -1,6 +1,10 @@
 import { request, ProblemResponse } from "../../api";
 import { ValidationErrors } from "../../api/validation";
-
+/**
+ * Check if a given username is already registered or not
+ * @param username The username to check
+ * @return True if the username is already registered. False if not.
+ */
 async function checkUsername(username: string): Promise<boolean> {
   try {
     await request({
@@ -24,19 +28,37 @@ async function checkUsername(username: string): Promise<boolean> {
   }
 }
 
+/** The shape of an access token received from the server */
 export interface AccessToken {
+  /** The access token */
   token: string;
+  /** The expiry date */
   expiry: string;
 }
 
+/** The shape of an authenticated user received from the server */
 export interface AuthenticatedUser {
+  /** The User ID */
   id: string;
+  /** The email address */
   email: string;
+  /** The display name */
   displayName: string;
+  /** The username */
   username: string;
+  /** The access token to use for this user */
   accessToken: AccessToken;
 }
 
+/**
+ * Attempt to register a new user with the server
+ * @param username The username to register
+ * @param email The email address to register
+ * @param displayName The display name to register
+ * @param password The password to register
+ * @return The details of the user after registration
+ * @throws ValidationErrors if the details were invalid.
+ */
 async function registerUser(
   username: string,
   email: string,
@@ -67,7 +89,16 @@ async function registerUser(
   }
 }
 
+/** Error class to indicate that authentication failed */
 export class AuthenticationError extends Error {}
+
+/**
+ * Attempt to authenticate an existing user with the server
+ * @param username The username to authenticate
+ * @param password The password to authenticate
+ * @return The details of the user after authentication
+ * @throws AuthenticationError if the details were invalid.
+ */
 
 async function authenticateUser(
   username: string,
@@ -95,6 +126,7 @@ async function authenticateUser(
   }
 }
 
+/** The API for logging in */
 export const api = {
   authenticateUser,
   checkUsername,

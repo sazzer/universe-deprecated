@@ -1,5 +1,14 @@
-import axios, { Method, AxiosResponse } from 'axios';
-import * as rfc6570 from 'rfc6570-expand';
+import axios, { Method, AxiosResponse } from "axios";
+import * as rfc6570 from "rfc6570-expand";
+import { Problem, ProblemResponse } from "./problem";
+import debug from "debug";
+
+/** The logger to use */
+const LOG = debug("universe:api");
+
+/** The error logger to use */
+const ERROR_LOG = debug("universe:api:error");
+debug.enable("universe:api:error");
 
 declare global {
   interface Window {
@@ -18,30 +27,10 @@ export interface Request {
   data?: any;
 }
 
+/**
+ * The shape of a Response from a request
+ */
 export type Response<T> = AxiosResponse<T>;
-
-/**
- * Shape of a Problem response from the serve
- */
-export interface Problem {
-  type: string,
-  status: number,
-}
-
-/**
- * Response that is thrown if we get an RFC-7807 Problem back from the server
- */
-export class ProblemResponse<T extends Problem> {
-  readonly problem: T;
-  readonly status: number;
-  readonly headers: any;
-
-  constructor(problem: T, status: number, headers: any) {
-    this.problem = problem;
-    this.status = status;
-    this.headers = headers;
-  }
-}
 
 /**
  * Build an API requester to make API calls with
@@ -54,6 +43,8 @@ export async function request<T>(request: Request): Promise<Response<T>> {
 
   const template = rfc6570.init(request.url);
   const expandedUri = template.expand(request.urlParams || {});
+  LOG("Making request to: %s", expandedUri);
+
   try {
     return await axios.request({
       baseURL: serviceUrl,
@@ -61,16 +52,22 @@ export async function request<T>(request: Request): Promise<Response<T>> {
       url: expandedUri,
       method: request.method,
       headers: request.headers,
-      data: request.data,
+      data: request.data
     });
   } catch (e) {
     if (e.response) {
       const response = e.response as AxiosResponse<Problem>;
-      if (response.headers['content-type'] === 'application/problem+json') {
-        throw new ProblemResponse(response.data, response.status, response.headers);
+      if (response.headers["content-type"] === "application/problem+json") {
+        LOG("Received an RFC-7807 Problem response: %o", response.data);
+        throw new ProblemResponse(
+          response.data,
+          response.status,
+          response.headers
+        );
       }
     }
-    console.error('Unexpected error making API request', e);
+
+    ERROR_LOG("Unexpected error making API request", e);
     throw e;
   }
 }

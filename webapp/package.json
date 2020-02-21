@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.19.2",
+    "debug": "^4.1.1",
     "i18next": "^19.0.3",
     "i18next-browser-languagedetector": "^4.0.1",
     "overmind": "^22.0.3",
