@@ -12,6 +12,9 @@ interface State {
   userId: string | null;
   /** The access token that we are authenticated with */
   accessToken: AccessToken | null;
+
+  /** Whether the user is currently logged in */
+  isLoggedIn: boolean;
 }
 
 /**
@@ -19,5 +22,9 @@ interface State {
  */
 export const state: State = {
   userId: null,
-  accessToken: null
+  accessToken: null,
+
+  get isLoggedIn() {
+    return this.userId !== null;
+  }
 };

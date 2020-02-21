@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Rendering the header bar 1`] = `
+exports[`Rendering the header bar When not logged in 1`] = `
 <div>
   <nav
     class="navbar navbar-expand-lg navbar-dark bg-dark"
