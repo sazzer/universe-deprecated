@@ -20,6 +20,7 @@ Feature: User Registration
       | Display Name      |         |
       | Password          |         |
       | Re-enter Password |         |
+    And I am not logged in
 
   Scenario Outline: Registering a user with invalid details: <Comment>
     Given I visit the home page
@@ -41,6 +42,7 @@ Feature: User Registration
       | Display Name      | <Display Name>  |
       | Password          |                 |
       | Re-enter Password |                 |
+    And I am not logged in
 
     Examples:
       | Email Address    | Display Name | Password | Re-enter Password | Email Address Error                | Display Name Error          | Password Error | Re-enter Password Error | Comment             |
@@ -68,6 +70,7 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
+    And I am not logged in
 
   Scenario: Registering a user with a duplicate username
     Given I visit the home page
@@ -88,6 +91,7 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
+    And I am not logged in
 
   Scenario: Successfully registering a user
     Given I visit the home page
@@ -102,6 +106,7 @@ Feature: User Registration
       | Username      | unknown              |
       | Email Address | testuser@example.com |
       | Display Name  | Test User            |
+    Then I am logged in as "Test User"
 
 
   Scenario Outline: Successfully registering a user - uses nasty characters: <Input>
@@ -117,6 +122,7 @@ Feature: User Registration
       | Username      | <Expected>             |
       | Email Address | <Expected>@example.com |
       | Display Name  | <Expected>             |
+    Then I am logged in as "<Expected>"
 
     Examples:
       | Input      | Expected   |

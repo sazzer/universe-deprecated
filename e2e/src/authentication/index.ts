@@ -13,6 +13,13 @@ Then("I am not logged in", async function() {
   expect(loggedIn, "Currently logged in").to.be.false;
 });
 
+Then("I am logged in as {string}", async function(displayName: string) {
+  const homePage = await this.browser.newPageModel(HomePage);
+  const header = await homePage.headerBar();
+  const loggedIn = await header.loggedInUser();
+  expect(loggedIn, "Currently logged in as").to.equal(displayName);
+});
+
 When("I start logging in as {string}", async function(username: string) {
   const homePage = await this.browser.newPageModel(HomePage);
   const header = await homePage.headerBar();
