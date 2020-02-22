@@ -22,13 +22,11 @@ describe("checkUsername", () => {
     checkUsernameEffect.mockReturnValueOnce(Promise.resolve(true));
     await overmind.actions.login.checkUsername("testuser");
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
   test("When the username is not known", async () => {
     checkUsernameEffect.mockReturnValueOnce(Promise.resolve(false));
     await overmind.actions.login.checkUsername("testuser");
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
   test("When the server call fails", async () => {
     checkUsernameEffect.mockReturnValueOnce(
@@ -36,7 +34,6 @@ describe("checkUsername", () => {
     );
     await overmind.actions.login.checkUsername("testuser");
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
 });
 
@@ -45,7 +42,6 @@ describe("resetLogin", () => {
     const overmind = createTestOvermind();
     overmind.actions.login.resetLogin();
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
   test("Resetting from the registering state", () => {
     const overmind = createTestOvermind(
@@ -61,7 +57,6 @@ describe("resetLogin", () => {
 
     overmind.actions.login.resetLogin();
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
   test("Resetting from the authenticating state", () => {
     const overmind = createTestOvermind(
@@ -76,7 +71,6 @@ describe("resetLogin", () => {
     );
     overmind.actions.login.resetLogin();
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
 });
 
@@ -85,7 +79,6 @@ describe("cancelLogin", () => {
     const overmind = createTestOvermind();
     overmind.actions.login.cancelLogin();
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
   test("Cancelling from the registering state", () => {
     const overmind = createTestOvermind(
@@ -100,7 +93,6 @@ describe("cancelLogin", () => {
     );
     overmind.actions.login.cancelLogin();
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
   test("Cancelling from the authenticating state", () => {
     const overmind = createTestOvermind(
@@ -115,7 +107,6 @@ describe("cancelLogin", () => {
     );
     overmind.actions.login.cancelLogin();
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
   });
 });
 
@@ -162,7 +153,6 @@ describe("authenticate", () => {
     });
     expect(result).toBeUndefined;
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
     expect(authenticateUserEffect).toBeCalledTimes(1);
     expect(authenticateUserEffect).toBeCalledWith("testuser", "Pa55word");
   });
@@ -176,7 +166,6 @@ describe("authenticate", () => {
     });
     expect(result).toEqual(new AuthenticationError());
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
     expect(authenticateUserEffect).toBeCalledTimes(1);
     expect(authenticateUserEffect).toBeCalledWith("testuser", "Pa55word");
   });
@@ -190,7 +179,6 @@ describe("authenticate", () => {
     });
     expect(result).toEqual(false);
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
     expect(authenticateUserEffect).toBeCalledTimes(1);
     expect(authenticateUserEffect).toBeCalledWith("testuser", "Pa55word");
   });
@@ -241,7 +229,6 @@ describe("register", () => {
     });
     expect(result).toBe(true);
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
     expect(registerUserEffect).toBeCalledTimes(1);
     expect(registerUserEffect).toBeCalledWith(
       "testuser",
@@ -276,7 +263,6 @@ describe("register", () => {
       ])
     );
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
     expect(registerUserEffect).toBeCalledTimes(1);
     expect(registerUserEffect).toBeCalledWith(
       "testuser",
@@ -297,7 +283,6 @@ describe("register", () => {
     });
     expect(result).toEqual(false);
     expect(overmind.mutations).toMatchSnapshot();
-    expect(overmind.state).toMatchSnapshot();
     expect(registerUserEffect).toBeCalledTimes(1);
     expect(registerUserEffect).toBeCalledWith(
       "testuser",

@@ -41,30 +41,6 @@ Array [
 ]
 `;
 
-exports[`authenticate Invalid Password 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "authenticating",
-      "initial": [Function],
-      "registering": [Function],
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
-`;
-
 exports[`authenticate Network Error 1`] = `
 Array [
   Object {
@@ -122,30 +98,6 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`authenticate Network Error 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": "Error: Network Error",
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "authenticating",
-      "initial": [Function],
-      "registering": [Function],
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
 
 exports[`authenticate Successfully 1`] = `
@@ -372,40 +324,6 @@ Array [
 ]
 `;
 
-exports[`authenticate Successfully 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": Object {
-      "accessToken": "some.token.id",
-      "expires": "2021-02-19T18:43:41.310201Z",
-    },
-    "isLoggedIn": false,
-    "userId": "some-user-id",
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "authenticating",
-      "initial": [Function],
-      "registering": [Function],
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {
-      "some-user-id": Object {
-        "displayName": "Test User",
-        "email": "test@example.com",
-        "userId": "some-user-id",
-        "username": "testuser",
-      },
-    },
-  },
-}
-`;
-
 exports[`cancelLogin Cancelling from the authenticating state 1`] = `
 Array [
   Object {
@@ -481,31 +399,6 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`cancelLogin Cancelling from the authenticating state 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "initial",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
 
 exports[`cancelLogin Cancelling from the initial state 1`] = `
@@ -585,31 +478,6 @@ Array [
 ]
 `;
 
-exports[`cancelLogin Cancelling from the initial state 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "initial",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
-`;
-
 exports[`cancelLogin Cancelling from the registering state 1`] = `
 Array [
   Object {
@@ -685,31 +553,6 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`cancelLogin Cancelling from the registering state 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "initial",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
 
 exports[`checkUsername When the server call fails 1`] = `
@@ -798,31 +641,6 @@ Array [
 ]
 `;
 
-exports[`checkUsername When the server call fails 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": "Error: Network Error",
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "initial",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
-`;
-
 exports[`checkUsername When the username is known 1`] = `
 Array [
   Object {
@@ -907,31 +725,6 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`checkUsername When the username is known 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "authenticating",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": "testuser",
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
 
 exports[`checkUsername When the username is not known 1`] = `
@@ -1020,31 +813,6 @@ Array [
 ]
 `;
 
-exports[`checkUsername When the username is not known 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "registering",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": "testuser",
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
-`;
-
 exports[`register Invalid Password 1`] = `
 Array [
   Object {
@@ -1084,30 +852,6 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`register Invalid Password 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "registering",
-      "initial": [Function],
-      "registering": [Function],
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
 
 exports[`register Network Error 1`] = `
@@ -1167,30 +911,6 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`register Network Error 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": "Error: Network Error",
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "registering",
-      "initial": [Function],
-      "registering": [Function],
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
 
 exports[`register Successfully 1`] = `
@@ -1417,40 +1137,6 @@ Array [
 ]
 `;
 
-exports[`register Successfully 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": Object {
-      "accessToken": "some.token.id",
-      "expires": "2021-02-19T18:43:41.310201Z",
-    },
-    "isLoggedIn": false,
-    "userId": "some-user-id",
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "registering",
-      "initial": [Function],
-      "registering": [Function],
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {
-      "some-user-id": Object {
-        "displayName": "Test User",
-        "email": "test@example.com",
-        "userId": "some-user-id",
-        "username": "testuser",
-      },
-    },
-  },
-}
-`;
-
 exports[`resetLogin Resetting from the authenticating state 1`] = `
 Array [
   Object {
@@ -1490,31 +1176,6 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`resetLogin Resetting from the authenticating state 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "initial",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
 
 exports[`resetLogin Resetting from the initial state 1`] = `
@@ -1558,31 +1219,6 @@ Array [
 ]
 `;
 
-exports[`resetLogin Resetting from the initial state 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "initial",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
-`;
-
 exports[`resetLogin Resetting from the registering state 1`] = `
 Array [
   Object {
@@ -1622,29 +1258,4 @@ Array [
     "revert": [Function],
   },
 ]
-`;
-
-exports[`resetLogin Resetting from the registering state 2`] = `
-Object {
-  "authentication": Object {
-    "accessToken": null,
-    "isLoggedIn": false,
-    "userId": null,
-  },
-  "login": Object {
-    "error": null,
-    "loading": false,
-    "mode": StateMachine {
-      "authenticating": [Function],
-      "current": "initial",
-      "initial": [Function],
-      "registering": [Function],
-      Symbol(CURRENT_EXIT): undefined,
-    },
-    "username": null,
-  },
-  "users": Object {
-    "users": Object {},
-  },
-}
 `;
