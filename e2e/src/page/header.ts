@@ -20,11 +20,31 @@ export class HeaderPageModel extends BasePageModel {
 
   async loggedInUser() {
     const userMenu = await this.findElement(
-      By.css('a.nav-link.dropdown-toggle[data-toggle="dropdown"]')
+      By.css(
+        'li.nav-item.dropdown a.nav-link.dropdown-toggle[data-toggle="dropdown"]'
+      )
     );
 
     return await userMenu.getText();
   }
+
+  async logout() {
+    const userMenu = await this.findElement(
+      By.css(
+        'li.nav-item.dropdown a.nav-link.dropdown-toggle[data-toggle="dropdown"]'
+      )
+    );
+
+    await userMenu.click();
+
+    const logout = await this.findElement(
+      By.css(
+        "li.nav-item.dropdown div.dropdown-menu a.dropdown-item[href='/login']"
+      )
+    );
+    await logout.click();
+  }
+
   /**
    * Start the login process
    */
