@@ -17,4 +17,37 @@ describe("Rendering the header bar", () => {
     );
     expect(container).toMatchSnapshot();
   });
+  test("When logged in", () => {
+    const overmind = createTestOvermind(
+      {},
+      {
+        users: {
+          users: {
+            someUserId: {
+              userId: "someUserId",
+              username: "username",
+              email: "test@example.com",
+              displayName: "Test User"
+            }
+          }
+        },
+        authentication: {
+          userId: "someUserId",
+          accessToken: {
+            accessToken: "accessToken",
+            expires: new Date().toISOString()
+          },
+          isLoggedIn: true
+        }
+      }
+    );
+    const { container } = render(
+      <Router>
+        <Provider value={overmind}>
+          <Header />
+        </Provider>
+      </Router>
+    );
+    expect(container).toMatchSnapshot();
+  });
 });
