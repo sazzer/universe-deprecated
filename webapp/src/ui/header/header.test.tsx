@@ -1,12 +1,13 @@
 import React from "react";
-import { render } from "@testing-library/react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { render, fireEvent, wait } from "@testing-library/react";
+import { MemoryRouter as Router } from "react-router-dom";
 import { Header } from "./header";
 import { createTestOvermind } from "../../overmind/test";
 import { Provider } from "overmind-react";
+import { OvermindMock, Config } from "overmind";
 
-describe("Rendering the header bar", () => {
-  test("When not logged in", () => {
+describe("When not logged in", () => {
+  test("It renders correctly", () => {
     const overmind = createTestOvermind();
     const { container } = render(
       <Router>
@@ -17,8 +18,13 @@ describe("Rendering the header bar", () => {
     );
     expect(container).toMatchSnapshot();
   });
-  test("When logged in", () => {
-    const overmind = createTestOvermind(
+});
+
+describe("When logged in", () => {
+  let overmind: OvermindMock<Config>;
+
+  beforeEach(() => {
+    overmind = createTestOvermind(
       {},
       {
         users: {
@@ -41,6 +47,9 @@ describe("Rendering the header bar", () => {
         }
       }
     );
+  });
+
+  test("It renders correctly", () => {
     const { container } = render(
       <Router>
         <Provider value={overmind}>

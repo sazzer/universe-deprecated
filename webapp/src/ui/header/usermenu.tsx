@@ -6,7 +6,7 @@ import { useOvermind } from "../../overmind";
 /** Header menu for the current user actions when the user is logged in */
 export const UserMenu: React.FC = () => {
   const { t } = useTranslation();
-  const { state } = useOvermind();
+  const { state, actions } = useOvermind();
 
   let username;
   const currentUser =
@@ -35,9 +35,13 @@ export const UserMenu: React.FC = () => {
           {t("header.userMenu.profile")}
         </Link>
         <div className="dropdown-divider"></div>
-        <a className="dropdown-item" href="/">
+        <Link
+          to="/login"
+          className="dropdown-item"
+          onClick={actions.authentication.logout}
+        >
           {t("header.userMenu.logout")}
-        </a>
+        </Link>
       </div>
     </li>
   );

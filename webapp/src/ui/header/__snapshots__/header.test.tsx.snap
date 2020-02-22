@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Rendering the header bar When logged in 1`] = `
+exports[`When logged in It renders correctly 1`] = `
 <div>
   <nav
     class="navbar navbar-expand-lg navbar-dark bg-dark"
@@ -60,7 +60,7 @@ exports[`Rendering the header bar When logged in 1`] = `
             />
             <a
               class="dropdown-item"
-              href="/"
+              href="/login"
             >
               Log Out
             </a>
@@ -72,7 +72,7 @@ exports[`Rendering the header bar When logged in 1`] = `
 </div>
 `;
 
-exports[`Rendering the header bar When not logged in 1`] = `
+exports[`When not logged in It renders correctly 1`] = `
 <div>
   <nav
     class="navbar navbar-expand-lg navbar-dark bg-dark"
