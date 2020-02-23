@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`When logged in It renders correctly 1`] = `
+<div>
+  Hello
+</div>
+`;
+
+exports[`When not logged in It renders correctly 1`] = `
+<div>
+  <div>
+    You must be logged in for this
+  </div>
+</div>
+`;
