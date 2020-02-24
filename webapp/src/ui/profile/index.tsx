@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useRouteMatch, NavLink } from "react-router-dom";
+import { Link, useRouteMatch, NavLink, Switch, Route } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LoggedIn } from "../login/loggedIn";
 
@@ -20,9 +20,9 @@ const ProfilePageTab: React.FC<ProfilePageEntry> = ({ path, name, label }) => {
       to={path}
       exact
       className="nav-link"
-      id={`v-pills-${name}-tab`}
+      id={`profile-tabs-${name}-tab`}
       role="tab"
-      aria-controls={`v-pills-${name}`}
+      aria-controls={`profile-tabs-${name}`}
       aria-selected={match !== null}
     >
       {label}
@@ -36,17 +36,16 @@ const ProfilePagePane: React.FC<ProfilePageEntry> = ({
   name,
   content
 }) => {
-  const match = useRouteMatch({ path: path, exact: true });
-
   return (
-    <div
-      className={match !== null ? "tab-pane show active" : "tab-pane"}
-      id={`v-pills-${name}`}
-      role="tabpanel"
-      aria-labelledby={`v-pills-${name}-tab`}
-    >
-      {content}
-    </div>
+    <Route exact path={path}>
+      <div
+        aria-labelledby={`profile-tabs-${name}-tab`}
+        role="tabpanel"
+        id={`profile-tabs-${name}`}
+      >
+        {content}
+      </div>
+    </Route>
   );
 };
 
@@ -86,17 +85,19 @@ export const ProfilePage: React.FC = () => {
     />
   ));
 
-  const panes = pages.map(page => (
-    <ProfilePagePane
-      path={page.path}
-      name={page.name}
-      label={page.label}
-      content={page.content}
-    />
-  ));
+  const panes = pages
+    .reverse()
+    .map(page => (
+      <ProfilePagePane
+        path={page.path}
+        name={page.name}
+        label={page.label}
+        content={page.content}
+      />
+    ));
 
   return (
-    <>
+    <LoggedIn>
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
@@ -110,7 +111,9 @@ export const ProfilePage: React.FC = () => {
 
       <div className="row">
         <div className="col-12 col-md-9 order-sm-1">
-          <div className="tab-content">{panes}</div>
+          <div className="tab-content">
+            <Switch>{panes}</Switch>
+          </div>
         </div>
 
         <div className="col-12 col-md-3">
@@ -124,6 +127,6 @@ export const ProfilePage: React.FC = () => {
           </div>
         </div>
       </div>
-    </>
+    </LoggedIn>
   );
 };
