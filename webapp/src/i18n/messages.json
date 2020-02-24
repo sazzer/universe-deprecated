@@ -63,6 +63,21 @@
       }
     }
   },
+  "profile": {
+    "breadcrumbs": {
+      "home": "Home",
+      "profile": "Profile"
+    },
+    "profile": {
+      "label": "User Profile"
+    },
+    "worlds": {
+      "label": "My Worlds"
+    },
+    "stories": {
+      "label": "My Stories"
+    }
+  },
   "errors": {
     "unexpected": "An unexpected error occurred: {{message}}"
   }
