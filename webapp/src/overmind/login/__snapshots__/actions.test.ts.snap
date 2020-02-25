@@ -125,7 +125,7 @@ Array [
       Object {
         "displayName": "Test User",
         "email": "test@example.com",
-        "userId": "some-user-id",
+        "id": "some-user-id",
         "username": "testuser",
       },
     ],
@@ -139,7 +139,7 @@ Array [
       Object {
         "displayName": "Test User",
         "email": "test@example.com",
-        "userId": "some-user-id",
+        "id": "some-user-id",
         "username": "testuser",
       },
     ],
@@ -153,7 +153,7 @@ Array [
       Object {
         "displayName": "Test User",
         "email": "test@example.com",
-        "userId": "some-user-id",
+        "id": "some-user-id",
         "username": "testuser",
       },
     ],
@@ -938,7 +938,7 @@ Array [
       Object {
         "displayName": "Test User",
         "email": "test@example.com",
-        "userId": "some-user-id",
+        "id": "some-user-id",
         "username": "testuser",
       },
     ],
@@ -952,7 +952,7 @@ Array [
       Object {
         "displayName": "Test User",
         "email": "test@example.com",
-        "userId": "some-user-id",
+        "id": "some-user-id",
         "username": "testuser",
       },
     ],
@@ -966,7 +966,7 @@ Array [
       Object {
         "displayName": "Test User",
         "email": "test@example.com",
-        "userId": "some-user-id",
+        "id": "some-user-id",
         "username": "testuser",
       },
     ],

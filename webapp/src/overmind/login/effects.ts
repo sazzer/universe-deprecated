@@ -1,5 +1,7 @@
 import { request, ProblemResponse } from "../../api";
 import { ValidationErrors } from "../../api/validation";
+import { AuthenticatedUser } from "./model";
+
 /**
  * Check if a given username is already registered or not
  * @param username The username to check
@@ -26,28 +28,6 @@ async function checkUsername(username: string): Promise<boolean> {
       throw e;
     }
   }
-}
-
-/** The shape of an access token received from the server */
-export interface AccessToken {
-  /** The access token */
-  token: string;
-  /** The expiry date */
-  expiry: string;
-}
-
-/** The shape of an authenticated user received from the server */
-export interface AuthenticatedUser {
-  /** The User ID */
-  id: string;
-  /** The email address */
-  email: string;
-  /** The display name */
-  displayName: string;
-  /** The username */
-  username: string;
-  /** The access token to use for this user */
-  accessToken: AccessToken;
 }
 
 /**

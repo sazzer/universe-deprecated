@@ -1,14 +1,4 @@
-/** The shape of a single user */
-export interface User {
-  /** The unqiue ID of the user */
-  userId: string;
-  /** The unique username of the user */
-  username: string;
-  /** The display name of the user */
-  displayName: string;
-  /** The email address of the user, if we know what it is */
-  email: string | null;
-}
+import { User } from "./model";
 
 /** The shape of this part of the state */
 interface State {
