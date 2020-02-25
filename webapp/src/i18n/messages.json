@@ -68,14 +68,37 @@
       "home": "Home",
       "profile": "Profile"
     },
-    "profile": {
-      "label": "User Profile"
-    },
     "worlds": {
       "label": "My Worlds"
     },
     "stories": {
       "label": "My Stories"
+    },
+    "profile": {
+      "label": "User Profile",
+      "title": "User Profile",
+      "submit": "Save Changes",
+      "username": {
+        "label": "Username",
+        "errors": {
+          "tag:universe,2020:validation-errors/missing": "Please enter a username",
+          "tag:universe,2020:users/validation-errors/username/duplicate": "Username is already registered"
+        }
+      },
+      "email": {
+        "label": "Email Address",
+        "errors": {
+          "tag:universe,2020:validation-errors/missing": "Please enter an email address",
+          "tag:universe,2020:users/validation-errors/email/malformed": "Please enter a valid email address",
+          "tag:universe,2020:users/validation-errors/email/duplicate": "Email Address is already registered"
+        }
+      },
+      "displayName": {
+        "label": "Display Name",
+        "errors": {
+          "tag:universe,2020:validation-errors/missing": "Please enter a display name"
+        }
+      }
     }
   },
   "errors": {

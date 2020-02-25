@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useRouteMatch, NavLink, Switch, Route } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LoggedIn } from "../login/loggedIn";
+import { UserProfileArea } from "./profile";
 
 /** Props to represent an entry in the profile page */
 interface ProfilePageEntry {
@@ -60,7 +61,7 @@ export const ProfilePage: React.FC = () => {
       name: "profile",
       path: "/profile",
       label: t("profile.profile.label"),
-      content: "User Profile Content"
+      content: <UserProfileArea />
     },
     {
       name: "worlds",
@@ -78,6 +79,7 @@ export const ProfilePage: React.FC = () => {
 
   const tabs = pages.map(page => (
     <ProfilePageTab
+      key={page.name}
       path={page.path}
       name={page.name}
       label={page.label}
@@ -89,6 +91,7 @@ export const ProfilePage: React.FC = () => {
     .reverse()
     .map(page => (
       <ProfilePagePane
+        key={page.name}
         path={page.path}
         name={page.name}
         label={page.label}
