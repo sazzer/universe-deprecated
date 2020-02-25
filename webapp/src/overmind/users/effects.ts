@@ -1,4 +1,4 @@
-import { request, ProblemResponse } from "../../api";
+import { request } from "../../api";
 import { User, UnknownUserError } from "./model";
 
 /**
