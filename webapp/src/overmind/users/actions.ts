@@ -12,3 +12,7 @@ export const storeUser: Action<User> = ({ state }, details: User) => {
     email: details.email
   };
 };
+
+export const fetchUser: Action<string> = ({ effects }, userId: string) => {
+  console.log("Load User: ", userId);
+};

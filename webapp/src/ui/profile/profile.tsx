@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
+import { useOvermind } from "../../overmind";
 
 /**
  * React Component to represent the user profile area of the profile page
  */
 export const UserProfileArea: React.FC = () => {
   const { t } = useTranslation();
+  const { state, actions } = useOvermind();
+
+  useEffect(() => {
+    const currentUser = state.authentication.userId;
+
+    if (currentUser !== null) {
+      actions.users.fetchUser(currentUser);
+    }
+  }, [state.authentication.userId, actions.users]);
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
