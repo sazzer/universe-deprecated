@@ -112,6 +112,10 @@ Feature: User Registration
       | Display Name  | Test User            |
     And I am logged in as "Test User"
     And I am displayed the User Profile page
+    And the User Profile form has details:
+      | Username      | unknown              |
+      | Email Address | testuser@example.com |
+      | Display Name  | Test User            |
 
 
   Scenario Outline: Successfully registering a user - uses nasty characters: <Input>

@@ -2,9 +2,10 @@ Feature: User Authentication
 
   Background: Create User
     Given a user already exists with details:
-      | Username     | known     |
-      | Display Name | Test User |
-      | Password     | Pa55word  |
+      | Username      | known                |
+      | Email Address | testuser@example.com |
+      | Display Name  | Test User            |
+      | Password      | Pa55word             |
 
   Scenario: Authenticating a user with no values
     Given I visit the home page
@@ -42,3 +43,7 @@ Feature: User Authentication
       | Password | Pa55word |
     Then I am logged in as "Test User"
     And I am displayed the User Profile page
+    And the User Profile form has details:
+      | Username      | known                |
+      | Email Address | testuser@example.com |
+      | Display Name  | Test User            |
