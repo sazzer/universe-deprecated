@@ -1,6 +1,5 @@
 import { Action } from "overmind";
 import { User } from "./model";
-import { state } from "../login";
 
 /**
  * Overmind action for storing the details of a user
