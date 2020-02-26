@@ -4,24 +4,21 @@ import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { useOvermind } from "../../overmind";
 import { Loader } from "../loader";
+import { User, UserState } from "../../overmind/users/model";
 
 /**
- * React Component to represent the user profile area of the profile page
+ * Props for rendering the User Profile Form
  */
-export const UserProfileArea: React.FC = () => {
+interface UserProfileFormProps {
+  user: User;
+  userState: UserState;
+}
+
+/**
+ * React component to actually render the user profile form
+ */
+export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   const { t } = useTranslation();
-  const { state, actions } = useOvermind();
-
-  const currentUser = state.authentication.userId;
-
-  useEffect(() => {
-    if (currentUser !== null) {
-      actions.users.fetchUser(currentUser);
-    }
-  }, [currentUser, actions.users]);
-
-  const storedUser = state.users.userById(currentUser || "");
-  const user = storedUser.user;
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -57,15 +54,11 @@ export const UserProfileArea: React.FC = () => {
     }),
     validateCriteriaMode: "all",
     defaultValues: {
-      username: (user && user.username) || "",
-      email: (user && user.email) || "",
-      displayName: (user && user.displayName) || ""
+      username: user.username,
+      email: user.email || "",
+      displayName: user.displayName
     }
   });
-
-  if (storedUser.state === "LOADING") {
-    return <Loader />;
-  }
 
   const onSubmitHandler = async (data: FieldValues) => {
     console.log(data);
@@ -142,4 +135,28 @@ export const UserProfileArea: React.FC = () => {
       </form>
     </>
   );
+};
+
+/**
+ * React Component to represent the user profile area of the profile page
+ */
+export const UserProfileArea: React.FC = () => {
+  const { state, actions } = useOvermind();
+
+  const currentUser = state.authentication.userId;
+
+  useEffect(() => {
+    if (currentUser !== null) {
+      actions.users.fetchUser(currentUser);
+    }
+  }, [currentUser, actions.users]);
+
+  const storedUser = state.users.userById(currentUser || "");
+  const user = storedUser.user;
+
+  if (storedUser.state === "LOADING" || user === undefined) {
+    return <Loader />;
+  } else {
+    return <UserProfileForm userState={storedUser.state} user={user} />;
+  }
 };
