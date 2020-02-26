@@ -3,6 +3,7 @@ import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { useOvermind } from "../../overmind";
+import { Loader } from "../loader";
 
 /**
  * React Component to represent the user profile area of the profile page
@@ -19,7 +20,8 @@ export const UserProfileArea: React.FC = () => {
     }
   }, [currentUser, actions.users]);
 
-  const user = state.users.userById(currentUser || "").user;
+  const storedUser = state.users.userById(currentUser || "");
+  const user = storedUser.user;
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -60,6 +62,10 @@ export const UserProfileArea: React.FC = () => {
       displayName: (user && user.displayName) || ""
     }
   });
+
+  if (storedUser.state === "LOADING") {
+    return <Loader />;
+  }
 
   const onSubmitHandler = async (data: FieldValues) => {
     console.log(data);

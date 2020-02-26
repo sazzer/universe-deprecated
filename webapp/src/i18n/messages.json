@@ -12,6 +12,9 @@
       "logout": "Log Out"
     }
   },
+  "loader": {
+    "label": "Loading..."
+  },
   "login": {
     "start": {
       "title": "Login / Register",
