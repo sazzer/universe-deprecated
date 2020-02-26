@@ -9,7 +9,8 @@ Feature: User Registration
       | Display Name      |  |
       | Password          |  |
       | Re-enter Password |  |
-    Then the Register User form has errors:
+    Then I am displayed the Register User page
+    And the Register User form has errors:
       | Email Address     | Please enter an email address |
       | Display Name      | Please enter a display name   |
       | Password          | Please enter a password       |
@@ -31,7 +32,8 @@ Feature: User Registration
       | Display Name      | <Display Name>      |
       | Password          | <Password>          |
       | Re-enter Password | <Re-enter Password> |
-    Then the Register User form has errors:
+    Then I am displayed the Register User page
+    And the Register User form has errors:
       | Email Address     | <Email Address Error>     |
       | Display Name      | <Display Name Error>      |
       | Password          | <Password Error>          |
@@ -62,7 +64,8 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
-    Then the Register User form has errors:
+    Then I am displayed the Register User page
+    And the Register User form has errors:
       | Email Address | Email Address is already registered |
     And the Register User form has details:
       | Username          | unknown              |
@@ -83,7 +86,8 @@ Feature: User Registration
       | Display Name      | Test User            |
       | Password          | Password             |
       | Re-enter Password | Password             |
-    Then the Register User form has errors:
+    Then I am displayed the Register User page
+    And the Register User form has errors:
       | Username | Username is already registered |
     And the Register User form has details:
       | Username          | known                |
@@ -106,7 +110,8 @@ Feature: User Registration
       | Username      | unknown              |
       | Email Address | testuser@example.com |
       | Display Name  | Test User            |
-    Then I am logged in as "Test User"
+    And I am logged in as "Test User"
+    And I am displayed the User Profile page
 
 
   Scenario Outline: Successfully registering a user - uses nasty characters: <Input>
@@ -122,7 +127,8 @@ Feature: User Registration
       | Username      | <Expected>             |
       | Email Address | <Expected>@example.com |
       | Display Name  | <Expected>             |
-    Then I am logged in as "<Expected>"
+    And I am logged in as "<Expected>"
+    And I am displayed the User Profile page
 
     Examples:
       | Input      | Expected   |

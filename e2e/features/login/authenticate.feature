@@ -12,7 +12,8 @@ Feature: User Authentication
     And I am displayed the Authenticate User page
     When I authenticate with details:
       | Password |  |
-    Then the Authenticate User form has errors:
+    Then I am displayed the Authenticate User page
+    And the Authenticate User form has errors:
       | Password | Please enter a password |
     And the Authenticate User form has details:
       | Username | known |
@@ -25,7 +26,8 @@ Feature: User Authentication
     And I am displayed the Authenticate User page
     When I authenticate with details:
       | Password | wrong |
-    Then the Authenticate User form has errors:
+    Then I am displayed the Authenticate User page
+    And the Authenticate User form has errors:
       | Password | Invalid username or password |
     And the Authenticate User form has details:
       | Username | known |
@@ -39,3 +41,4 @@ Feature: User Authentication
     When I authenticate with details:
       | Password | Pa55word |
     Then I am logged in as "Test User"
+    And I am displayed the User Profile page

@@ -101,32 +101,34 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <LoggedIn>
-      <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item">
-            <Link to="/">{t("profile.breadcrumbs.home")}</Link>
-          </li>
-          <li className="breadcrumb-item active" aria-current="page">
-            {t("profile.breadcrumbs.profile")}
-          </li>
-        </ol>
-      </nav>
+      <div data-test="profilePage">
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <Link to="/">{t("profile.breadcrumbs.home")}</Link>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              {t("profile.breadcrumbs.profile")}
+            </li>
+          </ol>
+        </nav>
 
-      <div className="row">
-        <div className="col-12 col-md-9 order-sm-1">
-          <div className="tab-content">
-            <Switch>{panes}</Switch>
+        <div className="row">
+          <div className="col-12 col-md-9 order-sm-1">
+            <div className="tab-content">
+              <Switch>{panes}</Switch>
+            </div>
           </div>
-        </div>
 
-        <div className="col-12 col-md-3">
-          <div
-            className="nav flex-column nav-pills"
-            id="profileSupportedContent"
-            role="tablist"
-            aria-orientation="vertical"
-          >
-            {tabs}
+          <div className="col-12 col-md-3">
+            <div
+              className="nav flex-column nav-pills"
+              id="profileSupportedContent"
+              role="tablist"
+              aria-orientation="vertical"
+            >
+              {tabs}
+            </div>
           </div>
         </div>
       </div>
