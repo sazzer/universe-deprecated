@@ -82,7 +82,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
             }
             id="username"
             name="username"
-            autoFocus
+            readOnly
             ref={register}
           />
           <ErrorMessage
@@ -100,6 +100,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
             }
             id="email"
             name="email"
+            autoFocus
             ref={register}
           />
           <ErrorMessage
