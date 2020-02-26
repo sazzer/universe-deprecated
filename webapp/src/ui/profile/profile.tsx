@@ -19,7 +19,7 @@ export const UserProfileArea: React.FC = () => {
     }
   }, [currentUser, actions.users]);
 
-  const user = state.users.userById(currentUser || "");
+  const user = state.users.userById(currentUser || "").user;
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({

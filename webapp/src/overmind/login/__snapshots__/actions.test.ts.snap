@@ -163,6 +163,27 @@ Array [
     "revert": [Function],
   },
   Object {
+    "args": Array [],
+    "hasChangedValue": true,
+    "method": "unset",
+    "path": "users.userStates.some-user-id",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [],
+    "hasChangedValue": true,
+    "method": "unset",
+    "path": "users.userStates.some-user-id",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [],
+    "hasChangedValue": true,
+    "method": "unset",
+    "path": "users.userStates.some-user-id",
+    "revert": [Function],
+  },
+  Object {
     "args": Array [
       Object {
         "accessToken": "some.token.id",
@@ -973,6 +994,27 @@ Array [
     "hasChangedValue": true,
     "method": "set",
     "path": "users.users.some-user-id",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [],
+    "hasChangedValue": true,
+    "method": "unset",
+    "path": "users.userStates.some-user-id",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [],
+    "hasChangedValue": true,
+    "method": "unset",
+    "path": "users.userStates.some-user-id",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [],
+    "hasChangedValue": true,
+    "method": "unset",
+    "path": "users.userStates.some-user-id",
     "revert": [Function],
   },
   Object {
