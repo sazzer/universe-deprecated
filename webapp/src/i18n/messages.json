@@ -79,7 +79,6 @@
     },
     "profile": {
       "label": "User Profile",
-      "title": "User Profile",
       "submit": "Save Changes",
       "username": {
         "label": "Username",

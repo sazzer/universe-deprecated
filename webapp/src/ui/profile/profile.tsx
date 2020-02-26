@@ -66,7 +66,6 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
 
   return (
     <>
-      <h3>{t("profile.profile.title")}</h3>
       <form
         onSubmit={handleSubmit(onSubmitHandler)}
         data-test="userProfileForm"
