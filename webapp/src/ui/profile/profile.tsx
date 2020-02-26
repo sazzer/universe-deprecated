@@ -11,13 +11,15 @@ export const UserProfileArea: React.FC = () => {
   const { t } = useTranslation();
   const { state, actions } = useOvermind();
 
-  useEffect(() => {
-    const currentUser = state.authentication.userId;
+  const currentUser = state.authentication.userId;
 
+  useEffect(() => {
     if (currentUser !== null) {
       actions.users.fetchUser(currentUser);
     }
-  }, [state.authentication.userId, actions.users]);
+  }, [currentUser, actions.users]);
+
+  const user = state.users.userById(currentUser || "");
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -53,9 +55,9 @@ export const UserProfileArea: React.FC = () => {
     }),
     validateCriteriaMode: "all",
     defaultValues: {
-      username: "sazzer",
-      email: "graham@grahamcox.co.uk",
-      displayName: "Graham"
+      username: (user && user.username) || "",
+      email: (user && user.email) || "",
+      displayName: (user && user.displayName) || ""
     }
   });
 
