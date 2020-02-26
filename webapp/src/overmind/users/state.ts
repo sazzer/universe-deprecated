@@ -1,5 +1,4 @@
 import { User } from "./model";
-import { Derive } from "overmind";
 
 /** The shape of this part of the state */
 interface State {
