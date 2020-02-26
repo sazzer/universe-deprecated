@@ -7,10 +7,7 @@ import { useOvermind } from "../../overmind";
 export const LoggedIn: React.FC = ({ children }) => {
   const { state } = useOvermind();
 
-  if (
-    state.authentication.isLoggedIn ||
-    process.env.NODE_ENV === "development"
-  ) {
+  if (state.authentication.isLoggedIn) {
     return <>{children}</>;
   } else {
     return <div>You must be logged in for this</div>;

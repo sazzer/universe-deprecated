@@ -30,7 +30,7 @@ describe("When logged in", () => {
         users: {
           users: {
             someUserId: {
-              userId: "someUserId",
+              id: "someUserId",
               username: "username",
               email: "test@example.com",
               displayName: "Test User"
