@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, wait } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { MemoryRouter as Router } from "react-router-dom";
 import { Header } from "./header";
 import { createTestOvermind } from "../../overmind/test";
