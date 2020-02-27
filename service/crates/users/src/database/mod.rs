@@ -1,9 +1,11 @@
 use crate::model::*;
 use crate::service::repository::*;
+use chrono::Utc;
 use std::error::Error;
 use tracing::{debug, warn};
 use universe_database::Database;
 use universe_entity::Identity;
+use uuid::Uuid;
 
 impl From<&postgres::Row> for UserEntity {
     fn from(row: &postgres::Row) -> Self {
@@ -67,7 +69,10 @@ impl UserRepository for Database {
 
         let mut client = self.client().unwrap();
 
-        let result = client.query("INSERT INTO users(user_id, version, created, updated, username, email, display_name, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", &[
+        let result = client.query(
+            "INSERT INTO users(user_id, version, created, updated, username, email, display_name, password) 
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+                RETURNING *", &[
             &user.identity.id,
             &user.identity.version,
             &user.identity.created,
@@ -80,6 +85,37 @@ impl UserRepository for Database {
         .map(|rows| rows.get(0).unwrap().into())?;
 
         debug!("Created record for user: {:?}", result);
+
+        Ok(result)
+    }
+
+    fn update_user(&self, user: UserEntity) -> Result<UserEntity, PersistUserError> {
+        debug!("Updating record for user: {:?}", user);
+
+        let mut client = self.client().unwrap();
+
+        let new_version = Uuid::new_v4();
+        let new_updated = Utc::now();
+
+        let result = client
+            .query(
+                "UPDATE users SET username = $1, email = $2, display_name = $3, password = $4,
+                    version = $5, updated = $6
+                    WHERE user_id = $7
+                    RETURNING *",
+                &[
+                    &user.data.username,
+                    &user.data.email,
+                    &user.data.display_name,
+                    &user.data.password,
+                    &new_version,
+                    &new_updated,
+                    &user.identity.id,
+                ],
+            )
+            .map(|rows| rows.get(0).unwrap().into())?;
+
+        debug!("Updated record for user: {:?}", result);
 
         Ok(result)
     }
@@ -106,6 +142,7 @@ impl From<postgres::Error> for PersistUserError {
 mod tests {
     use super::*;
     use spectral::prelude::*;
+    use std::str::FromStr;
     use test_env_log::test;
     use universe_test_database_wrapper::TestDatabaseWrapper;
     use universe_testdata::{seed, User};
@@ -329,5 +366,161 @@ mod tests {
             .unwrap_err();
 
         assert_that(&created_user).is_equal_to(PersistUserError::DuplicateEmail);
+    }
+
+    #[test]
+    fn test_update_user_success() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let mut user = database
+            .wrapper
+            .get_user_by_username(&Username::from_str("testuser").unwrap())
+            .unwrap();
+
+        user.data.username = "newuser".parse().unwrap();
+        user.data.email = "newuser@example.com".parse().unwrap();
+        user.data.display_name = "New User".parse().unwrap();
+
+        let saved = database.wrapper.update_user(user.clone());
+
+        assert_that(&saved).is_ok();
+
+        let saved = saved.unwrap();
+        assert_that(&saved.identity.id).is_equal_to(&user.identity.id);
+        assert_that(&saved.identity.created).is_equal_to(&user.identity.created);
+        assert_that(&saved.identity.version).is_not_equal_to(&user.identity.version);
+        assert_that(&saved.identity.updated).is_not_equal_to(&user.identity.updated);
+        assert_that(&saved.data).is_equal_to(&user.data);
+    }
+
+    #[test]
+    fn test_update_user_reload() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let mut user = database
+            .wrapper
+            .get_user_by_username(&Username::from_str("testuser").unwrap())
+            .unwrap();
+
+        user.data.username = "newuser".parse().unwrap();
+        user.data.email = "newuser@example.com".parse().unwrap();
+        user.data.display_name = "New User".parse().unwrap();
+
+        let saved = database.wrapper.update_user(user.clone());
+
+        assert_that(&saved).is_ok();
+
+        let loaded = database.wrapper.get_user_by_id(&user.identity.id).unwrap();
+        assert_that(&loaded).is_equal_to(saved.unwrap());
+    }
+
+    #[test]
+    fn test_update_user_same_values() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let user = database
+            .wrapper
+            .get_user_by_username(&Username::from_str("testuser").unwrap())
+            .unwrap();
+
+        let saved = database.wrapper.update_user(user.clone());
+
+        assert_that(&saved).is_ok();
+
+        let saved = saved.unwrap();
+        assert_that(&saved.identity.id).is_equal_to(&user.identity.id);
+        assert_that(&saved.identity.created).is_equal_to(&user.identity.created);
+        assert_that(&saved.identity.version).is_not_equal_to(&user.identity.version);
+        assert_that(&saved.identity.updated).is_not_equal_to(&user.identity.updated);
+        assert_that(&saved.data).is_equal_to(&user.data);
+    }
+
+    #[test]
+    fn test_update_user_duplicate_email() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+        let other_user: User = User {
+            username: "testuser2".to_owned(),
+            email: "newuser@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+
+        seed(&database, vec![&existing_user, &other_user]);
+
+        let mut user = database
+            .wrapper
+            .get_user_by_username(&Username::from_str("testuser").unwrap())
+            .unwrap();
+
+        user.data.username = "newuser".parse().unwrap();
+        user.data.email = "newuser@example.com".parse().unwrap();
+        user.data.display_name = "New User".parse().unwrap();
+
+        let saved = database.wrapper.update_user(user.clone());
+
+        assert_that(&saved)
+            .is_err()
+            .is_equal_to(PersistUserError::DuplicateEmail);
+    }
+
+    #[test]
+    fn test_update_user_duplicate_username() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+        let other_user: User = User {
+            username: "newuser".to_owned(),
+            email: "testuser2@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+
+        seed(&database, vec![&existing_user, &other_user]);
+
+        let mut user = database
+            .wrapper
+            .get_user_by_username(&Username::from_str("testuser").unwrap())
+            .unwrap();
+
+        user.data.username = "newuser".parse().unwrap();
+        user.data.email = "newuser@example.com".parse().unwrap();
+        user.data.display_name = "New User".parse().unwrap();
+
+        let saved = database.wrapper.update_user(user.clone());
+
+        assert_that(&saved)
+            .is_err()
+            .is_equal_to(PersistUserError::DuplicateUsername);
     }
 }

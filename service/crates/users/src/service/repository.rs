@@ -31,6 +31,15 @@ pub trait UserRepository {
     /// # Returns
     /// The user that was persisted
     fn create_user(&self, user: UserEntity) -> Result<UserEntity, PersistUserError>;
+
+    /// Update an existing user in the data store
+    ///
+    /// # Arguments
+    /// * `user` The user entity to persist to the data store
+    ///
+    /// # Returns
+    /// The user that was persisted
+    fn update_user(&self, user: UserEntity) -> Result<UserEntity, PersistUserError>;
 }
 
 /// Enumeration of reasons why we failed to persist a newly created user
