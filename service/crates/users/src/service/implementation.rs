@@ -35,12 +35,7 @@ impl<Repo: UserRepository + Send + Sync> UserService for UserServiceImpl<Repo> {
     }
 
     fn register_user(&self, user: UserData) -> Result<UserEntity, RegisterUserError> {
-        let user_entity = UserEntity {
-            identity: Default::default(),
-            data: user,
-        };
-
-        let created = self.repository.create_user(user_entity)?;
+        let created = self.repository.create_user(user)?;
         Ok(created)
     }
 }
@@ -164,13 +159,17 @@ mod tests {
             password: Password::from_hash("abc"),
         };
 
+        let new_user = UserEntity {
+            identity: Default::default(),
+            data: user_data.clone(),
+        };
+
         let mut repository = MockUserRepository::new();
-        let consumed_user_data = user_data.clone();
         repository
             .expect_create_user()
-            .withf(move |user| user.data == consumed_user_data)
+            .with(predicate::eq(user_data.clone()))
             .times(1)
-            .returning(|user| Ok(user));
+            .returning(move |_user| Ok(new_user.clone()));
 
         let service = new_user_service(repository);
 
@@ -189,37 +188,11 @@ mod tests {
         };
 
         let mut repository = MockUserRepository::new();
-        let consumed_user_data = user_data.clone();
         repository
             .expect_create_user()
-            .withf(move |user| user.data == consumed_user_data)
+            .with(predicate::eq(user_data.clone()))
             .times(1)
             .returning(|_| Err(PersistUserError::UnknownError));
-
-        let service = new_user_service(repository);
-
-        let result = service.register_user(user_data.clone());
-        assert_that(&result)
-            .is_err()
-            .is_equal_to(RegisterUserError::UnknownError);
-    }
-
-    #[test]
-    fn test_register_user_duplicate_id() {
-        let user_data = UserData {
-            username: "testuser".parse().unwrap(),
-            email: "test@example.com".parse().unwrap(),
-            display_name: "Test User".parse().unwrap(),
-            password: Password::from_hash("abc"),
-        };
-
-        let mut repository = MockUserRepository::new();
-        let consumed_user_data = user_data.clone();
-        repository
-            .expect_create_user()
-            .withf(move |user| user.data == consumed_user_data)
-            .times(1)
-            .returning(|_| Err(PersistUserError::DuplicateId));
 
         let service = new_user_service(repository);
 
@@ -239,10 +212,9 @@ mod tests {
         };
 
         let mut repository = MockUserRepository::new();
-        let consumed_user_data = user_data.clone();
         repository
             .expect_create_user()
-            .withf(move |user| user.data == consumed_user_data)
+            .with(predicate::eq(user_data.clone()))
             .times(1)
             .returning(|_| Err(PersistUserError::DuplicateUsername));
 
@@ -266,10 +238,9 @@ mod tests {
         };
 
         let mut repository = MockUserRepository::new();
-        let consumed_user_data = user_data.clone();
         repository
             .expect_create_user()
-            .withf(move |user| user.data == consumed_user_data)
+            .with(predicate::eq(user_data.clone()))
             .times(1)
             .returning(|_| Err(PersistUserError::DuplicateEmail));
 

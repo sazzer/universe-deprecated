@@ -64,23 +64,26 @@ impl UserRepository for Database {
         user
     }
 
-    fn create_user(&self, user: UserEntity) -> Result<UserEntity, PersistUserError> {
+    fn create_user(&self, user: UserData) -> Result<UserEntity, PersistUserError> {
         debug!("Creating record for user: {:?}", user);
 
         let mut client = self.client().unwrap();
 
+        let new_id = UserID::default();
+        let new_version = Uuid::new_v4();
+        let new_updated = Utc::now();
+
         let result = client.query(
             "INSERT INTO users(user_id, version, created, updated, username, email, display_name, password) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+                VALUES ($1, $2, $3, $3, $4, $5, $6, $7) 
                 RETURNING *", &[
-            &user.identity.id,
-            &user.identity.version,
-            &user.identity.created,
-            &user.identity.updated,
-            &user.data.username,
-            &user.data.email,
-            &user.data.display_name,
-            &user.data.password,
+            &new_id,
+            &new_version,
+            &new_updated,
+            &user.username,
+            &user.email,
+            &user.display_name,
+            &user.password,
         ])
         .map(|rows| rows.get(0).unwrap().into())?;
 
@@ -129,7 +132,6 @@ impl From<postgres::Error> for PersistUserError {
             .source()
             .and_then(|e| e.downcast_ref::<postgres::error::DbError>())
             .map(|e| match e.constraint() {
-                Some("users_pkey") => PersistUserError::DuplicateId,
                 Some("users_username_key") => PersistUserError::DuplicateUsername,
                 Some("users_email_key") => PersistUserError::DuplicateEmail,
                 _ => PersistUserError::UnknownError,
@@ -231,45 +233,22 @@ mod tests {
     #[test]
     fn test_create_user() {
         let database = TestDatabaseWrapper::new();
-        let seeded_user: User = Default::default();
+        let user = UserData {
+            username: "testuser".parse().unwrap(),
+            email: "testuser@example.com".parse().unwrap(),
+            display_name: "Test User".parse().unwrap(),
+            password: Password::from_plaintext("Pa55word").unwrap(),
+        };
 
-        let created_user = database
-            .wrapper
-            .create_user(seeded_user.clone().into())
-            .unwrap();
+        let created_user = database.wrapper.create_user(user.clone()).unwrap();
 
-        assert_that(&created_user).is_equal_to(UserEntity::from(seeded_user));
+        assert_that(&created_user.data).is_equal_to(&user);
 
         let loaded_user = database
             .wrapper
             .get_user_by_id(&created_user.identity.id)
             .unwrap();
         assert_that(&loaded_user).is_equal_to(created_user);
-    }
-
-    #[test]
-    fn test_create_user_duplicate_id() {
-        let database = TestDatabaseWrapper::new();
-        let existing_user: User = User {
-            username: "testuser".to_owned(),
-            email: "testuser@example.com".to_owned(),
-            ..Default::default()
-        };
-        seed(&database, vec![&existing_user]);
-
-        let seeded_user: User = User {
-            user_id: existing_user.user_id,
-            username: "new_username".to_owned(),
-            email: "new@example.com".to_owned(),
-            ..Default::default()
-        };
-
-        let created_user = database
-            .wrapper
-            .create_user(seeded_user.clone().into())
-            .unwrap_err();
-
-        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateId);
     }
 
     #[test]
@@ -282,18 +261,18 @@ mod tests {
         };
         seed(&database, vec![&existing_user]);
 
-        let seeded_user: User = User {
-            username: "testuser".to_owned(),
-            email: "new@example.com".to_owned(),
-            ..Default::default()
+        let user = UserData {
+            username: "testuser".parse().unwrap(),
+            email: "new@example.com".parse().unwrap(),
+            display_name: "Test User".parse().unwrap(),
+            password: Password::from_plaintext("Pa55word").unwrap(),
         };
 
-        let created_user = database
-            .wrapper
-            .create_user(seeded_user.clone().into())
-            .unwrap_err();
+        let created_user = database.wrapper.create_user(user.clone());
 
-        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateUsername);
+        assert_that(&created_user)
+            .is_err()
+            .is_equal_to(PersistUserError::DuplicateUsername);
     }
 
     #[test]
@@ -306,18 +285,18 @@ mod tests {
         };
         seed(&database, vec![&existing_user]);
 
-        let seeded_user: User = User {
-            username: "TestUser".to_owned(),
-            email: "new@example.com".to_owned(),
-            ..Default::default()
+        let user = UserData {
+            username: "TestUser".parse().unwrap(),
+            email: "new@example.com".parse().unwrap(),
+            display_name: "Test User".parse().unwrap(),
+            password: Password::from_plaintext("Pa55word").unwrap(),
         };
 
-        let created_user = database
-            .wrapper
-            .create_user(seeded_user.clone().into())
-            .unwrap_err();
+        let created_user = database.wrapper.create_user(user.clone());
 
-        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateUsername);
+        assert_that(&created_user)
+            .is_err()
+            .is_equal_to(PersistUserError::DuplicateUsername);
     }
 
     #[test]
@@ -330,18 +309,18 @@ mod tests {
         };
         seed(&database, vec![&existing_user]);
 
-        let seeded_user: User = User {
-            username: "new_username".to_owned(),
-            email: "testuser@example.com".to_owned(),
-            ..Default::default()
+        let user = UserData {
+            username: "new_username".parse().unwrap(),
+            email: "testuser@example.com".parse().unwrap(),
+            display_name: "Test User".parse().unwrap(),
+            password: Password::from_plaintext("Pa55word").unwrap(),
         };
 
-        let created_user = database
-            .wrapper
-            .create_user(seeded_user.clone().into())
-            .unwrap_err();
+        let created_user = database.wrapper.create_user(user.clone());
 
-        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateEmail);
+        assert_that(&created_user)
+            .is_err()
+            .is_equal_to(PersistUserError::DuplicateEmail);
     }
 
     #[test]
@@ -354,18 +333,18 @@ mod tests {
         };
         seed(&database, vec![&existing_user]);
 
-        let seeded_user: User = User {
-            username: "new_username".to_owned(),
-            email: "TestUser@example.com".to_owned(),
-            ..Default::default()
+        let user = UserData {
+            username: "new_username".parse().unwrap(),
+            email: "TestUser@example.com".parse().unwrap(),
+            display_name: "Test User".parse().unwrap(),
+            password: Password::from_plaintext("Pa55word").unwrap(),
         };
 
-        let created_user = database
-            .wrapper
-            .create_user(seeded_user.clone().into())
-            .unwrap_err();
+        let created_user = database.wrapper.create_user(user.clone());
 
-        assert_that(&created_user).is_equal_to(PersistUserError::DuplicateEmail);
+        assert_that(&created_user)
+            .is_err()
+            .is_equal_to(PersistUserError::DuplicateEmail);
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use crate::{UserEntity, UserID, Username};
+use crate::{UserData, UserEntity, UserID, Username};
 #[cfg(test)]
 use mockall::automock;
 
@@ -26,11 +26,11 @@ pub trait UserRepository {
     /// Create a new user record in the data store
     ///
     /// # Arguments
-    /// * `user` The user entity to persist to the data store
+    /// * `user` The user details to persist to the data store
     ///
     /// # Returns
     /// The user that was persisted
-    fn create_user(&self, user: UserEntity) -> Result<UserEntity, PersistUserError>;
+    fn create_user(&self, user: UserData) -> Result<UserEntity, PersistUserError>;
 
     /// Update an existing user in the data store
     ///
@@ -45,7 +45,6 @@ pub trait UserRepository {
 /// Enumeration of reasons why we failed to persist a newly created user
 #[derive(Debug, PartialEq)]
 pub enum PersistUserError {
-    DuplicateId,
     DuplicateUsername,
     DuplicateEmail,
     UnknownError,
@@ -57,7 +56,6 @@ impl std::fmt::Display for PersistUserError {
             f,
             "{}",
             match self {
-                PersistUserError::DuplicateId => "Duplicate User ID",
                 PersistUserError::DuplicateUsername => "Duplicate Username",
                 PersistUserError::DuplicateEmail => "Duplicate Email Address",
                 PersistUserError::UnknownError => "An unknown error occurred",
