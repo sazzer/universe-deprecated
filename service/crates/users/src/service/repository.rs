@@ -47,6 +47,7 @@ pub trait UserRepository {
 pub enum PersistUserError {
     DuplicateUsername,
     DuplicateEmail,
+    UserNotFound,
     UnknownError,
 }
 
@@ -59,6 +60,7 @@ impl std::fmt::Display for PersistUserError {
                 PersistUserError::DuplicateUsername => "Duplicate Username",
                 PersistUserError::DuplicateEmail => "Duplicate Email Address",
                 PersistUserError::UnknownError => "An unknown error occurred",
+                PersistUserError::UserNotFound => "The user was not found",
             }
         )
     }

@@ -100,27 +100,30 @@ impl UserRepository for Database {
         let new_version = Uuid::new_v4();
         let new_updated = Utc::now();
 
-        let result = client
-            .query(
-                "UPDATE users SET username = $1, email = $2, display_name = $3, password = $4,
+        let rows = client.query(
+            "UPDATE users SET username = $1, email = $2, display_name = $3, password = $4,
                     version = $5, updated = $6
                     WHERE user_id = $7
                     RETURNING *",
-                &[
-                    &user.data.username,
-                    &user.data.email,
-                    &user.data.display_name,
-                    &user.data.password,
-                    &new_version,
-                    &new_updated,
-                    &user.identity.id,
-                ],
-            )
-            .map(|rows| rows.get(0).unwrap().into())?;
+            &[
+                &user.data.username,
+                &user.data.email,
+                &user.data.display_name,
+                &user.data.password,
+                &new_version,
+                &new_updated,
+                &user.identity.id,
+            ],
+        )?;
 
-        debug!("Updated record for user: {:?}", result);
+        if rows.is_empty() {
+            Err(PersistUserError::UserNotFound)
+        } else {
+            let result = rows.get(0).unwrap().into();
 
-        Ok(result)
+            debug!("Updated record for user: {:?}", result);
+            Ok(result)
+        }
     }
 }
 
@@ -501,5 +504,26 @@ mod tests {
         assert_that(&saved)
             .is_err()
             .is_equal_to(PersistUserError::DuplicateUsername);
+    }
+
+    #[test]
+    fn test_update_user_unknown_user() {
+        let database = TestDatabaseWrapper::new();
+
+        let user = UserEntity {
+            identity: Default::default(),
+            data: UserData {
+                username: "testuser".parse().unwrap(),
+                email: "test@example.com".parse().unwrap(),
+                display_name: "Test User".parse().unwrap(),
+                password: Password::from_hash("abc"),
+            },
+        };
+
+        let saved = database.wrapper.update_user(user.clone());
+
+        assert_that(&saved)
+            .is_err()
+            .is_equal_to(PersistUserError::UserNotFound);
     }
 }
