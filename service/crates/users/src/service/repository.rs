@@ -48,6 +48,7 @@ pub enum PersistUserError {
     DuplicateUsername,
     DuplicateEmail,
     UserNotFound,
+    OptimisticLockFailure,
     UnknownError,
 }
 
@@ -61,6 +62,8 @@ impl std::fmt::Display for PersistUserError {
                 PersistUserError::DuplicateEmail => "Duplicate Email Address",
                 PersistUserError::UnknownError => "An unknown error occurred",
                 PersistUserError::UserNotFound => "The user was not found",
+                PersistUserError::OptimisticLockFailure =>
+                    "The version of the user record did not match",
             }
         )
     }

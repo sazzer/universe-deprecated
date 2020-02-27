@@ -96,14 +96,16 @@ impl UserRepository for Database {
         debug!("Updating record for user: {:?}", user);
 
         let mut client = self.client().unwrap();
+        let mut transaction = client.transaction().unwrap();
 
         let new_version = Uuid::new_v4();
         let new_updated = Utc::now();
 
-        let rows = client.query(
+        let rows = transaction.query(
             "UPDATE users SET username = $1, email = $2, display_name = $3, password = $4,
                     version = $5, updated = $6
                     WHERE user_id = $7
+                    AND version = $8
                     RETURNING *",
             &[
                 &user.data.username,
@@ -113,13 +115,36 @@ impl UserRepository for Database {
                 &new_version,
                 &new_updated,
                 &user.identity.id,
+                &user.identity.version,
             ],
         )?;
 
         if rows.is_empty() {
-            Err(PersistUserError::UserNotFound)
+            let user_found = transaction.query(
+                "SELECT version FROM users WHERE user_id = $1",
+                &[&user.identity.id],
+            )?;
+
+            if user_found.is_empty() {
+                warn!(
+                    "Attempted to update user {} that wasn't found",
+                    user.identity.id
+                );
+                Err(PersistUserError::UserNotFound)
+            } else {
+                let user_row = user_found.get(0).unwrap();
+                let old_version: Uuid = user_row.get("version");
+
+                warn!(
+                    "Attempted to update user {}. Expected version {} but database had {}",
+                    user.identity.id, user.identity.version, old_version
+                );
+                Err(PersistUserError::OptimisticLockFailure)
+            }
         } else {
             let result = rows.get(0).unwrap().into();
+
+            transaction.commit().unwrap();
 
             debug!("Updated record for user: {:?}", result);
             Ok(result)
@@ -525,5 +550,29 @@ mod tests {
         assert_that(&saved)
             .is_err()
             .is_equal_to(PersistUserError::UserNotFound);
+    }
+
+    #[test]
+    fn test_update_user_wrong_version() {
+        let database = TestDatabaseWrapper::new();
+        let existing_user: User = User {
+            username: "testuser".to_owned(),
+            email: "testuser@example.com".to_owned(),
+            display_name: "Test User".to_owned(),
+            ..Default::default()
+        };
+        seed(&database, vec![&existing_user]);
+
+        let mut user = database
+            .wrapper
+            .get_user_by_username(&Username::from_str("testuser").unwrap())
+            .unwrap();
+        user.identity.version = Uuid::new_v4();
+
+        let saved = database.wrapper.update_user(user.clone());
+
+        assert_that(&saved)
+            .is_err()
+            .is_equal_to(PersistUserError::OptimisticLockFailure);
     }
 }
