@@ -1,4 +1,5 @@
 use crate::model::*;
+use std::boxed::Box;
 
 /// The User Service to allow interactoins with user entities
 pub trait UserService: Send + Sync {
@@ -43,7 +44,7 @@ pub trait UserService: Send + Sync {
     fn update_user(
         &self,
         user_id: &UserID,
-        updater: &mut dyn FnMut(UserData) -> UserData,
+        updater: &mut dyn FnMut(UserData) -> Result<UserData, Box<dyn std::error::Error>>,
     ) -> Result<UserEntity, UpdateUserError>;
 }
 
@@ -70,11 +71,12 @@ impl std::fmt::Display for RegisterUserError {
 impl std::error::Error for RegisterUserError {}
 
 /// Enumeration of reasons why we failed to update an existing user
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub enum UpdateUserError {
     ValidationError(Vec<UserValidationError>),
     UnknownUser,
     OptimisticLockFailure,
+    UpdateError(Box<dyn std::error::Error>),
     UnknownError,
 }
 

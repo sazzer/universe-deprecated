@@ -1,6 +1,7 @@
 use super::repository::*;
 use super::service::*;
 use crate::model::*;
+use std::boxed::Box;
 use tracing::warn;
 
 /// The User Service to allow interactoins with user entities
@@ -42,13 +43,13 @@ impl<Repo: UserRepository + Send + Sync> UserService for UserServiceImpl<Repo> {
     fn update_user(
         &self,
         user_id: &UserID,
-        updater: &mut dyn FnMut(UserData) -> UserData,
+        updater: &mut dyn FnMut(UserData) -> Result<UserData, Box<dyn std::error::Error>>,
     ) -> Result<UserEntity, UpdateUserError> {
         let user = self
             .get_user_by_id(&user_id)
             .ok_or(UpdateUserError::UnknownUser)?;
 
-        let updated = updater(user.data);
+        let updated = updater(user.data).map_err(|e| UpdateUserError::UpdateError(e))?;
 
         let saved = self.repository.update_user(UserEntity {
             identity: user.identity,
@@ -95,6 +96,7 @@ mod tests {
     use super::*;
     use crate::service::repository::MockUserRepository;
     use crate::{Password, UserData, UserEntity, UserID};
+    use assert_matches::*;
     use mockall::*;
     use spectral::prelude::*;
     // use test_env_log::test;
@@ -301,11 +303,10 @@ mod tests {
             .returning(|_| None);
 
         let service = new_user_service(repository);
-        let result = service.update_user(&user_id, &mut |user| user);
+        let result = service.update_user(&user_id, &mut |user| Ok(user));
 
-        assert_that(&result)
-            .is_err()
-            .is_equal_to(UpdateUserError::UnknownUser);
+        assert_that(&result).is_err();
+        assert_matches!(result.unwrap_err(), UpdateUserError::UnknownUser);
     }
 
     #[test]
@@ -354,7 +355,7 @@ mod tests {
 
         // The service being tested
         let service = new_user_service(repository);
-        let result = service.update_user(&user.identity.id, &mut |user| user);
+        let result = service.update_user(&user.identity.id, &mut |user| Ok(user));
 
         assert_that(&result)
             .is_ok()
@@ -414,7 +415,7 @@ mod tests {
         let result = service.update_user(&user.identity.id, &mut |mut user| {
             user.email = "new@example.com".parse().unwrap();
             user.display_name = "New User".parse().unwrap();
-            user
+            Ok(user)
         });
 
         assert_that(&result)
@@ -466,13 +467,49 @@ mod tests {
         let result = service.update_user(&user.identity.id, &mut |mut user| {
             user.email = "new@example.com".parse().unwrap();
             user.display_name = "New User".parse().unwrap();
-            user
+            Ok(user)
         });
 
-        assert_that(&result)
-            .is_err()
-            .is_equal_to(UpdateUserError::ValidationError(vec![
-                UserValidationError::DuplicateEmail,
-            ]));
+        assert_that(&result).is_err();
+        assert_matches!(
+            result.unwrap_err(),
+            UpdateUserError::ValidationError(v) if v == vec![UserValidationError::DuplicateEmail]
+        );
+    }
+
+    #[test]
+    fn test_update_update_error() {
+        // The user as it currently exists
+        let user = UserEntity {
+            identity: Default::default(),
+            data: UserData {
+                username: "testuser".parse().unwrap(),
+                email: "test@example.com".parse().unwrap(),
+                display_name: "Test User".parse().unwrap(),
+                password: Password::from_hash("abc"),
+            },
+        };
+
+        // The mock repository
+        let mut repository = MockUserRepository::new();
+
+        let returned_user = user.clone();
+        repository
+            .expect_get_user_by_id()
+            .with(predicate::eq(user.identity.id.clone()))
+            .times(1)
+            .returning(move |_| Some(returned_user.clone()));
+
+        // The service being tested
+        let service = new_user_service(repository);
+        let result = service.update_user(&user.identity.id, &mut |_user| {
+            Err(Box::new(std::fmt::Error {}))
+        });
+
+        assert_that(&result).is_err();
+        assert_matches!(
+            result.unwrap_err(),
+            UpdateUserError::UpdateError(e) if e.is::<std::fmt::Error>()
+        );
     }
 }
