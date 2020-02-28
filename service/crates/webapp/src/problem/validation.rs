@@ -3,7 +3,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 
 /// Struct representing a validation error to go into a Problem response
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct ValidationError {
     pub r#type: String,
     pub title: String,

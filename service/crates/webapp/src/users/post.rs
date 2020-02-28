@@ -1,5 +1,5 @@
 use crate::authentication::model::{AccessToken, AuthenticatedUser};
-use crate::problem::{missing_error, unexpected_error, validation_error, Problem, ValidationError};
+use crate::problem::{Problem, ValidationError};
 use crate::request_id::RequestId;
 use rocket::{post, State};
 use rocket_contrib::json::Json;
@@ -20,10 +20,7 @@ pub fn register_user(
 ) -> Result<Json<AuthenticatedUser>, Problem> {
     debug!("Registration: {:?}", registration);
 
-    let user: UserData = registration
-        .into_inner()
-        .try_into()
-        .map_err(validation_error)?;
+    let user: UserData = registration.into_inner().try_into()?;
     debug!("User Data: {:?}", user);
 
     let result = user_service.register_user(user)?;
@@ -44,17 +41,6 @@ pub fn register_user(
     }))
 }
 
-impl From<RegisterUserError> for Problem {
-    fn from(e: RegisterUserError) -> Self {
-        match e {
-            RegisterUserError::ValidationError(errors) => {
-                validation_error(errors.iter().map(|e| e.into()).collect())
-            }
-            _ => unexpected_error(),
-        }
-    }
-}
-
 /// Struct representing the input data for registering a new user
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -69,36 +55,24 @@ impl<'a> TryFrom<Registration<'a>> for UserData {
     type Error = Vec<ValidationError>;
 
     fn try_from(input: Registration) -> Result<Self, Self::Error> {
-        let username: Result<Username, ValidationError> =
-            input.username.unwrap_or("").parse().map_err(|e| match e {
-                UsernameParseError::Blank => missing_error("username"),
-            });
+        let username: Result<Username, ValidationError> = input
+            .username
+            .unwrap_or("")
+            .parse()
+            .map_err(|e: UsernameParseError| e.into());
         let display_name: Result<DisplayName, ValidationError> = input
             .display_name
             .unwrap_or("")
             .parse()
-            .map_err(|e| match e {
-                DisplayNameParseError::Blank => missing_error("displayName"),
-            });
-        let email: Result<EmailAddress, ValidationError> =
-            input.email.unwrap_or("").parse().map_err(|e| match e {
-                EmailAddressParseError::Blank => missing_error("email"),
-                EmailAddressParseError::Malformed => ValidationError {
-                    r#type: "tag:universe,2020:users/validation-errors/email/malformed".to_owned(),
-                    title: "Email Address was malformed".to_owned(),
-                    field: "email".to_owned(),
-                },
-            });
+            .map_err(|e: DisplayNameParseError| e.into());
+        let email: Result<EmailAddress, ValidationError> = input
+            .email
+            .unwrap_or("")
+            .parse()
+            .map_err(|e: EmailAddressParseError| e.into());
         let password: Result<Password, ValidationError> =
-            Password::from_plaintext(input.password.unwrap_or("")).map_err(|e| match e {
-                PasswordHashError::Blank => missing_error("password"),
-                PasswordHashError::HashError => ValidationError {
-                    r#type: "tag:universe,2020:validation-errors/password/invalid-password"
-                        .to_owned(),
-                    title: "The password was invalid".to_owned(),
-                    field: "password".to_owned(),
-                },
-            });
+            Password::from_plaintext(input.password.unwrap_or(""))
+                .map_err(|e: PasswordHashError| e.into());
 
         match (username, email, display_name, password) {
             (Ok(username), Ok(email), Ok(display_name), Ok(password)) => Ok(UserData {
