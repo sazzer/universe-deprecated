@@ -1,4 +1,4 @@
-use super::model::User;
+use super::{model::User, problems::unknown_user_problem};
 use crate::problem::Problem;
 use crate::request_id::RequestId;
 use rocket::{get, http::Status, Response, State};
@@ -50,14 +50,4 @@ pub fn get_username(
         .finalize();
 
     Ok(response)
-}
-
-/// Helper to build a Problem response for an unknown user
-fn unknown_user_problem() -> Problem {
-    Problem {
-        r#type: "tag:universe,2020:users/problems/unknown-user".to_owned(),
-        title: "The requested user could not be found".to_owned(),
-        status: 404,
-        ..Default::default()
-    }
 }

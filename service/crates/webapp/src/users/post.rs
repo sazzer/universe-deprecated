@@ -48,24 +48,7 @@ impl From<RegisterUserError> for Problem {
     fn from(e: RegisterUserError) -> Self {
         match e {
             RegisterUserError::ValidationError(errors) => {
-                let validation_errors = errors
-                    .iter()
-                    .map(|e| match e {
-                        UserValidationError::DuplicateUsername => ValidationError {
-                            r#type: "tag:universe,2020:users/validation-errors/username/duplicate"
-                                .to_owned(),
-                            title: "The username is already registered".to_owned(),
-                            field: "username".to_owned(),
-                        },
-                        UserValidationError::DuplicateEmail => ValidationError {
-                            r#type: "tag:universe,2020:users/validation-errors/email/duplicate"
-                                .to_owned(),
-                            title: "The email address is already registered".to_owned(),
-                            field: "email".to_owned(),
-                        },
-                    })
-                    .collect();
-                validation_error(validation_errors)
+                validation_error(errors.iter().map(|e| e.into()).collect())
             }
             _ => unexpected_error(),
         }
