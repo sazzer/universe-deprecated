@@ -28,6 +28,23 @@ pub trait UserService: Send + Sync {
     /// # Returns
     /// The user that was persisted
     fn register_user(&self, user: UserData) -> Result<UserEntity, RegisterUserError>;
+
+    /// Update an existing user.
+    ///
+    /// This will load the user by ID, and then call a provided callback to mutate the user before persisting
+    /// the changes back to the database
+    ///
+    /// # Arguments
+    /// * `user_id` The ID of the user to update
+    /// * `updater` The callback to mutate the user with
+    ///
+    /// # Returns
+    /// The newly updated user
+    fn update_user(
+        &self,
+        user_id: &UserID,
+        updater: &mut dyn FnMut(UserData) -> UserData,
+    ) -> Result<UserEntity, UpdateUserError>;
 }
 
 /// Enumeration of potential validation errors when creating a new user
@@ -51,3 +68,20 @@ impl std::fmt::Display for RegisterUserError {
 }
 
 impl std::error::Error for RegisterUserError {}
+
+/// Enumeration of reasons why we failed to update an existing user
+#[derive(Debug, PartialEq)]
+pub enum UpdateUserError {
+    ValidationError(Vec<UserValidationError>),
+    UnknownUser,
+    OptimisticLockFailure,
+    UnknownError,
+}
+
+impl std::fmt::Display for UpdateUserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Error updating user: {}", self)
+    }
+}
+
+impl std::error::Error for UpdateUserError {}
