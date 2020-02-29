@@ -57,6 +57,16 @@ impl<'d> ServiceWrapper<'d> {
         ))
     }
 
+    pub fn patch<'c, 'u: 'c, U: Into<std::borrow::Cow<'u, str>>>(
+        &'c self,
+        uri: U,
+    ) -> rocket::local::LocalRequest<'c> {
+        self.client().patch(uri).header(rocket::http::Header::new(
+            "X-Request-Client-Name",
+            "IntegrationTest",
+        ))
+    }
+
     /// Get the database the service is using
     pub fn database(&self) -> &TestDatabaseWrapper<'d> {
         &self.database
