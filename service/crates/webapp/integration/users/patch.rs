@@ -6,11 +6,15 @@ use spectral::prelude::*;
 use test_env_log::test;
 use universe_testdata::{seed, User};
 
-fn authenticate_user<'h>(service: &ServiceWrapper, user: &User) -> Header<'h> {
+fn authenticate_user<'h>(service: &ServiceWrapper, user: &User) -> Option<Header<'h>> {
   authenticate(&service, &user.username, &user.password)
 }
 
-fn authenticate<'h>(service: &ServiceWrapper, username: &str, password: &str) -> Header<'h> {
+fn authenticate<'h>(
+  service: &ServiceWrapper,
+  username: &str,
+  password: &str,
+) -> Option<Header<'h>> {
   let req = service.post("/login").header(ContentType::JSON).body(
     json!({
         "username": username,
@@ -19,7 +23,9 @@ fn authenticate<'h>(service: &ServiceWrapper, username: &str, password: &str) ->
     .to_string(),
   );
   let mut response = req.dispatch();
-  assert_that(&response.status()).is_equal_to(Status::Ok);
+  if response.status() != Status::Ok {
+    return None;
+  }
 
   let body = build_json_body(&mut response);
   body
@@ -27,7 +33,6 @@ fn authenticate<'h>(service: &ServiceWrapper, username: &str, password: &str) ->
     .and_then(|token| token.get("token"))
     .and_then(|token| token.as_str())
     .map(|token| Header::new("Authorization", format!("Bearer {}", token)))
-    .expect("No Access Token returned")
 }
 
 #[test]
@@ -63,7 +68,7 @@ fn test_patch_wrong_user() {
   let req = service
     .patch("/users/83C60AD3-2A4F-455B-B685-C16DA785BF6E")
     .header(ContentType::JSON)
-    .header(authenticate_user(&service, &user))
+    .header(authenticate_user(&service, &user).unwrap())
     .body(json!({}).to_string());
   let mut response = req.dispatch();
 
@@ -96,7 +101,7 @@ fn test_patch_known_user_no_differences() {
   let req = service
     .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
     .header(ContentType::JSON)
-    .header(authenticate_user(&service, &user))
+    .header(authenticate_user(&service, &user).unwrap())
     .body(json!({}).to_string());
   let mut response = req.dispatch();
 
@@ -130,11 +135,11 @@ fn test_patch_known_user_with_differences() {
   let req = service
     .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
     .header(ContentType::JSON)
-    .header(authenticate_user(&service, &user))
+    .header(authenticate_user(&service, &user).unwrap())
     .body(
       json!({
-        "email": "new@example.com".to_owned(),
-        "displayName": "New User".to_owned(),
+        "email": "new@example.com",
+        "displayName": "New User",
       })
       .to_string(),
     );
@@ -153,4 +158,39 @@ fn test_patch_known_user_with_differences() {
     "username": "testuser"
   }
   "###);
+}
+
+#[test]
+fn test_patch_change_password() {
+  let service = ServiceWrapper::default();
+  let user = User {
+    user_id: uuid::Uuid::parse_str("2fcc3850-bb9b-405e-bbab-22978283fef8").unwrap(),
+    username: "testuser".to_owned(),
+    email: "testing@example.com".to_owned(),
+    display_name: "Test User".to_owned(),
+    password: "password".to_owned(),
+    ..Default::default()
+  };
+  seed(service.database(), vec![&user]);
+
+  let req = service
+    .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
+    .header(ContentType::JSON)
+    .header(authenticate_user(&service, &user).unwrap())
+    .body(
+      json!({
+        "password": "NewPa55word",
+      })
+      .to_string(),
+    );
+  let response = req.dispatch();
+
+  assert_snapshot!(build_headers(&response), @r###"
+  HTTP/1.1 200 OK.
+  Content-Type: application/json
+  Server: Rocket
+  "###);
+
+  assert_that(&authenticate(&service, "testuser", "password")).is_none();
+  assert_that(&authenticate(&service, "testuser", "NewPa55word")).is_some();
 }
