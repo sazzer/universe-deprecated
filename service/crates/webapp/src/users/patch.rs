@@ -1,7 +1,7 @@
 use super::model::User;
 use super::problems::{unknown_user_problem, ValidationErrors};
 use crate::problem::{Problem, ValidationError};
-use crate::request_id::RequestId;
+use crate::{authentication::Authorizer, request_id::RequestId};
 use rocket::{patch, State};
 use rocket_contrib::json::Json;
 use serde::Deserialize;
@@ -9,9 +9,10 @@ use tracing::{debug, warn};
 use universe_users::*;
 
 #[patch("/users/<user_id>", data = "<patch_data>")]
-#[tracing::instrument(skip(user_service, access_token_factory, access_token_encoder))]
+#[tracing::instrument(skip(user_service, authorizer))]
 pub fn update_user(
     _request_id: RequestId,
+    authorizer: Authorizer,
     user_id: String,
     patch_data: Json<PatchData>,
     user_service: State<Box<dyn UserService>>,
@@ -22,6 +23,7 @@ pub fn update_user(
         warn!("Invalid User ID: {}", e);
         unknown_user_problem()
     })?;
+    authorizer.same_user(&user_id).to_result()?;
 
     let user = user_service.update_user(&user_id, &mut |mut user| {
         debug!("Patching user details");

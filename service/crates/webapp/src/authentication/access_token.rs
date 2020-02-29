@@ -47,11 +47,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiAccessToken {
 
 fn build_failure_response() -> Outcome<ApiAccessToken, Problem> {
   Outcome::Failure((
-    Status::Forbidden,
+    Status::Unauthorized,
     Problem {
       r#type: "tag:universe,2020:problems/authentication/missing-access-token".to_owned(),
       title: "No Access Token was provided on the request".to_owned(),
-      status: 403,
+      status: 401,
       ..Default::default()
     },
   ))

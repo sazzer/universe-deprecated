@@ -10,7 +10,7 @@ use std::io::Cursor;
 use tracing::error;
 
 /// Struct representing an RFC-7807 problem returned by a REST API
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, PartialEq)]
 pub struct Problem {
     pub r#type: String,
     pub title: String,
