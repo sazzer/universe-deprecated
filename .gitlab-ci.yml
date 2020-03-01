@@ -165,7 +165,7 @@ deploy-webapp:
 
   only:
     refs:
-      - rustspa
+      - master
 
   variables:
     NETLIFY_SITE_ID: 5d660fa7-9244-4b03-84d5-9a7fdf547b65
@@ -189,7 +189,7 @@ deploy-service:
 
   only:
     refs:
-      - rustspa
+      - master
 
   variables:
     DOCKER_HOST: tcp://docker:2375
