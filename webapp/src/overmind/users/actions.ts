@@ -22,3 +22,18 @@ export const fetchUser: Action<string, Promise<void>> = async (
   const user = await effects.users.api.loadUser(userId);
   actions.users.storeUser(user);
 };
+
+export interface SaveUserValue {
+  userId: string;
+  displayName: string;
+  email: string;
+}
+
+export const saveUser: Action<SaveUserValue, Promise<void>> = async (
+  { state, actions, effects },
+  { userId, displayName, email }: SaveUserValue
+) => {
+  state.users.userStates[userId] = "SAVING";
+  const user = await effects.users.api.saveUser(userId, displayName, email);
+  actions.users.storeUser(user);
+};

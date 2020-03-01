@@ -16,6 +16,9 @@ declare global {
   }
 }
 
+/** The access token to use */
+let _accessToken: string | undefined;
+
 /**
  * The shape of the request that we want to make
  */
@@ -45,13 +48,21 @@ export async function request<T>(request: Request): Promise<Response<T>> {
   const expandedUri = template.expand(request.urlParams || {});
   LOG("Making request to: %s", expandedUri);
 
+  const headers = {
+    ...request.headers
+  };
+
+  if (_accessToken) {
+    headers.Authorization = `Bearer ${_accessToken}`;
+  }
+
   try {
     return await axios.request({
       baseURL: serviceUrl,
       timeout: 20000,
       url: expandedUri,
       method: request.method,
-      headers: request.headers,
+      headers: headers,
       data: request.data
     });
   } catch (e) {
@@ -70,4 +81,8 @@ export async function request<T>(request: Request): Promise<Response<T>> {
     ERROR_LOG("Unexpected error making API request", e);
     throw e;
   }
+}
+
+export function setAccessToken(accessToken: string | undefined) {
+  _accessToken = accessToken;
 }

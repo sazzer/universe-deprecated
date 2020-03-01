@@ -335,11 +335,47 @@ Array [
   },
   Object {
     "args": Array [
-      false,
+      "Error: The effect \\"authentication.api\\" with method storeAccessToken has not been mocked",
     ],
     "hasChangedValue": true,
     "method": "set",
-    "path": "login.loading",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: The effect \\"authentication.api\\" with method storeAccessToken has not been mocked",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: The effect \\"authentication.api\\" with method storeAccessToken has not been mocked",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: The effect \\"authentication.api\\" with method storeAccessToken has not been mocked",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
+    "revert": [Function],
+  },
+  Object {
+    "args": Array [
+      "Error: The effect \\"authentication.api\\" with method storeAccessToken has not been mocked",
+    ],
+    "hasChangedValue": true,
+    "method": "set",
+    "path": "login.error",
     "revert": [Function],
   },
 ]

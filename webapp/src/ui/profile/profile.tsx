@@ -19,6 +19,7 @@ interface UserProfileFormProps {
  */
 export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   const { t } = useTranslation();
+  const { actions } = useOvermind();
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -61,7 +62,11 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    console.log(data);
+    actions.users.saveUser({
+      userId: user.id,
+      displayName: data.displayName,
+      email: data.email
+    });
   };
 
   return (

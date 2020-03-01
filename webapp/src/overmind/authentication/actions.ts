@@ -3,9 +3,10 @@ import { Action } from "overmind";
 /**
  * Overmind action for logging out.
  */
-export const logout: Action = ({ state }) => {
+export const logout: Action = ({ state, effects }) => {
   state.authentication.accessToken = null;
   state.authentication.userId = null;
+  effects.authentication.api.clearAccessToken();
 };
 
 /**
@@ -23,10 +24,14 @@ export interface LoginInput {
 /**
  * Overmind action for logging in
  */
-export const login: Action<LoginInput> = ({ state }, details: LoginInput) => {
+export const login: Action<LoginInput> = (
+  { state, effects },
+  details: LoginInput
+) => {
   state.authentication.accessToken = {
     accessToken: details.accessToken,
     expires: details.expires
   };
   state.authentication.userId = details.userId;
+  effects.authentication.api.storeAccessToken(details.accessToken);
 };

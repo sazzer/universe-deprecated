@@ -186,16 +186,23 @@ describe("authenticate", () => {
 
 describe("register", () => {
   let registerUserEffect: jest.Mock;
+  let storeAccessTokenEffect: jest.Mock;
   let overmind: OvermindMock<Config>;
 
   beforeEach(() => {
     registerUserEffect = jest.fn();
+    storeAccessTokenEffect = jest.fn();
 
     overmind = createTestOvermind(
       {
         login: {
           api: {
             registerUser: registerUserEffect
+          }
+        },
+        authentication: {
+          api: {
+            storeAccessToken: storeAccessTokenEffect
           }
         }
       },
@@ -236,6 +243,8 @@ describe("register", () => {
       "Test User",
       "Pa55word"
     );
+    expect(storeAccessTokenEffect).toBeCalledTimes(1);
+    expect(storeAccessTokenEffect).toBeCalledWith("some.token.id");
   });
   test("Invalid Password", async () => {
     registerUserEffect.mockReturnValueOnce(
