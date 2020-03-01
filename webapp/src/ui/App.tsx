@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -7,5 +8,9 @@ import { useTranslation } from "react-i18next";
 export const App: React.FC = () => {
   const { t } = useTranslation();
 
-  return <div>{t("page.title")}</div>;
+  return (
+    <Router>
+      <div>{t("page.title")}</div>
+    </Router>
+  );
 };
