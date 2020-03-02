@@ -9,10 +9,15 @@ import { useTranslation } from "react-i18next";
 /** The logger to use */
 const LOG = debug("universe:ui:login:start");
 
+export interface StartLoginProps {
+  /** Callback when a username has been submitted */
+  onUsername: (username: string, known: boolean) => void;
+}
+
 /**
  * Page for starting the login process, allowing for input of the username
  */
-export const StartLogin: React.FC = () => {
+export const StartLogin: React.FC<StartLoginProps> = ({ onUsername }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +39,8 @@ export const StartLogin: React.FC = () => {
   const onSubmitHandler = async (data: FieldValues) => {
     LOG("Submitting form: %o", data);
     setLoading(true);
+
+    onUsername(data.username, false);
   };
 
   let errorMessage = <></>;

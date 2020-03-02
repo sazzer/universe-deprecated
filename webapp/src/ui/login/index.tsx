@@ -16,11 +16,20 @@ export const LoginPage: React.FC = () => {
 
   switch (pageState) {
     case null:
-      page = <StartLogin />;
+      page = (
+        <StartLogin
+          onUsername={(username, known) => {
+            setPageState(known ? "AUTHENTICATE" : "REGISTER");
+          }}
+        />
+      );
       break;
     case "AUTHENTICATE":
+      page = <>Authenticate</>;
+      break;
     case "REGISTER":
-      page = <></>;
+      page = <>Register</>;
+      break;
   }
 
   return <LandingPage>{page}</LandingPage>;
