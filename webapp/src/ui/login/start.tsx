@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 
+import { checkUsername } from "../../users";
 import debug from "debug";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +21,7 @@ export interface StartLoginProps {
 export const StartLogin: React.FC<StartLoginProps> = ({ onUsername }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<String | undefined>(undefined);
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -38,12 +40,30 @@ export const StartLogin: React.FC<StartLoginProps> = ({ onUsername }) => {
 
   const onSubmitHandler = async (data: FieldValues) => {
     LOG("Submitting form: %o", data);
+    setError(undefined);
     setLoading(true);
 
-    onUsername(data.username, false);
+    try {
+      const result = await checkUsername(data.username);
+      onUsername(data.username, result);
+    } catch (e) {
+      setLoading(false);
+      setError(e.toString());
+    }
   };
 
   let errorMessage = <></>;
+  if (error) {
+    errorMessage = (
+      <div className="form-group">
+        <div className="alert alert-danger" role="alert">
+          {t("errors.unexpected", {
+            message: error
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -72,11 +92,14 @@ export const StartLogin: React.FC<StartLoginProps> = ({ onUsername }) => {
         <div className="form-group">
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading && (
-              <span
-                className="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
+              <>
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                &nbsp;
+              </>
             )}
             {t("login.start.submit")}
           </button>

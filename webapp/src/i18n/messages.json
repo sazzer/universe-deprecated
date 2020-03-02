@@ -20,5 +20,8 @@
       "title": "Login / Register",
       "submit": "Login / Register"
     }
+  },
+  "errors": {
+    "unexpected": "An unexpected error occurred: {{message}}"
   }
 }
