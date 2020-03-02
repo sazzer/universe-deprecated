@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 
 import { HeaderBar } from "./header";
 import { HomePage } from "./homePage";
+import { LoginPage } from "./login";
 import React from "react";
 import { UserProvider } from "../users";
 
@@ -14,11 +15,16 @@ export const App: React.FC = () => {
       <Router>
         <HeaderBar />
 
-        <Switch>
-          <Route>
-            <HomePage />
-          </Route>
-        </Switch>
+        <div className="container-fluid mt-3">
+          <Switch>
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <Route>
+              <HomePage />
+            </Route>
+          </Switch>
+        </div>
       </Router>
     </UserProvider>
   );

@@ -7,5 +7,18 @@
     "loginMenu": {
       "title": "Login / Register"
     }
+  },
+  "login": {
+    "username": {
+      "label": "Username",
+      "errors": {
+        "tag:universe,2020:validation-errors/missing": "Please enter a username",
+        "tag:universe,2020:users/validation-errors/username/duplicate": "Username is already registered"
+      }
+    },
+    "start": {
+      "title": "Login / Register",
+      "submit": "Login / Register"
+    }
   }
 }
