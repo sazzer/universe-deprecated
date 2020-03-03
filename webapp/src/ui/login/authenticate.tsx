@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 
+import { UnexpectedError } from "../components/form/error";
 import { ValidationErrors } from "../../api/validation";
 import debug from "debug";
 import { useTranslation } from "react-i18next";
@@ -27,7 +28,7 @@ export const AuthenticateUserPage: React.FC<AuthenticateUserPageProps> = ({
 }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [globalError, setGlobalError] = useState<String | undefined>(undefined);
+  const [globalError, setGlobalError] = useState<string | undefined>(undefined);
 
   const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
@@ -55,19 +56,6 @@ export const AuthenticateUserPage: React.FC<AuthenticateUserPageProps> = ({
     setGlobalError(undefined);
     setLoading(true);
   };
-
-  let errorMessage;
-  if (globalError) {
-    errorMessage = (
-      <div className="form-group">
-        <div className="alert alert-danger" role="alert">
-          {t("errors.unexpected", {
-            message: globalError
-          })}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -136,7 +124,7 @@ export const AuthenticateUserPage: React.FC<AuthenticateUserPageProps> = ({
             {t("login.authenticate.cancel")}
           </button>
         </div>
-        {errorMessage}
+        {globalError && <UnexpectedError message={globalError} />}
       </form>
     </>
   );

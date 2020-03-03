@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 
+import { UnexpectedError } from "../components/form/error";
 import { checkUsername } from "../../users";
 import debug from "debug";
 import { useTranslation } from "react-i18next";
@@ -26,7 +27,7 @@ export const StartLoginPage: React.FC<StartLoginPageProps> = ({
 }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<String | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -56,19 +57,6 @@ export const StartLoginPage: React.FC<StartLoginPageProps> = ({
       setError(e.toString());
     }
   };
-
-  let errorMessage = <></>;
-  if (error) {
-    errorMessage = (
-      <div className="form-group">
-        <div className="alert alert-danger" role="alert">
-          {t("errors.unexpected", {
-            message: error
-          })}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -109,7 +97,7 @@ export const StartLoginPage: React.FC<StartLoginPageProps> = ({
             {t("login.start.submit")}
           </button>
         </div>
-        {errorMessage}
+        {error && <UnexpectedError message={error} />}
       </form>
     </>
   );
