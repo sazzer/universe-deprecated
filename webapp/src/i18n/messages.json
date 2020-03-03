@@ -9,6 +9,15 @@
     }
   },
   "login": {
+    "start": {
+      "title": "Login / Register",
+      "submit": "Login / Register"
+    },
+    "register": {
+      "title": "Register",
+      "submit": "Register",
+      "cancel": "Cancel"
+    },
     "username": {
       "label": "Username",
       "errors": {
@@ -16,9 +25,33 @@
         "tag:universe,2020:users/validation-errors/username/duplicate": "Username is already registered"
       }
     },
-    "start": {
-      "title": "Login / Register",
-      "submit": "Login / Register"
+    "email": {
+      "label": "Email Address",
+      "errors": {
+        "tag:universe,2020:validation-errors/missing": "Please enter an email address",
+        "tag:universe,2020:users/validation-errors/email/malformed": "Please enter a valid email address",
+        "tag:universe,2020:users/validation-errors/email/duplicate": "Email Address is already registered"
+      }
+    },
+    "displayName": {
+      "label": "Display Name",
+      "errors": {
+        "tag:universe,2020:validation-errors/missing": "Please enter a display name"
+      }
+    },
+    "password": {
+      "label": "Password",
+      "errors": {
+        "tag:universe,2020:validation-errors/missing": "Please enter a password",
+        "tag:universe,2020:users/problems/login_failure": "Invalid username or password"
+      }
+    },
+    "password2": {
+      "label": "Repeat Password",
+      "errors": {
+        "tag:universe,2020:validation-errors/missing": "Please re-enter the password",
+        "tag:universe,2020:validation-errors/password/invalid-password": "Passwords do not match"
+      }
     }
   },
   "errors": {

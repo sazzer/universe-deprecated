@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 
+import { AuthenticateUserPage } from "./authenticate";
 import { LandingPage } from "../landingPage";
-import { StartLogin } from "./start";
+import { RegisterUserPage } from "./register";
+import { StartLoginPage } from "./start";
 
 /** The possible states the page can be in */
 type PageState = "AUTHENTICATE" | "REGISTER" | null;
@@ -11,24 +13,40 @@ type PageState = "AUTHENTICATE" | "REGISTER" | null;
  */
 export const LoginPage: React.FC = () => {
   const [pageState, setPageState] = useState<PageState>(null);
+  const [username, setUsername] = useState<string>("");
 
   let page: React.ReactElement = <></>;
 
   switch (pageState) {
     case null:
       page = (
-        <StartLogin
+        <StartLoginPage
           onUsername={(username, known) => {
+            setUsername(username);
             setPageState(known ? "AUTHENTICATE" : "REGISTER");
           }}
         />
       );
       break;
     case "AUTHENTICATE":
-      page = <>Authenticate</>;
+      page = (
+        <AuthenticateUserPage
+          username={username}
+          onCancel={() => {
+            setPageState(null);
+          }}
+        />
+      );
       break;
     case "REGISTER":
-      page = <>Register</>;
+      page = (
+        <RegisterUserPage
+          username={username}
+          onCancel={() => {
+            setPageState(null);
+          }}
+        />
+      );
       break;
   }
 

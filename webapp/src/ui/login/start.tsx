@@ -10,7 +10,10 @@ import { useTranslation } from "react-i18next";
 /** The logger to use */
 const LOG = debug("universe:ui:login:start");
 
-export interface StartLoginProps {
+/**
+ * Props required for the the StartLogin page
+ */
+export interface StartLoginPageProps {
   /** Callback when a username has been submitted */
   onUsername: (username: string, known: boolean) => void;
 }
@@ -18,7 +21,9 @@ export interface StartLoginProps {
 /**
  * Page for starting the login process, allowing for input of the username
  */
-export const StartLogin: React.FC<StartLoginProps> = ({ onUsername }) => {
+export const StartLoginPage: React.FC<StartLoginPageProps> = ({
+  onUsername
+}) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<String | undefined>(undefined);
@@ -79,7 +84,7 @@ export const StartLogin: React.FC<StartLoginProps> = ({ onUsername }) => {
             id="username"
             name="username"
             autoFocus
-            disabled={loading}
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
