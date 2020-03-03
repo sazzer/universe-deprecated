@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 
+import { SubmitButton } from "../components/form/buttons";
 import { UnexpectedError } from "../components/form/error";
 import { checkUsername } from "../../users";
 import debug from "debug";
@@ -83,19 +84,9 @@ export const StartLoginPage: React.FC<StartLoginPageProps> = ({
         </div>
 
         <div className="form-group">
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading && (
-              <>
-                <span
-                  className="spinner-border spinner-border-sm"
-                  role="status"
-                  aria-hidden="true"
-                ></span>
-                &nbsp;
-              </>
-            )}
+          <SubmitButton loading={loading}>
             {t("login.start.submit")}
-          </button>
+          </SubmitButton>
         </div>
         {error && <UnexpectedError message={error} />}
       </form>

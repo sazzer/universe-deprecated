@@ -1,5 +1,6 @@
 import * as yup from "yup";
 
+import { CancelButton, SubmitButton } from "../components/form/buttons";
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 
@@ -190,27 +191,12 @@ export const RegisterUserPage: React.FC<RegisterUserPageProps> = ({
           />
         </div>
         <div className="form-group">
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading && (
-              <>
-                <span
-                  className="spinner-border spinner-border-sm"
-                  role="status"
-                  aria-hidden="true"
-                ></span>
-                &nbsp;
-              </>
-            )}
+          <SubmitButton loading={loading}>
             {t("login.register.submit")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-link"
-            disabled={loading}
-            onClick={onCancel}
-          >
+          </SubmitButton>
+          <CancelButton disabled={loading} onClick={onCancel}>
             {t("login.register.cancel")}
-          </button>
+          </CancelButton>
         </div>
         {globalError && <UnexpectedError message={globalError} />}
       </form>
