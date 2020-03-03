@@ -5,7 +5,6 @@ import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 
 import { UnexpectedError } from "../components/form/error";
-import { ValidationErrors } from "../../api/validation";
 import debug from "debug";
 import { useTranslation } from "react-i18next";
 
@@ -31,7 +30,7 @@ export const RegisterUserPage: React.FC<RegisterUserPageProps> = ({
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState<string | undefined>(undefined);
 
-  const { register, errors, handleSubmit, setError } = useForm({
+  const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
       username: yup
         .string()
