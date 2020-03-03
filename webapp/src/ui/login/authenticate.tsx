@@ -5,6 +5,7 @@ import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 
 import { UnexpectedError } from "../components/form/error";
+import { authenticate } from "../../users";
 import debug from "debug";
 import { useTranslation } from "react-i18next";
 
@@ -55,6 +56,13 @@ export const AuthenticateUserPage: React.FC<AuthenticateUserPageProps> = ({
     LOG("Submitting form: %o", data);
     setGlobalError(undefined);
     setLoading(true);
+
+    try {
+      await authenticate(data.username, data.password);
+    } catch (e) {
+      setGlobalError(e.toString());
+      setLoading(false);
+    }
   };
 
   return (

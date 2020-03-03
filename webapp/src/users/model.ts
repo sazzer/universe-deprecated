@@ -11,3 +11,17 @@ export interface User {
   /** The email address of the user */
   email: string;
 }
+
+/**
+ * Representation of an Access Token for a user
+ */
+export interface AccessToken {
+  token: string;
+}
+
+/**
+ * Representation of a User that has just authenticated, and thus also has an access token
+ */
+export interface AuthenticatedUser extends User {
+  accessToken: AccessToken;
+}
