@@ -63,6 +63,18 @@
       }
     }
   },
+  "profile": {
+    "breadcrumbs": {
+      "home": "Home",
+      "profile": "User Profile"
+    },
+    "profile": {
+      "label": "User Profile"
+    },
+    "password": {
+      "label": "Change Password"
+    }
+  },
   "errors": {
     "unexpected": "An unexpected error occurred: {{message}}",
     "unauthenticated": "You must be logged in to access this page"
