@@ -1,5 +1,6 @@
 import { Link, NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
 
+import { Breadcrumbs } from "../components/breadcrumbs";
 import { LoggedIn } from "../loggedIn";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -71,41 +72,17 @@ export const ProfilePage: React.FC = () => {
     }
   ];
 
-  const tabs = pages.map(page => (
-    <ProfilePageTab
-      key={page.name}
-      path={page.path}
-      name={page.name}
-      label={page.label}
-      content={page.content}
-    />
-  ));
+  const tabs = pages.map(page => <ProfilePageTab {...page} />);
 
-  const panes = pages
-    .reverse()
-    .map(page => (
-      <ProfilePagePane
-        key={page.name}
-        path={page.path}
-        name={page.name}
-        label={page.label}
-        content={page.content}
-      />
-    ));
+  const panes = pages.reverse().map(page => <ProfilePagePane {...page} />);
 
   return (
     <LoggedIn>
       <div data-test="profilePage">
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <Link to="/">{t("profile.breadcrumbs.home")}</Link>
-            </li>
-            <li className="breadcrumb-item active" aria-current="page">
-              {t("profile.breadcrumbs.profile")}
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs
+          currentLabel={t("profile.breadcrumbs.profile")}
+          breadcrumbs={[{ link: "/", label: t("profile.breadcrumbs.home") }]}
+        />
 
         <div className="row">
           <div className="col-12 col-md-9 order-sm-1">
