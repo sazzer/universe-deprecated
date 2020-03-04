@@ -3,9 +3,12 @@ import * as yup from "yup";
 import { CancelButton, SubmitButton } from "../components/form/buttons";
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
+import { register as registerUser, useUser } from "../../users";
 
 import { UnexpectedError } from "../components/form/error";
+import { ValidationErrors } from "../../api";
 import debug from "debug";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 /** The logger to use */
@@ -29,8 +32,10 @@ export const RegisterUserPage: React.FC<RegisterUserPageProps> = ({
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState<string | undefined>(undefined);
+  const history = useHistory();
+  const { storeUser } = useUser();
 
-  const { register, errors, handleSubmit } = useForm({
+  const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
       username: yup
         .string()
@@ -92,6 +97,27 @@ export const RegisterUserPage: React.FC<RegisterUserPageProps> = ({
     LOG("Submitting form: %o", data);
     setGlobalError(undefined);
     setLoading(true);
+
+    try {
+      const user = await registerUser(
+        data.username,
+        data.email,
+        data.displayName,
+        data.password
+      );
+      storeUser(user);
+      history.push("/profile");
+    } catch (e) {
+      if (e instanceof ValidationErrors) {
+        e.errors.forEach(error => {
+          const message = t(`login.${error.field}.errors.${error.type}`);
+          setError(error.field, error.type, message);
+        });
+      } else {
+        setGlobalError(e.toString());
+      }
+      setLoading(false);
+    }
   };
 
   return (

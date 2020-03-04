@@ -1,5 +1,10 @@
 import { AuthenticatedUser, User } from "./model";
-import { ProblemResponse, request, setAccessToken } from "../api";
+import {
+  ProblemResponse,
+  ValidationErrors,
+  request,
+  setAccessToken
+} from "../api";
 
 import debug from "debug";
 
@@ -79,6 +84,60 @@ export async function authenticate(
       throw new LoginFailure();
     } else {
       LOG("Failed to authenticate as username %s: %o", username, e);
+      throw e;
+    }
+  }
+}
+
+/**
+ * Attempt to register with the given user details
+ * @param username the username to register with
+ * @param email the email address to register with
+ * @param displayName the display name to register with
+ * @param password the password to register with
+ * @param password the password to register with
+ */
+export async function register(
+  username: string,
+  email: string,
+  displayName: string,
+  password: string
+): Promise<User> {
+  LOG("Registering with details: %o", {
+    username,
+    email,
+    displayName,
+    password
+  });
+  try {
+    const user = await request<AuthenticatedUser>({
+      url: "/users",
+      method: "POST",
+      data: {
+        username,
+        email,
+        displayName,
+        password
+      }
+    });
+
+    LOG("Registered successfully: %o", user);
+    setAccessToken(user.data.accessToken.token);
+    // Strip out the non-user details from the return
+    return {
+      userId: user.data.userId,
+      username: user.data.username,
+      displayName: user.data.displayName,
+      email: user.data.email
+    };
+  } catch (e) {
+    LOG("Failed to register as username %s: %o", username, e);
+    if (
+      e instanceof ProblemResponse &&
+      e.problem.type === "tag:universe,2020:problems/validation-error"
+    ) {
+      throw new ValidationErrors(e.problem.errors);
+    } else {
       throw e;
     }
   }
