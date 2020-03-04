@@ -1,4 +1,4 @@
-import { Link, NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
+import { NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
 
 import { Breadcrumbs } from "../components/breadcrumbs";
 import { LoggedIn } from "../loggedIn";
@@ -73,9 +73,11 @@ export const ProfilePage: React.FC = () => {
     }
   ];
 
-  const tabs = pages.map(page => <ProfilePageTab {...page} />);
+  const tabs = pages.map(page => <ProfilePageTab {...page} key={page.name} />);
 
-  const panes = pages.reverse().map(page => <ProfilePagePane {...page} />);
+  const panes = pages
+    .reverse()
+    .map(page => <ProfilePagePane {...page} key={page.name} />);
 
   return (
     <LoggedIn>

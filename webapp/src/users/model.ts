@@ -3,7 +3,7 @@
  */
 export interface User {
   /** The User ID of the user */
-  userId: string;
+  id: string;
   /** The username of the user */
   username: string;
   /** The display name of the user */

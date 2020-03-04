@@ -43,6 +43,30 @@ export async function checkUsername(username: string): Promise<boolean> {
   }
 }
 
+/**
+ * Load the user record with the given ID
+ * @param userId The User ID to load
+ * @return The details of the user
+ */
+export async function getUserById(userId: string): Promise<User> {
+  LOG("Loading user: %s", userId);
+  try {
+    const user = await request<User>({
+      url: "/users/{userId}",
+      urlParams: {
+        userId
+      },
+      method: "GET"
+    });
+
+    LOG("User details: %o", user);
+    return user.data;
+  } catch (e) {
+    LOG("Failed to load user with ID %s: %o", userId, e);
+    throw e;
+  }
+}
+
 /** Error representation for a failure to log in - e.g. incorrect password */
 export class LoginFailure extends Error {}
 
@@ -70,7 +94,7 @@ export async function authenticate(
     setAccessToken(user.data.accessToken.token);
     // Strip out the non-user details from the return
     return {
-      userId: user.data.userId,
+      id: user.data.id,
       username: user.data.username,
       displayName: user.data.displayName,
       email: user.data.email
@@ -125,7 +149,7 @@ export async function register(
     setAccessToken(user.data.accessToken.token);
     // Strip out the non-user details from the return
     return {
-      userId: user.data.userId,
+      id: user.data.id,
       username: user.data.username,
       displayName: user.data.displayName,
       email: user.data.email

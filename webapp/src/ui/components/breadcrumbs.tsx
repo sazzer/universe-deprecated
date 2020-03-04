@@ -20,9 +20,9 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   breadcrumbs,
   currentLabel
 }) => {
-  const links = breadcrumbs.map(({ link, label }) => {
+  const links = breadcrumbs.map(({ link, label }, index) => {
     return (
-      <li className="breadcrumb-item">
+      <li className="breadcrumb-item" key={`breadcrumb-${index}`}>
         <Link to={link}>{label}</Link>
       </li>
     );
