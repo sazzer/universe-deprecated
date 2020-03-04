@@ -16,12 +16,16 @@ export interface User {
  * Representation of an Access Token for a user
  */
 export interface AccessToken {
+  /** The actual token */
   token: string;
+  /** When the token expires */
+  expiry: string;
 }
 
 /**
  * Representation of a User that has just authenticated, and thus also has an access token
  */
 export interface AuthenticatedUser extends User {
+  /** The access token for the user */
   accessToken: AccessToken;
 }

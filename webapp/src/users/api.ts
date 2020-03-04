@@ -1,6 +1,6 @@
-import { ProblemResponse, request } from "../api";
+import { AuthenticatedUser, User } from "./model";
+import { ProblemResponse, request, setAccessToken } from "../api";
 
-import { AuthenticatedUser } from "./model";
 import debug from "debug";
 
 /** The logger to use */
@@ -38,6 +38,9 @@ export async function checkUsername(username: string): Promise<boolean> {
   }
 }
 
+/** Error representation for a failure to log in - e.g. incorrect password */
+export class LoginFailure extends Error {}
+
 /**
  * Attempt to authenticate with the given credentials
  * @param username the username to authenticate with
@@ -46,7 +49,7 @@ export async function checkUsername(username: string): Promise<boolean> {
 export async function authenticate(
   username: string,
   password: string
-): Promise<AuthenticatedUser> {
+): Promise<User> {
   LOG("Authenticating as username %s with password %s", username, password);
   try {
     const user = await request<AuthenticatedUser>({
@@ -59,9 +62,24 @@ export async function authenticate(
     });
 
     LOG("Authenticated successfully: %o", user);
-    return user.data;
+    setAccessToken(user.data.accessToken.token);
+    // Strip out the non-user details from the return
+    return {
+      userId: user.data.userId,
+      username: user.data.username,
+      displayName: user.data.displayName,
+      email: user.data.email
+    };
   } catch (e) {
-    LOG("Failed to authenticate as username %s: %o", username, e);
-    throw e;
+    if (
+      e instanceof ProblemResponse &&
+      e.problem.type === "tag:universe,2020:users/problems/login_failure"
+    ) {
+      LOG("Login failure for user %s", username);
+      throw new LoginFailure();
+    } else {
+      LOG("Failed to authenticate as username %s: %o", username, e);
+      throw e;
+    }
   }
 }

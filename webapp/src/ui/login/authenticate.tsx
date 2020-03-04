@@ -2,11 +2,12 @@ import * as yup from "yup";
 
 import { CancelButton, SubmitButton } from "../components/form/buttons";
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
+import { LoginFailure, authenticate, useUser } from "../../users";
 import React, { useState } from "react";
 
 import { UnexpectedError } from "../components/form/error";
-import { authenticate } from "../../users";
 import debug from "debug";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 /** The logger to use */
@@ -30,8 +31,10 @@ export const AuthenticateUserPage: React.FC<AuthenticateUserPageProps> = ({
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState<string | undefined>(undefined);
+  const { storeUser } = useUser();
+  const history = useHistory();
 
-  const { register, errors, handleSubmit } = useForm({
+  const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
       username: yup
         .string()
@@ -58,9 +61,21 @@ export const AuthenticateUserPage: React.FC<AuthenticateUserPageProps> = ({
     setLoading(true);
 
     try {
-      await authenticate(data.username, data.password);
+      const user = await authenticate(data.username, data.password);
+      storeUser(user);
+      history.push("/profile");
     } catch (e) {
-      setGlobalError(e.toString());
+      if (e instanceof LoginFailure) {
+        setError(
+          "password",
+          "tag:universe,2020:users/problems/login_failure",
+          t(
+            "login.password.errors.tag:universe,2020:users/problems/login_failure"
+          )
+        );
+      } else {
+        setGlobalError(e.toString());
+      }
       setLoading(false);
     }
   };
