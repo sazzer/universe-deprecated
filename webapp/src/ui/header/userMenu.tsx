@@ -1,21 +1,21 @@
+import { Link, useHistory } from "react-router-dom";
+
 import React from "react";
+import { setAccessToken } from "../../api";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { useOvermind } from "../../overmind";
+import { useUser } from "../../users";
 
 /** Header menu for the current user actions when the user is logged in */
 export const UserMenu: React.FC = () => {
   const { t } = useTranslation();
-  const { state, actions } = useOvermind();
+  const { user, clearUser } = useUser();
+  const history = useHistory();
 
-  let username;
-  const currentUser =
-    state.authentication.userId !== null
-      ? state.users.users[state.authentication.userId]
-      : undefined;
-  if (currentUser !== undefined) {
-    username = currentUser.displayName;
-  }
+  const logout = () => {
+    setAccessToken(undefined);
+    clearUser();
+    history.push("/login");
+  };
 
   return (
     <li className="nav-item dropdown">
@@ -28,18 +28,14 @@ export const UserMenu: React.FC = () => {
         aria-haspopup="true"
         aria-expanded="false"
       >
-        {username}
+        {user?.displayName}
       </a>
       <div className="dropdown-menu" aria-labelledby="navbarDropdown">
         <Link to="/profile" className="dropdown-item">
           {t("header.userMenu.profile")}
         </Link>
         <div className="dropdown-divider"></div>
-        <Link
-          to="/login"
-          className="dropdown-item"
-          onClick={actions.authentication.logout}
-        >
+        <Link to="/login" className="dropdown-item" onClick={logout}>
           {t("header.userMenu.logout")}
         </Link>
       </div>

@@ -1,25 +1,26 @@
-import React, { useEffect } from "react";
-import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
-import { useTranslation } from "react-i18next";
 import * as yup from "yup";
-import { useOvermind } from "../../overmind";
-import { Loader } from "../loader";
-import { User, UserState } from "../../overmind/users/model";
 
-/**
- * Props for rendering the User Profile Form
- */
+import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { User, getUserById, useUser } from "../../users";
+
+import { Loader } from "../components/loader";
+import debug from "debug";
+import { useTranslation } from "react-i18next";
+
+/** The logger to use */
+const LOG = debug("universe:ui:profile:userProfile");
+
+/** The props for the User Profile Form */
 interface UserProfileFormProps {
-  user: User;
-  userState: UserState;
+  user: User | null;
 }
 
 /**
- * React component to actually render the user profile form
+ * The actual User Profile form to work with
  */
-export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
+const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   const { t } = useTranslation();
-  const { actions } = useOvermind();
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -35,7 +36,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         .string()
         .email(
           t(
-            "login.email.errors.tag:universe,2020:users/validation-errors/email/malformed"
+            "profile.email.errors.tag:universe,2020:users/validation-errors/email/malformed"
           )
         )
         .required(
@@ -48,25 +49,21 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         .string()
         .required(
           t(
-            "login.displayName.errors.tag:universe,2020:validation-errors/missing"
+            "profile.displayName.errors.tag:universe,2020:validation-errors/missing"
           )
         )
         .trim()
     }),
     validateCriteriaMode: "all",
     defaultValues: {
-      username: user.username,
-      email: user.email || "",
-      displayName: user.displayName
+      username: user?.username || "",
+      email: user?.email || "",
+      displayName: user?.displayName || ""
     }
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    actions.users.saveUser({
-      userId: user.id,
-      displayName: data.displayName,
-      email: data.email
-    });
+    LOG("Updating user profile: %o", data);
   };
 
   return (
@@ -143,25 +140,28 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
 };
 
 /**
- * React Component to represent the user profile area of the profile page
+ * Area of the Profile Page to manage the User Profile
  */
 export const UserProfileArea: React.FC = () => {
-  const { state, actions } = useOvermind();
+  const { user, storeUser } = useUser();
+  const [loading, setLoading] = useState(true);
 
-  const currentUser = state.authentication.userId;
+  const userId = user?.id;
 
   useEffect(() => {
-    if (currentUser !== null) {
-      actions.users.fetchUser(currentUser);
+    if (userId) {
+      setLoading(true);
+      getUserById(userId).then(loadedUser => {
+        storeUser(loadedUser);
+        setLoading(false);
+      });
     }
-  }, [currentUser, actions.users]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
-  const storedUser = state.users.userById(currentUser || "");
-  const user = storedUser.user;
-
-  if (storedUser.state === "LOADING" || user === undefined) {
-    return <Loader />;
-  } else {
-    return <UserProfileForm userState={storedUser.state} user={user} />;
-  }
+  return (
+    <Loader loading={loading}>
+      <UserProfileForm user={user} />
+    </Loader>
+  );
 };

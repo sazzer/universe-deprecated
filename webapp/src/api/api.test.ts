@@ -1,4 +1,5 @@
-import { request, ProblemResponse, Response } from ".";
+import { ProblemResponse, Response, request } from ".";
+
 import nock from "nock";
 
 const URL_BASE = "http://api.test.example.com";

@@ -12,9 +12,6 @@
       "logout": "Log Out"
     }
   },
-  "loader": {
-    "label": "Loading..."
-  },
   "login": {
     "start": {
       "title": "Login / Register",
@@ -69,17 +66,13 @@
   "profile": {
     "breadcrumbs": {
       "home": "Home",
-      "profile": "Profile"
+      "profile": "User Profile"
     },
-    "worlds": {
-      "label": "My Worlds"
-    },
-    "stories": {
-      "label": "My Stories"
+    "password": {
+      "label": "Change Password"
     },
     "profile": {
       "label": "User Profile",
-      "submit": "Save Changes",
       "username": {
         "label": "Username",
         "errors": {
@@ -100,10 +93,15 @@
         "errors": {
           "tag:universe,2020:validation-errors/missing": "Please enter a display name"
         }
-      }
+      },
+      "submit": "Save Changes"
     }
   },
+  "loader": {
+    "label": "Loading..."
+  },
   "errors": {
-    "unexpected": "An unexpected error occurred: {{message}}"
+    "unexpected": "An unexpected error occurred: {{message}}",
+    "unauthenticated": "You must be logged in to access this page"
   }
 }

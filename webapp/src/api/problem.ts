@@ -3,13 +3,14 @@
  */
 export interface Problem {
   type: string;
+  title: string;
   status: number;
 }
 
 /**
  * Response that is thrown if we get an RFC-7807 Problem back from the server
  */
-export class ProblemResponse<T extends Problem> {
+export class ProblemResponse<T extends Problem> extends Error {
   readonly problem: T;
   readonly status: number;
   readonly headers: any;
@@ -21,6 +22,7 @@ export class ProblemResponse<T extends Problem> {
    * @param headers Any headers from the response
    */
   constructor(problem: T, status: number, headers: any) {
+    super(problem.title);
     this.problem = problem;
     this.status = status;
     this.headers = headers;

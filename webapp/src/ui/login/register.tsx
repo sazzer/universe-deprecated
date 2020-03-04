@@ -1,18 +1,39 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import * as yup from "yup";
-import { useOvermind } from "../../overmind";
+
+import { CancelButton, SubmitButton } from "../components/form/buttons";
+import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { register as registerUser, useUser } from "../../users";
+
+import { UnexpectedError } from "../components/form/error";
+import { ValidationErrors } from "../../api";
+import debug from "debug";
 import { useHistory } from "react-router-dom";
-import { ValidationErrors } from "../../api/validation";
+import { useTranslation } from "react-i18next";
+
+/** The logger to use */
+const LOG = debug("universe:ui:login:register");
 
 /**
- * Render the view for the Register Form
+ * Props for the Register User page
  */
-export const RegisterForm: React.FC = () => {
+export interface RegisterUserPageProps {
+  username: string;
+  onCancel: () => void;
+}
+
+/**
+ * Page for registering a new user
+ */
+export const RegisterUserPage: React.FC<RegisterUserPageProps> = ({
+  username,
+  onCancel
+}) => {
   const { t } = useTranslation();
-  const { state, actions } = useOvermind();
+  const [loading, setLoading] = useState(false);
+  const [globalError, setGlobalError] = useState<string | undefined>(undefined);
   const history = useHistory();
+  const { storeUser } = useUser();
 
   const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
@@ -64,7 +85,7 @@ export const RegisterForm: React.FC = () => {
     }),
     validateCriteriaMode: "all",
     defaultValues: {
-      username: state.login.username || "",
+      username: username,
       email: "",
       displayName: "",
       password: "",
@@ -73,35 +94,31 @@ export const RegisterForm: React.FC = () => {
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    const result = await actions.login.register({
-      username: data.username,
-      email: data.email,
-      displayName: data.displayName,
-      password: data.password
-    });
+    LOG("Submitting form: %o", data);
+    setGlobalError(undefined);
+    setLoading(true);
 
-    if (result instanceof ValidationErrors) {
-      result.errors.forEach(error => {
-        const message = t(`login.${error.field}.errors.${error.type}`);
-        setError(error.field, error.type, message);
-      });
-    } else if (result === true) {
+    try {
+      const user = await registerUser(
+        data.username,
+        data.email,
+        data.displayName,
+        data.password
+      );
+      storeUser(user);
       history.push("/profile");
+    } catch (e) {
+      if (e instanceof ValidationErrors) {
+        e.errors.forEach(error => {
+          const message = t(`login.${error.field}.errors.${error.type}`);
+          setError(error.field, error.type, message);
+        });
+      } else {
+        setGlobalError(e.toString());
+      }
+      setLoading(false);
     }
   };
-
-  let errorMessage;
-  if (state.login.error) {
-    errorMessage = (
-      <div className="form-group">
-        <div className="alert alert-danger" role="alert">
-          {t("errors.unexpected", {
-            message: state.login.error
-          })}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -135,6 +152,7 @@ export const RegisterForm: React.FC = () => {
             id="email"
             name="email"
             autoFocus
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -152,6 +170,7 @@ export const RegisterForm: React.FC = () => {
             }
             id="displayName"
             name="displayName"
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -169,6 +188,7 @@ export const RegisterForm: React.FC = () => {
             }
             id="password"
             name="password"
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -186,6 +206,7 @@ export const RegisterForm: React.FC = () => {
             }
             id="password2"
             name="password2"
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -195,30 +216,14 @@ export const RegisterForm: React.FC = () => {
           />
         </div>
         <div className="form-group">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={state.login.loading}
-          >
-            {state.login.loading && (
-              <span
-                className="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-            )}
+          <SubmitButton loading={loading}>
             {t("login.register.submit")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-link"
-            disabled={state.login.loading}
-            onClick={actions.login.cancelLogin}
-          >
+          </SubmitButton>
+          <CancelButton disabled={loading} onClick={onCancel}>
             {t("login.register.cancel")}
-          </button>
+          </CancelButton>
         </div>
-        {errorMessage}
+        {globalError && <UnexpectedError message={globalError} />}
       </form>
     </>
   );

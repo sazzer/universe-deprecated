@@ -1,7 +1,7 @@
-import i18n from 'i18next';
+import LanguageDetector from "i18next-browser-languagedetector";
+import defaultTranslations from "./messages.json";
+import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from 'i18next-browser-languagedetector';
-import defaultTranslations from './messages.json';
 
 i18n
   .use(LanguageDetector)
@@ -21,7 +21,13 @@ i18n
       escapeValue: false
     },
 
-    parseMissingKeyHandler: (key) => `!!${key}!!`
+    parseMissingKeyHandler: key => {
+      if (process.env.NODE_ENV === "test") {
+        throw new Error(`Missing message key: ${key}`);
+      } else {
+        return `!!${key}!!`;
+      }
+    }
   });
 
 export default i18n;

@@ -1,29 +1,54 @@
-import React, { useEffect } from "react";
-import { LandingPage } from "../landing";
-import { StartLoginForm } from "./start";
-import { RegisterForm } from "./register";
-import { AuthenticateForm } from "./authenticate";
-import { useOvermind } from "../../overmind";
+import React, { useState } from "react";
+
+import { AuthenticateUserPage } from "./authenticate";
+import { LandingPage } from "../landingPage";
+import { RegisterUserPage } from "./register";
+import { StartLoginPage } from "./start";
+
+/** The possible states the page can be in */
+type PageState = "AUTHENTICATE" | "REGISTER" | null;
 
 /**
- * Component to represent the page that is used for logging in
+ * Page controlling login and registration of users
  */
 export const LoginPage: React.FC = () => {
-  const { state, actions } = useOvermind();
+  const [pageState, setPageState] = useState<PageState>(null);
+  const [username, setUsername] = useState<string>("");
 
-  useEffect(() => {
-    actions.login.resetLogin();
-  }, [actions.login]);
+  let page: React.ReactElement = <></>;
 
-  let body;
-
-  if (state.login.mode.current === "registering") {
-    body = <RegisterForm />;
-  } else if (state.login.mode.current === "authenticating") {
-    body = <AuthenticateForm />;
-  } else {
-    body = <StartLoginForm />;
+  switch (pageState) {
+    case null:
+      page = (
+        <StartLoginPage
+          onUsername={(username, known) => {
+            setUsername(username);
+            setPageState(known ? "AUTHENTICATE" : "REGISTER");
+          }}
+        />
+      );
+      break;
+    case "AUTHENTICATE":
+      page = (
+        <AuthenticateUserPage
+          username={username}
+          onCancel={() => {
+            setPageState(null);
+          }}
+        />
+      );
+      break;
+    case "REGISTER":
+      page = (
+        <RegisterUserPage
+          username={username}
+          onCancel={() => {
+            setPageState(null);
+          }}
+        />
+      );
+      break;
   }
 
-  return <LandingPage>{body}</LandingPage>;
+  return <LandingPage>{page}</LandingPage>;
 };

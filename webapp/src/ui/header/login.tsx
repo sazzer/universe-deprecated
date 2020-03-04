@@ -1,6 +1,6 @@
+import { Link } from "react-router-dom";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 /** Header link to allow the user to log in */
 export const LoginLink: React.FC = () => {

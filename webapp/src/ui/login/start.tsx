@@ -1,15 +1,34 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import * as yup from "yup";
-import { useOvermind } from "../../overmind";
+
+import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
+import React, { useState } from "react";
+
+import { SubmitButton } from "../components/form/buttons";
+import { UnexpectedError } from "../components/form/error";
+import { checkUsername } from "../../users";
+import debug from "debug";
+import { useTranslation } from "react-i18next";
+
+/** The logger to use */
+const LOG = debug("universe:ui:login:start");
 
 /**
- * Render the view for the Start Login Form
+ * Props required for the the StartLogin page
  */
-export const StartLoginForm: React.FC = () => {
+export interface StartLoginPageProps {
+  /** Callback when a username has been submitted */
+  onUsername: (username: string, known: boolean) => void;
+}
+
+/**
+ * Page for starting the login process, allowing for input of the username
+ */
+export const StartLoginPage: React.FC<StartLoginPageProps> = ({
+  onUsername
+}) => {
   const { t } = useTranslation();
-  const { state, actions } = useOvermind();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const { register, errors, handleSubmit } = useForm({
     validationSchema: yup.object().shape({
@@ -27,21 +46,18 @@ export const StartLoginForm: React.FC = () => {
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    actions.login.checkUsername(data.username);
-  };
+    LOG("Submitting form: %o", data);
+    setError(undefined);
+    setLoading(true);
 
-  let errorMessage;
-  if (state.login.error) {
-    errorMessage = (
-      <div className="form-group">
-        <div className="alert alert-danger" role="alert">
-          {t("errors.unexpected", {
-            message: state.login.error
-          })}
-        </div>
-      </div>
-    );
-  }
+    try {
+      const result = await checkUsername(data.username);
+      onUsername(data.username, result);
+    } catch (e) {
+      setLoading(false);
+      setError(e.toString());
+    }
+  };
 
   return (
     <>
@@ -57,6 +73,7 @@ export const StartLoginForm: React.FC = () => {
             id="username"
             name="username"
             autoFocus
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -65,23 +82,13 @@ export const StartLoginForm: React.FC = () => {
             as={<div className="invalid-feedback" />}
           />
         </div>
+
         <div className="form-group">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={state.login.loading}
-          >
-            {state.login.loading && (
-              <span
-                className="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-            )}
+          <SubmitButton loading={loading}>
             {t("login.start.submit")}
-          </button>
+          </SubmitButton>
         </div>
-        {errorMessage}
+        {error && <UnexpectedError message={error} />}
       </form>
     </>
   );

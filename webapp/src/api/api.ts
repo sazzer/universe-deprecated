@@ -1,6 +1,8 @@
-import axios, { Method, AxiosResponse } from "axios";
 import * as rfc6570 from "rfc6570-expand";
+
 import { Problem, ProblemResponse } from "./problem";
+import axios, { AxiosResponse, Method } from "axios";
+
 import debug from "debug";
 
 /** The logger to use */
@@ -83,6 +85,10 @@ export async function request<T>(request: Request): Promise<Response<T>> {
   }
 }
 
+/**
+ * Set the access token that we are going to use for future requests
+ * @param accessToken The access token, or `undefined` to clear it
+ */
 export function setAccessToken(accessToken: string | undefined) {
   _accessToken = accessToken;
 }

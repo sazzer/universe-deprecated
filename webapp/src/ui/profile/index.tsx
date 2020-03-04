@@ -1,8 +1,10 @@
+import { NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
+
+import { Breadcrumbs } from "../components/breadcrumbs";
+import { LoggedIn } from "../loggedIn";
 import React from "react";
-import { Link, useRouteMatch, NavLink, Switch, Route } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { LoggedIn } from "../login/loggedIn";
 import { UserProfileArea } from "./profile";
+import { useTranslation } from "react-i18next";
 
 /** Props to represent an entry in the profile page */
 interface ProfilePageEntry {
@@ -51,7 +53,7 @@ const ProfilePagePane: React.FC<ProfilePageEntry> = ({
 };
 
 /**
- * React Component represnting the user profile page
+ * Page representing the user profile
  */
 export const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
@@ -64,54 +66,26 @@ export const ProfilePage: React.FC = () => {
       content: <UserProfileArea />
     },
     {
-      name: "worlds",
-      path: "/profile/worlds",
-      label: t("profile.worlds.label"),
-      content: "My Worlds Content"
-    },
-    {
-      name: "stories",
-      path: "/profile/stories",
-      label: t("profile.stories.label"),
-      content: "My Stories Content"
+      name: "password",
+      path: "/profile/password",
+      label: t("profile.password.label"),
+      content: "Change Password"
     }
   ];
 
-  const tabs = pages.map(page => (
-    <ProfilePageTab
-      key={page.name}
-      path={page.path}
-      name={page.name}
-      label={page.label}
-      content={page.content}
-    />
-  ));
+  const tabs = pages.map(page => <ProfilePageTab {...page} key={page.name} />);
 
   const panes = pages
     .reverse()
-    .map(page => (
-      <ProfilePagePane
-        key={page.name}
-        path={page.path}
-        name={page.name}
-        label={page.label}
-        content={page.content}
-      />
-    ));
+    .map(page => <ProfilePagePane {...page} key={page.name} />);
 
   return (
     <LoggedIn>
       <div data-test="profilePage">
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <Link to="/">{t("profile.breadcrumbs.home")}</Link>
-            </li>
-            <li className="breadcrumb-item active" aria-current="page">
-              {t("profile.breadcrumbs.profile")}
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs
+          currentLabel={t("profile.breadcrumbs.profile")}
+          breadcrumbs={[{ link: "/", label: t("profile.breadcrumbs.home") }]}
+        />
 
         <div className="row">
           <div className="col-12 col-md-9 order-sm-1">

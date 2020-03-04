@@ -1,9 +1,8 @@
+import { HomePage } from "./homePage";
 import React from "react";
 import { render } from "@testing-library/react";
-import { MemoryRouter as Router } from "react-router-dom";
-import { Loader } from "./loader";
 
 test("It renders correctly", () => {
-  const { container } = render(<Loader />);
+  const { container } = render(<HomePage />);
   expect(container).toMatchSnapshot();
 });

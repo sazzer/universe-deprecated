@@ -1,17 +1,37 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { useForm, ErrorMessage, FieldValues } from "react-hook-form";
 import * as yup from "yup";
-import { useOvermind } from "../../overmind";
+
+import { CancelButton, SubmitButton } from "../components/form/buttons";
+import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
+import { LoginFailure, authenticate, useUser } from "../../users";
+import React, { useState } from "react";
+
+import { UnexpectedError } from "../components/form/error";
+import debug from "debug";
 import { useHistory } from "react-router-dom";
-import { AuthenticationError } from "../../overmind/login/effects";
+import { useTranslation } from "react-i18next";
+
+/** The logger to use */
+const LOG = debug("universe:ui:login:authenticate");
 
 /**
- * Render the view for the Authenticate Form
+ * Props for the Authenticate User page
  */
-export const AuthenticateForm: React.FC = () => {
+export interface AuthenticateUserPageProps {
+  username: string;
+  onCancel: () => void;
+}
+
+/**
+ * Page for authenticating an existing user
+ */
+export const AuthenticateUserPage: React.FC<AuthenticateUserPageProps> = ({
+  username,
+  onCancel
+}) => {
   const { t } = useTranslation();
-  const { state, actions } = useOvermind();
+  const [loading, setLoading] = useState(false);
+  const [globalError, setGlobalError] = useState<string | undefined>(undefined);
+  const { storeUser } = useUser();
   const history = useHistory();
 
   const { register, errors, handleSubmit, setError } = useForm({
@@ -30,43 +50,35 @@ export const AuthenticateForm: React.FC = () => {
     }),
     validateCriteriaMode: "all",
     defaultValues: {
-      username: state.login.username || "",
+      username: username,
       password: ""
     }
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    const result = await actions.login.authenticate({
-      username: data.username,
-      password: data.password
-    });
+    LOG("Submitting form: %o", data);
+    setGlobalError(undefined);
+    setLoading(true);
 
-    if (result instanceof AuthenticationError) {
-      const message = t(
-        "login.password.errors.tag:universe,2020:users/problems/login_failure"
-      );
-      setError(
-        "password",
-        "tag:universe,2020:users/problems/login_failure",
-        message
-      );
-    } else if (result === true) {
+    try {
+      const user = await authenticate(data.username, data.password);
+      storeUser(user);
       history.push("/profile");
+    } catch (e) {
+      if (e instanceof LoginFailure) {
+        setError(
+          "password",
+          "tag:universe,2020:users/problems/login_failure",
+          t(
+            "login.password.errors.tag:universe,2020:users/problems/login_failure"
+          )
+        );
+      } else {
+        setGlobalError(e.toString());
+      }
+      setLoading(false);
     }
   };
-
-  let errorMessage;
-  if (state.login.error) {
-    errorMessage = (
-      <div className="form-group">
-        <div className="alert alert-danger" role="alert">
-          {t("errors.unexpected", {
-            message: state.login.error
-          })}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -103,6 +115,7 @@ export const AuthenticateForm: React.FC = () => {
             id="password"
             name="password"
             autoFocus
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -112,30 +125,14 @@ export const AuthenticateForm: React.FC = () => {
           />
         </div>
         <div className="form-group">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={state.login.loading}
-          >
-            {state.login.loading && (
-              <span
-                className="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-            )}
+          <SubmitButton loading={loading}>
             {t("login.authenticate.submit")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-link"
-            disabled={state.login.loading}
-            onClick={actions.login.cancelLogin}
-          >
+          </SubmitButton>
+          <CancelButton disabled={loading} onClick={onCancel}>
             {t("login.authenticate.cancel")}
-          </button>
+          </CancelButton>
         </div>
-        {errorMessage}
+        {globalError && <UnexpectedError message={globalError} />}
       </form>
     </>
   );
