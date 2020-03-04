@@ -75,6 +75,9 @@
       "label": "Change Password"
     }
   },
+  "loader": {
+    "label": "Loading..."
+  },
   "errors": {
     "unexpected": "An unexpected error occurred: {{message}}",
     "unauthenticated": "You must be logged in to access this page"

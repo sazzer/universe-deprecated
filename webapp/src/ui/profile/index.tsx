@@ -3,6 +3,7 @@ import { Link, NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
 import { Breadcrumbs } from "../components/breadcrumbs";
 import { LoggedIn } from "../loggedIn";
 import React from "react";
+import { UserProfileArea } from "./profile";
 import { useTranslation } from "react-i18next";
 
 /** Props to represent an entry in the profile page */
@@ -62,7 +63,7 @@ export const ProfilePage: React.FC = () => {
       name: "profile",
       path: "/profile",
       label: t("profile.profile.label"),
-      content: "User Profile Area"
+      content: <UserProfileArea />
     },
     {
       name: "password",
