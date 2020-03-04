@@ -6,6 +6,10 @@
     "toggleNavigation": "Toggle Navigation",
     "loginMenu": {
       "title": "Login / Register"
+    },
+    "userMenu": {
+      "profile": "Profile",
+      "logout": "Log Out"
     }
   },
   "login": {

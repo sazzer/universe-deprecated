@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { LoginLink } from "./login";
 import React from "react";
+import { UserMenu } from "./userMenu";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../users";
 
@@ -11,12 +12,7 @@ export const HeaderBar: React.FC = () => {
   const { t } = useTranslation();
   const { hasUser } = useUser();
 
-  let userMenu;
-  if (hasUser) {
-    userMenu = "Hello";
-  } else {
-    userMenu = <LoginLink />;
-  }
+  const userMenu = hasUser ? <UserMenu /> : <LoginLink />;
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
