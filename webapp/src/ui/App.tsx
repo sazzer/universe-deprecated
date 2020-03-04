@@ -3,6 +3,7 @@ import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { HeaderBar } from "./header";
 import { HomePage } from "./homePage";
 import { LoginPage } from "./login";
+import { ProfilePage } from "./profile";
 import React from "react";
 import { UserProvider } from "../users";
 
@@ -19,6 +20,9 @@ export const App: React.FC = () => {
           <Switch>
             <Route path="/login">
               <LoginPage />
+            </Route>
+            <Route path="/profile">
+              <ProfilePage />
             </Route>
             <Route>
               <HomePage />

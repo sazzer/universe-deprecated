@@ -64,6 +64,7 @@
     }
   },
   "errors": {
-    "unexpected": "An unexpected error occurred: {{message}}"
+    "unexpected": "An unexpected error occurred: {{message}}",
+    "unauthenticated": "You must be logged in to access this page"
   }
 }
