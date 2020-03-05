@@ -1,0 +1,311 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Initial rendering 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Submit empty form 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="username"
+        name="username"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a username
+      </div>
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Submit valid username - pending 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        disabled=""
+        type="submit"
+      >
+        <span
+          aria-hidden="true"
+          class="spinner-border spinner-border-sm"
+          role="status"
+        />
+         
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Submit valid username - unexpected error 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+    <div
+      class="form-group"
+    >
+      <div
+        class="alert alert-danger"
+        role="alert"
+      >
+        An unexpected error occurred: Error: Network Error
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Submit valid username - user known 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        disabled=""
+        type="submit"
+      >
+        <span
+          aria-hidden="true"
+          class="spinner-border spinner-border-sm"
+          role="status"
+        />
+         
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Submit valid username - user unknown 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        disabled=""
+        type="submit"
+      >
+        <span
+          aria-hidden="true"
+          class="spinner-border spinner-border-sm"
+          role="status"
+        />
+         
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Submit whitespace username 1`] = `
+<div>
+  <h3>
+    Login / Register
+  </h3>
+  <form
+    data-test="startLoginForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="username"
+        name="username"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a username
+      </div>
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Login / Register
+      </button>
+    </div>
+  </form>
+</div>
+`;

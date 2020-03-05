@@ -36,7 +36,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         .string()
         .email(
           t(
-            "profile.email.errors.tag:universe,2020:users/validation-errors/email/malformed"
+            "profile.profile.email.errors.tag:universe,2020:users/validation-errors/email/malformed"
           )
         )
         .required(
@@ -49,7 +49,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         .string()
         .required(
           t(
-            "profile.displayName.errors.tag:universe,2020:validation-errors/missing"
+            "profile.profile.displayName.errors.tag:universe,2020:validation-errors/missing"
           )
         )
         .trim()

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`loggedIn When logged in 1`] = `
+<div>
+  Contents
+</div>
+`;
+
+exports[`loggedIn When not logged in 1`] = `
+<div>
+  You must be logged in to access this page
+</div>
+`;
