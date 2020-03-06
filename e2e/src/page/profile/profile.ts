@@ -1,6 +1,7 @@
 import { Url, PageName } from "../pageModel";
 import { BasePage } from "../basePage";
 import { WebElement, By } from "selenium-webdriver";
+import { When } from "cucumber";
 
 /**
  * Page Object representing the profile page of the application
@@ -17,3 +18,9 @@ export class UserProfilePage extends BasePage {
     return await form.isDisplayed();
   }
 }
+
+When("I load the user profile", async function() {
+  const homePage = await this.browser.newPageModel(BasePage);
+  const header = await homePage.headerBar();
+  await header.openProfile();
+});

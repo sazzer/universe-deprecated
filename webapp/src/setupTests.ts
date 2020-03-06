@@ -1,5 +1,7 @@
-import '@testing-library/jest-dom/extend-expect';
-import { configure } from '@testing-library/react'
-import './i18n';
+import "@testing-library/jest-dom/extend-expect";
+import "./i18n";
+import "mutationobserver-shim";
 
-configure({ testIdAttribute: 'data-test' })
+import { configure } from "@testing-library/react";
+
+configure({ testIdAttribute: "data-test" });

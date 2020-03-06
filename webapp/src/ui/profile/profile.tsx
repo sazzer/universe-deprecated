@@ -2,9 +2,12 @@ import * as yup from "yup";
 
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
-import { User, getUserById, useUser } from "../../users";
+import { User, getUserById, updateUserProfile, useUser } from "../../users";
 
 import { Loader } from "../components/loader";
+import { SubmitButton } from "../components/form/buttons";
+import { UnexpectedError } from "../components/form/error";
+import { ValidationErrors } from "../../api";
 import debug from "debug";
 import { useTranslation } from "react-i18next";
 
@@ -21,8 +24,11 @@ interface UserProfileFormProps {
  */
 const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [globalError, setGlobalError] = useState<string | undefined>(undefined);
+  const { storeUser } = useUser();
 
-  const { register, errors, handleSubmit } = useForm({
+  const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
       username: yup
         .string()
@@ -36,7 +42,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         .string()
         .email(
           t(
-            "profile.email.errors.tag:universe,2020:users/validation-errors/email/malformed"
+            "profile.profile.email.errors.tag:universe,2020:users/validation-errors/email/malformed"
           )
         )
         .required(
@@ -49,7 +55,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         .string()
         .required(
           t(
-            "profile.displayName.errors.tag:universe,2020:validation-errors/missing"
+            "profile.profile.displayName.errors.tag:universe,2020:validation-errors/missing"
           )
         )
         .trim()
@@ -63,7 +69,30 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   });
 
   const onSubmitHandler = async (data: FieldValues) => {
-    LOG("Updating user profile: %o", data);
+    LOG("Submitting form: %o", data);
+    setGlobalError(undefined);
+    setLoading(true);
+
+    try {
+      const saved = await updateUserProfile(
+        user?.id || "",
+        data.email,
+        data.displayName
+      );
+      storeUser(saved);
+    } catch (e) {
+      if (e instanceof ValidationErrors) {
+        e.errors.forEach(error => {
+          const message = t(
+            `profile.profile.${error.field}.errors.${error.type}`
+          );
+          setError(error.field, error.type, message);
+        });
+      } else {
+        setGlobalError(e.toString());
+      }
+    }
+    setLoading(false);
   };
 
   return (
@@ -102,6 +131,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
             id="email"
             name="email"
             autoFocus
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -121,6 +151,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
             }
             id="displayName"
             name="displayName"
+            readOnly={loading}
             ref={register}
           />
           <ErrorMessage
@@ -130,10 +161,11 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
           />
         </div>
         <div className="form-group">
-          <button type="submit" className="btn btn-primary">
+          <SubmitButton loading={loading}>
             {t("profile.profile.submit")}
-          </button>
+          </SubmitButton>
         </div>
+        {globalError && <UnexpectedError message={globalError} />}
       </form>
     </>
   );

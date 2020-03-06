@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Rendering when logged in 1`] = `
+<div>
+  <div
+    data-test="profilePage"
+  >
+    <nav
+      aria-label="breadcrumb"
+    >
+      <ol
+        class="breadcrumb"
+      >
+        <li
+          class="breadcrumb-item"
+        >
+          <a
+            href="/"
+          >
+            Home
+          </a>
+        </li>
+        <li
+          aria-current="page"
+          class="breadcrumb-item active"
+        >
+          User Profile
+        </li>
+      </ol>
+    </nav>
+    <div
+      class="row"
+    >
+      <div
+        class="col-12 col-md-9 order-sm-1"
+      >
+        <div
+          class="tab-content"
+        >
+          <div
+            aria-labelledby="profile-tabs-profile-tab"
+            id="profile-tabs-profile"
+            role="tabpanel"
+          >
+            <form
+              data-test="userProfileForm"
+            >
+              <div
+                class="form-group"
+                data-test="username"
+              >
+                <label
+                  for="username"
+                >
+                  Username
+                </label>
+                <input
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  readonly=""
+                  type="text"
+                />
+              </div>
+              <div
+                class="form-group"
+                data-test="email"
+              >
+                <label
+                  for="email"
+                >
+                  Email Address
+                </label>
+                <input
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  type="text"
+                />
+              </div>
+              <div
+                class="form-group"
+                data-test="displayName"
+              >
+                <label
+                  for="displayName"
+                >
+                  Display Name
+                </label>
+                <input
+                  class="form-control"
+                  id="displayName"
+                  name="displayName"
+                  type="text"
+                />
+              </div>
+              <div
+                class="form-group"
+              >
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-12 col-md-3"
+      >
+        <div
+          aria-orientation="vertical"
+          class="nav flex-column nav-pills"
+          id="profileSupportedContent"
+          role="tablist"
+        >
+          <a
+            aria-controls="profile-tabs-profile"
+            aria-current="page"
+            aria-selected="true"
+            class="nav-link active"
+            href="/profile"
+            id="profile-tabs-profile-tab"
+            role="tab"
+          >
+            User Profile
+          </a>
+          <a
+            aria-controls="profile-tabs-password"
+            aria-selected="false"
+            class="nav-link"
+            href="/profile/password"
+            id="profile-tabs-password-tab"
+            role="tab"
+          >
+            Change Password
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Rendering when not logged in 1`] = `
+<div>
+  You must be logged in to access this page
+</div>
+`;

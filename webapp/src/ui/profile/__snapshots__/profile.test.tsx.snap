@@ -1,0 +1,458 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Rendering after user loaded 1`] = `
+<div>
+  <form
+    data-test="userProfileForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control"
+        id="email"
+        name="email"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Rendering before user loaded 1`] = `
+<div>
+  <div
+    class="d-flex justify-content-center"
+  >
+    <div
+      class="spinner-border"
+      role="status"
+    >
+      <span
+        class="sr-only"
+      >
+        Loading...
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Saving a duplicate email address 1`] = `
+<div>
+  <form
+    data-test="userProfileForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="email"
+        name="email"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Email Address is registered to another user
+      </div>
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Saving blank fields 1`] = `
+<div>
+  <form
+    data-test="userProfileForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="email"
+        name="email"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter an email address
+      </div>
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a display name
+      </div>
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Saving invalid email address 1`] = `
+<div>
+  <form
+    data-test="userProfileForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control is-invalid"
+        id="email"
+        name="email"
+        type="text"
+      />
+      <div
+        class="invalid-feedback"
+      >
+        Please enter a valid email address
+      </div>
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Saving successfully 1`] = `
+<div>
+  <form
+    data-test="userProfileForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control"
+        id="email"
+        name="email"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Saving with an unexpected error 1`] = `
+<div>
+  <form
+    data-test="userProfileForm"
+  >
+    <div
+      class="form-group"
+      data-test="username"
+    >
+      <label
+        for="username"
+      >
+        Username
+      </label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        readonly=""
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="email"
+    >
+      <label
+        for="email"
+      >
+        Email Address
+      </label>
+      <input
+        class="form-control"
+        id="email"
+        name="email"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+      data-test="displayName"
+    >
+      <label
+        for="displayName"
+      >
+        Display Name
+      </label>
+      <input
+        class="form-control"
+        id="displayName"
+        name="displayName"
+        type="text"
+      />
+    </div>
+    <div
+      class="form-group"
+    >
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Save Changes
+      </button>
+    </div>
+    <div
+      class="form-group"
+    >
+      <div
+        class="alert alert-danger"
+        role="alert"
+      >
+        An unexpected error occurred: Error: Network error
+      </div>
+    </div>
+  </form>
+</div>
+`;

@@ -3,10 +3,10 @@ import React, { createContext, useContext, useState } from "react";
 import { User } from "./model";
 
 /** Type representing the current state of the user context */
-type UserState = User | null;
+export type UserState = User | null;
 
 /** The shape of the contet available through this */
-type UserContext = {
+export type UserContextState = {
   user: UserState;
   hasUser: boolean;
   storeUser: (user: User) => void;
@@ -14,7 +14,7 @@ type UserContext = {
 };
 
 /** The React context for storing the current user */
-const UserContext = createContext<UserContext>({
+export const UserContext = createContext<UserContextState>({
   user: null,
   hasUser: false,
   storeUser: () => {},
@@ -27,7 +27,7 @@ const UserContext = createContext<UserContext>({
 export const UserProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<UserState>(null);
 
-  const contextState: UserContext = {
+  const contextState: UserContextState = {
     user,
     storeUser: (user: User) => setUser(user),
     clearUser: () => setUser(null),

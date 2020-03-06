@@ -33,10 +33,10 @@ export class UserSeed {
       input => new Date(input)
     );
 
-    this._username = extractData(data, "Username", "testuser");
-    this._email = extractData(data, "Email Address", "testuser@example.com");
-    this._displayName = extractData(data, "Display Name", "Test User");
-    this._password = extractData(data, "Password", "Password");
+    this._username = extractData(data, "Username", uuid());
+    this._email = extractData(data, "Email Address", `${uuid()}@example.com`);
+    this._displayName = extractData(data, "Display Name", uuid());
+    this._password = extractData(data, "Password", uuid());
   }
 
   get sql() {

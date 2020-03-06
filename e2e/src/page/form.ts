@@ -1,7 +1,7 @@
 import { BasePageModel, PageModel } from "./pageModel";
 import { WebElement, By } from "selenium-webdriver";
 import { expect } from "chai";
-import { Then, TableDefinition } from "cucumber";
+import { Then, TableDefinition, When } from "cucumber";
 import debug from "debug";
 import { processObject } from "../table";
 import { wait } from "../browser";
@@ -228,6 +228,16 @@ export function FormPage(name: string) {
 
       const expected = dataTable.rowsHash();
       expect(values).to.contain(processObject(expected));
+    });
+
+    When(`I update the ${name} form with details:`, async function(
+      dataTable: TableDefinition
+    ) {
+      const page = await this.browser.newPageModel(constructor);
+      const form = await page.getForm();
+
+      await form.setAllValues(processObject(dataTable.rowsHash()));
+      await form.submit();
     });
   };
 }

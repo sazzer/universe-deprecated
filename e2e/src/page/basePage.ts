@@ -1,6 +1,6 @@
-import { WebElement, By } from 'selenium-webdriver';
-import { HeaderPageModel } from './header';
-import { BasePageModel } from './pageModel';
+import { WebElement, By } from "selenium-webdriver";
+import { HeaderPageModel } from "./header";
+import { BasePageModel } from "./pageModel";
 
 /**
  * Base class for all full-page page models, giving common access to standard page features such as the header bar
@@ -15,7 +15,11 @@ export class BasePage extends BasePageModel {
    * @return The page header
    */
   async headerBar() {
-    const headerElement = await this.findElement(By.css('nav.navbar'));
+    const headerElement = await this.findElement(By.css("nav.navbar"));
     return new HeaderPageModel(headerElement);
+  }
+
+  async verifyCorrectPage() {
+    return true;
   }
 }
