@@ -166,3 +166,54 @@ export async function register(
     }
   }
 }
+
+/**
+ * Call to update the user profile of the given user
+ * @param userId The ID of the user
+ * @param email The new email address of the user
+ * @param displayName The new display name of the user
+ */
+export async function updateUserProfile(
+  userId: string,
+  email: string,
+  displayName: string
+): Promise<User> {
+  LOG("Updating user with details: %o", {
+    userId,
+    email,
+    displayName
+  });
+
+  try {
+    const user = await request<User>({
+      url: "/users/{userId}",
+      method: "PATCH",
+      urlParams: {
+        userId
+      },
+      data: {
+        email,
+        displayName
+      }
+    });
+
+    LOG("Updated successfully: %o", user);
+    // Strip out the non-user details from the return
+    return {
+      id: user.data.id,
+      username: user.data.username,
+      displayName: user.data.displayName,
+      email: user.data.email
+    };
+  } catch (e) {
+    LOG("Failed to update user %s: %o", userId, e);
+    if (
+      e instanceof ProblemResponse &&
+      e.problem.type === "tag:universe,2020:problems/validation-error"
+    ) {
+      throw new ValidationErrors(e.problem.errors);
+    } else {
+      throw e;
+    }
+  }
+}

@@ -77,7 +77,7 @@
         "label": "Username",
         "errors": {
           "tag:universe,2020:validation-errors/missing": "Please enter a username",
-          "tag:universe,2020:users/validation-errors/username/duplicate": "Username is already registered"
+          "tag:universe,2020:users/validation-errors/username/duplicate": "Username is registered to another user"
         }
       },
       "email": {
@@ -85,7 +85,7 @@
         "errors": {
           "tag:universe,2020:validation-errors/missing": "Please enter an email address",
           "tag:universe,2020:users/validation-errors/email/malformed": "Please enter a valid email address",
-          "tag:universe,2020:users/validation-errors/email/duplicate": "Email Address is already registered"
+          "tag:universe,2020:users/validation-errors/email/duplicate": "Email Address is registered to another user"
         }
       },
       "displayName": {
