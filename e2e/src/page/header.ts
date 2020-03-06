@@ -6,6 +6,11 @@ export class HeaderPageModel extends BasePageModel {
     super(baseElement);
   }
 
+  async goHome() {
+    const homeLink = await this.findElement(By.css("a.navbar-brand"));
+    await homeLink.click();
+  }
+
   /**
    * Check if we're currently logged in or not
    * @return True if we're logged in. False if not.
@@ -28,7 +33,7 @@ export class HeaderPageModel extends BasePageModel {
     return await userMenu.getText();
   }
 
-  async logout() {
+  async openUserMenu() {
     const userMenu = await this.findElement(
       By.css(
         'li.nav-item.dropdown a.nav-link.dropdown-toggle[data-toggle="dropdown"]'
@@ -36,6 +41,10 @@ export class HeaderPageModel extends BasePageModel {
     );
 
     await userMenu.click();
+  }
+
+  async logout() {
+    await this.openUserMenu();
 
     const logout = await this.findElement(
       By.css(
@@ -53,5 +62,16 @@ export class HeaderPageModel extends BasePageModel {
       By.css('a.nav-link[href="/login"]')
     );
     await loginLink.click();
+  }
+
+  async openProfile() {
+    await this.openUserMenu();
+
+    const logout = await this.findElement(
+      By.css(
+        "li.nav-item.dropdown div.dropdown-menu a.dropdown-item[href='/profile']"
+      )
+    );
+    await logout.click();
   }
 }
