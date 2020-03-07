@@ -27,7 +27,12 @@ impl Service {
             config.port = port_number;
         }
 
-        let cors: CorsOptions = Default::default();
+        let cors: CorsOptions = CorsOptions {
+            allow_credentials: true,
+            expose_headers: ["link".to_owned()].iter().cloned().collect(),
+            max_age: Some(3600),
+            ..Default::default()
+        };
         let rocket = rocket::custom(config)
             .attach(cors.to_cors().unwrap())
             .attach(crate::request_id::RequestIdFairing {})
