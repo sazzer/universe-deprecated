@@ -2,9 +2,11 @@ import * as yup from "yup";
 
 import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
+import { changePassword, useUser } from "../../users";
 
 import { SubmitButton } from "../components/form/buttons";
 import { UnexpectedError } from "../components/form/error";
+import { ValidationErrors } from "../../api";
 import debug from "debug";
 import { useTranslation } from "react-i18next";
 
@@ -18,8 +20,9 @@ export const ChangePasswordArea: React.FC = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState<string | undefined>(undefined);
+  const { user } = useUser();
 
-  const { register, errors, handleSubmit } = useForm({
+  const { register, errors, handleSubmit, setError } = useForm({
     validationSchema: yup.object().shape({
       password: yup
         .string()
@@ -56,6 +59,20 @@ export const ChangePasswordArea: React.FC = () => {
     setGlobalError(undefined);
     setLoading(true);
 
+    try {
+      const saved = await changePassword(user?.id || "", data.password);
+    } catch (e) {
+      if (e instanceof ValidationErrors) {
+        e.errors.forEach(error => {
+          const message = t(
+            `profile.profile.${error.field}.errors.${error.type}`
+          );
+          setError(error.field, error.type, message);
+        });
+      } else {
+        setGlobalError(e.toString());
+      }
+    }
     setLoading(false);
   };
 

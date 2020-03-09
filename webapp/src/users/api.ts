@@ -168,21 +168,21 @@ export async function register(
 }
 
 /**
- * Call to update the user profile of the given user
- * @param userId The ID of the user
- * @param email The new email address of the user
- * @param displayName The new display name of the user
+ * Interface describing the details we can patch on a user
  */
-export async function updateUserProfile(
-  userId: string,
-  email: string,
-  displayName: string
-): Promise<User> {
-  LOG("Updating user with details: %o", {
-    userId,
-    email,
-    displayName
-  });
+interface UserPatch {
+  email?: string;
+  displayName?: string;
+  password?: string;
+}
+
+/**
+ * Actually perform a patch of a user record
+ * @param userId The ID of the user to patch
+ * @param details The details of the user to patch
+ */
+async function patchUser(userId: string, details: UserPatch): Promise<User> {
+  LOG("Updating user %s with details: %o", userId, details);
 
   try {
     const user = await request<User>({
@@ -191,10 +191,7 @@ export async function updateUserProfile(
       urlParams: {
         userId
       },
-      data: {
-        email,
-        displayName
-      }
+      data: details
     });
 
     LOG("Updated successfully: %o", user);
@@ -216,4 +213,30 @@ export async function updateUserProfile(
       throw e;
     }
   }
+}
+
+/**
+ * Call to update the user profile of the given user
+ * @param userId The ID of the user
+ * @param email The new email address of the user
+ * @param displayName The new display name of the user
+ */
+export async function updateUserProfile(
+  userId: string,
+  email: string,
+  displayName: string
+): Promise<User> {
+  return patchUser(userId, { email, displayName });
+}
+
+/**
+ * Call to update the password of the given user
+ * @param userId The ID of the user
+ * @param password The new password of the user
+ */
+export async function changePassword(
+  userId: string,
+  password: string
+): Promise<User> {
+  return patchUser(userId, { password });
 }
