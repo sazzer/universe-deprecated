@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { User, getUserById, updateUserProfile, useUser } from "../../users";
 
 import { Loader } from "../components/loader";
+import { Message } from "../components/form/messages";
 import { SubmitButton } from "../components/form/buttons";
 import { UnexpectedError } from "../components/form/error";
 import { ValidationErrors } from "../../api";
@@ -26,6 +27,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState<string | undefined>(undefined);
+  const [success, setSuccess] = useState<boolean>(false);
   const { storeUser } = useUser();
 
   const { register, errors, handleSubmit, setError } = useForm({
@@ -72,6 +74,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
     LOG("Submitting form: %o", data);
     setGlobalError(undefined);
     setLoading(true);
+    setSuccess(false);
 
     try {
       const saved = await updateUserProfile(
@@ -80,6 +83,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         data.displayName
       );
       storeUser(saved);
+      setSuccess(true);
     } catch (e) {
       if (e instanceof ValidationErrors) {
         e.errors.forEach(error => {
@@ -166,6 +170,9 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
           </SubmitButton>
         </div>
         {globalError && <UnexpectedError message={globalError} />}
+        {success && (
+          <Message type="success">{t("profile.password.success")}</Message>
+        )}
       </form>
     </>
   );

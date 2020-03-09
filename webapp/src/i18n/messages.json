@@ -68,9 +68,6 @@
       "home": "Home",
       "profile": "User Profile"
     },
-    "password": {
-      "label": "Change Password"
-    },
     "profile": {
       "label": "User Profile",
       "username": {
@@ -94,6 +91,7 @@
           "tag:universe,2020:validation-errors/missing": "Please enter a display name"
         }
       },
+      "success": "Profile updated successfully",
       "submit": "Save Changes"
     },
     "password": {
@@ -112,6 +110,7 @@
           "tag:universe,2020:validation-errors/password/invalid-password": "Passwords do not match"
         }
       },
+      "success": "Password changed successfully",
       "submit": "Change Password"
     }
   },

@@ -1,3 +1,4 @@
+import { Message } from "./messages";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -17,12 +18,10 @@ export const UnexpectedError: React.FC<UnexpectedErrorProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="form-group">
-      <div className="alert alert-danger" role="alert">
-        {t("errors.unexpected", {
-          message
-        })}
-      </div>
-    </div>
+    <Message type="danger">
+      {t("errors.unexpected", {
+        message
+      })}
+    </Message>
   );
 };

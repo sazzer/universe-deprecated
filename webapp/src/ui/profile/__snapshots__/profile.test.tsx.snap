@@ -375,6 +375,16 @@ exports[`Saving successfully 1`] = `
         Save Changes
       </button>
     </div>
+    <div
+      class="form-group"
+    >
+      <div
+        class="alert alert-success"
+        role="alert"
+      >
+        Password changed successfully
+      </div>
+    </div>
   </form>
 </div>
 `;

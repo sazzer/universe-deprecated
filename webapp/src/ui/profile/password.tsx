@@ -4,6 +4,7 @@ import { ErrorMessage, FieldValues, useForm } from "react-hook-form";
 import React, { useState } from "react";
 import { changePassword, useUser } from "../../users";
 
+import { Message } from "../components/form/messages";
 import { SubmitButton } from "../components/form/buttons";
 import { UnexpectedError } from "../components/form/error";
 import { ValidationErrors } from "../../api";
@@ -20,9 +21,10 @@ export const ChangePasswordArea: React.FC = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState<string | undefined>(undefined);
+  const [success, setSuccess] = useState<boolean>(false);
   const { user } = useUser();
 
-  const { register, errors, handleSubmit, setError } = useForm({
+  const { register, errors, handleSubmit, setError, setValue } = useForm({
     validationSchema: yup.object().shape({
       password: yup
         .string()
@@ -58,9 +60,13 @@ export const ChangePasswordArea: React.FC = () => {
     LOG("Submitting form: %o", data);
     setGlobalError(undefined);
     setLoading(true);
+    setSuccess(false);
 
     try {
-      const saved = await changePassword(user?.id || "", data.password);
+      await changePassword(user?.id || "", data.password);
+      setSuccess(true);
+      setValue("password", "");
+      setValue("password2", "");
     } catch (e) {
       if (e instanceof ValidationErrors) {
         e.errors.forEach(error => {
@@ -126,6 +132,9 @@ export const ChangePasswordArea: React.FC = () => {
         </SubmitButton>
       </div>
       {globalError && <UnexpectedError message={globalError} />}
+      {success && (
+        <Message type="success">{t("profile.password.success")}</Message>
+      )}
     </form>
   );
 };
