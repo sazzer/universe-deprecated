@@ -1,6 +1,7 @@
 import { NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
 
 import { Breadcrumbs } from "../components/breadcrumbs";
+import { ChangePasswordArea } from "./password";
 import { LoggedIn } from "../loggedIn";
 import React from "react";
 import { UserProfileArea } from "./profile";
@@ -69,7 +70,7 @@ export const ProfilePage: React.FC = () => {
       name: "password",
       path: "/profile/password",
       label: t("profile.password.label"),
-      content: "Change Password"
+      content: <ChangePasswordArea />
     }
   ];
 
