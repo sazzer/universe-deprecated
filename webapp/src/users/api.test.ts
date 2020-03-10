@@ -389,3 +389,58 @@ describe("updateUserProfile", () => {
     }
   });
 });
+
+describe("changePassword", () => {
+  const userId = "57c33107-b43e-4b53-a967-3ff89ccaaf16";
+
+  beforeEach(() => {
+    nock(URL_BASE)
+      .defaultReplyHeaders({
+        "access-control-allow-origin": "*",
+        "access-control-allow-method": "*"
+      })
+      .options(`/users/${userId}`)
+      .reply(204);
+  });
+  test("Successfully", async () => {
+    nock(URL_BASE)
+      .defaultReplyHeaders({
+        "access-control-allow-origin": "*"
+      })
+      .patch(`/users/${userId}`, {
+        password: "Pa55word"
+      })
+      .reply(200, {
+        id: userId,
+        email: "testuser@example.com",
+        username: "testuser",
+        displayName: "Test User"
+      });
+
+    const user = await api.changePassword(userId, "Pa55word");
+
+    expect(user).toEqual({
+      id: userId,
+      email: "testuser@example.com",
+      username: "testuser",
+      displayName: "Test User"
+    });
+  });
+  test("Unexpected error", async () => {
+    nock(URL_BASE)
+      .defaultReplyHeaders({ "access-control-allow-origin": "*" })
+      .patch(`/users/${userId}`, {
+        password: "Pa55word"
+      })
+      .reply(500, "Broken Service", {
+        "content-type": "text/plain"
+      });
+
+    try {
+      await api.changePassword(userId, "Pa55word");
+      fail("Expected an exception");
+    } catch (e) {
+      expect(e.toString()).toBe("Error: Request failed with status code 500");
+    }
+  });
+});
