@@ -4,7 +4,8 @@
  * @return       The result of processing the input
  */
 export function processValue(input: string): string {
-  let result = input.replace(/{space}/g, ' ');
+  let result = input.replace(/{blank}/g, "");
+  result = result.replace(/{space}/g, " ");
   return result;
 }
 
@@ -13,7 +14,9 @@ export function processValue(input: string): string {
  * @param  input The object to process
  * @return       The result of processing all the values
  */
-export function processObject(input: { [key: string]: string }): { [key: string]: string } {
+export function processObject(input: {
+  [key: string]: string;
+}): { [key: string]: string } {
   const result: { [key: string]: string } = {};
   Object.keys(input).forEach(key => {
     const inputValue = input[key];
