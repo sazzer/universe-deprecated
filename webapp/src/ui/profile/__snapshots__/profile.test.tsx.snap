@@ -382,7 +382,7 @@ exports[`Saving successfully 1`] = `
         class="alert alert-success"
         role="alert"
       >
-        Password changed successfully
+        Profile updated successfully
       </div>
     </div>
   </form>

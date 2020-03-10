@@ -171,7 +171,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
         </div>
         {globalError && <UnexpectedError message={globalError} />}
         {success && (
-          <Message type="success">{t("profile.password.success")}</Message>
+          <Message type="success">{t("profile.profile.success")}</Message>
         )}
       </form>
     </>
