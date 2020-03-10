@@ -43,30 +43,16 @@ pub trait UserRepository {
 }
 
 /// Enumeration of reasons why we failed to persist a newly created user
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, thiserror::Error)]
 pub enum PersistUserError {
+    #[error("Duplicate Username")]
     DuplicateUsername,
+    #[error("Duplicate Email Address")]
     DuplicateEmail,
+    #[error("The user was not found")]
     UserNotFound,
+    #[error("The version of the user record did not match")]
     OptimisticLockFailure,
+    #[error("An unknown error occurred")]
     UnknownError,
 }
-
-impl std::fmt::Display for PersistUserError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                PersistUserError::DuplicateUsername => "Duplicate Username",
-                PersistUserError::DuplicateEmail => "Duplicate Email Address",
-                PersistUserError::UnknownError => "An unknown error occurred",
-                PersistUserError::UserNotFound => "The user was not found",
-                PersistUserError::OptimisticLockFailure =>
-                    "The version of the user record did not match",
-            }
-        )
-    }
-}
-
-impl std::error::Error for PersistUserError {}

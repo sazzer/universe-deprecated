@@ -5,39 +5,18 @@ use std::sync::Arc;
 use tracing::{debug, error};
 
 /// Errors that can be returned when creating a Postgres Database wrapper
-#[derive(Debug, PartialEq)]
-pub struct DatabaseError {
-    message: String,
+#[derive(Debug, thiserror::Error)]
+pub enum DatabaseError {
+    #[error("Failed to create connection: {0:?}")]
+    ConnectionError(#[from] postgres::Error),
+    #[error("Failed to create connection pool: {0:?}")]
+    ConnectionPoolError(#[from] r2d2::Error),
 }
-
-impl std::fmt::Display for DatabaseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl std::error::Error for DatabaseError {}
 
 /// Wrapper around a connection to the Postgres database
 #[derive(Debug, Clone)]
 pub struct Database {
     pool: Arc<r2d2::Pool<PostgresConnectionManager<NoTls>>>,
-}
-
-impl From<postgres::Error> for DatabaseError {
-    fn from(e: postgres::Error) -> Self {
-        let message = format!("Failed to create connection: {}", e);
-        error!("{}", message);
-        DatabaseError { message }
-    }
-}
-
-impl From<r2d2::Error> for DatabaseError {
-    fn from(e: r2d2::Error) -> Self {
-        let message = format!("Failed to create connection pool: {}", e);
-        error!("{}", message);
-        DatabaseError { message }
-    }
 }
 
 impl Database {
@@ -77,6 +56,7 @@ impl Database {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert_matches::*;
     use spectral::prelude::*;
     use test_env_log::test;
     use universe_test_database_container::TestDatabase;
@@ -98,11 +78,7 @@ mod tests {
             database.host, database.port
         );
         let postgres = Database::new(url);
-        assert_that(&postgres)
-            .is_err()
-            .is_equal_to(DatabaseError {
-                message: "Failed to create connection pool: timed out waiting for connection: db error: FATAL: role \"invalid\" does not exist".to_owned(),
-            });
+        assert_matches!(postgres.unwrap_err(), DatabaseError::ConnectionPoolError(_));
     }
 
     #[test]

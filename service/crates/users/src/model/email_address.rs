@@ -62,19 +62,13 @@ impl ToSql for EmailAddress {
 }
 
 /// Errors that can happen when parsing a string into a email address.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, thiserror::Error)]
 pub enum EmailAddressParseError {
+    #[error("Email Address was blank")]
     Blank,
+    #[error("Email Address was malformed")]
     Malformed,
 }
-
-impl std::fmt::Display for EmailAddressParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error parsing email address")
-    }
-}
-
-impl std::error::Error for EmailAddressParseError {}
 
 #[cfg(test)]
 mod tests {

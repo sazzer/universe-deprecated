@@ -67,7 +67,7 @@ impl From<PasswordHashError> for ValidationError {
   fn from(e: PasswordHashError) -> Self {
     match e {
       PasswordHashError::Blank => missing_error("password"),
-      PasswordHashError::HashError => ValidationError {
+      PasswordHashError::HashError(_) => ValidationError {
         r#type: "tag:universe,2020:validation-errors/password/invalid-password".to_owned(),
         title: "The password was invalid".to_owned(),
         field: "password".to_owned(),

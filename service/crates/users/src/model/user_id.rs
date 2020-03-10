@@ -11,25 +11,10 @@ use uuid::Uuid;
 pub struct UserID(Uuid);
 
 /// Errors that can happen when parsing a string into a User ID.
-#[derive(Debug, PartialEq, Clone)]
-pub struct UserIDParseError {
-    message: String,
-}
-
-impl std::fmt::Display for UserIDParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl std::error::Error for UserIDParseError {}
-
-impl From<uuid::Error> for UserIDParseError {
-    fn from(e: uuid::Error) -> Self {
-        UserIDParseError {
-            message: format!("Error parsing User ID: {}", e),
-        }
-    }
+#[derive(Debug, PartialEq, Clone, thiserror::Error)]
+pub enum UserIDParseError {
+    #[error("User ID was malformed: {0}")]
+    Malformed(#[from] uuid::Error),
 }
 
 impl UserID {
@@ -97,6 +82,7 @@ impl ToSql for UserID {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert_matches::*;
     use serde_json::json;
     use spectral::prelude::*;
     use test_env_log::test;
@@ -125,36 +111,21 @@ mod tests {
     fn test_parse_empty_string() {
         let user_id: Result<UserID, UserIDParseError> = "".parse();
 
-        assert_that(&user_id)
-            .is_err()
-            .is_equal_to(UserIDParseError {
-                message: "Error parsing User ID: invalid length: expected one of [36, 32], found 0"
-                    .to_owned(),
-            });
+        assert_matches!(user_id.unwrap_err(), UserIDParseError::Malformed(_));
     }
 
     #[test]
     fn test_parse_blank_string() {
         let user_id: Result<UserID, UserIDParseError> = "     ".parse();
 
-        assert_that(&user_id)
-            .is_err()
-            .is_equal_to(UserIDParseError {
-                message: "Error parsing User ID: invalid length: expected one of [36, 32], found 0"
-                    .to_owned(),
-            });
+        assert_matches!(user_id.unwrap_err(), UserIDParseError::Malformed(_));
     }
 
     #[test]
     fn test_parse_invalid_string_bad_length() {
         let user_id: Result<UserID, UserIDParseError> = "non-uuid".parse();
 
-        assert_that(&user_id)
-            .is_err()
-            .is_equal_to(UserIDParseError {
-                message: "Error parsing User ID: invalid length: expected one of [36, 32], found 8"
-                    .to_owned(),
-            });
+        assert_matches!(user_id.unwrap_err(), UserIDParseError::Malformed(_));
     }
 
     #[test]
@@ -162,12 +133,7 @@ mod tests {
         let user_id: Result<UserID, UserIDParseError> =
             "C37837C7-3E8C-4235-8A00-0845F598D12Z".parse();
 
-        assert_that(&user_id)
-            .is_err()
-            .is_equal_to(UserIDParseError {
-                message: "Error parsing User ID: invalid character: expected an optional prefix of `urn:uuid:` followed by 0123456789abcdefABCDEF-, found Z at 35"
-                    .to_owned(),
-            });
+        assert_matches!(user_id.unwrap_err(), UserIDParseError::Malformed(_));
     }
 
     #[test]

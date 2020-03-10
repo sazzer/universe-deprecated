@@ -56,34 +56,25 @@ pub enum UserValidationError {
 }
 
 /// Enumeration of reasons why we failed to register a new user
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, thiserror::Error)]
 pub enum RegisterUserError {
+    #[error("User details were invalid: {0:?}")]
     ValidationError(Vec<UserValidationError>),
+    #[error("An unknown error occurred")]
     UnknownError,
 }
-
-impl std::fmt::Display for RegisterUserError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error registering user: {}", self)
-    }
-}
-
-impl std::error::Error for RegisterUserError {}
 
 /// Enumeration of reasons why we failed to update an existing user
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum UpdateUserError {
+    #[error("User details were invalid: {0:?}")]
     ValidationError(Vec<UserValidationError>),
+    #[error("The user was not found")]
     UnknownUser,
+    #[error("The version of the user record did not match")]
     OptimisticLockFailure,
+    #[error("An error occurred updating the user details: {0}")]
     UpdateError(Box<dyn std::error::Error>),
+    #[error("An unknown error occurred")]
     UnknownError,
 }
-
-impl std::fmt::Display for UpdateUserError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error updating user: {}", self)
-    }
-}
-
-impl std::error::Error for UpdateUserError {}

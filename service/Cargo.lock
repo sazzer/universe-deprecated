@@ -1935,6 +1935,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "thiserror"
+version = "1.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee14bf8e6767ab4c687c9e8bc003879e042a96fd67a3ba5934eadb6536bef4db"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "1.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7b51e1fbc44b5a0840be594fbc0f960be09050f2617e61e6aa43bef97cd3ef4"
+dependencies = [
+ "proc-macro2 1.0.8",
+ "quote 1.0.2",
+ "syn 1.0.14",
+]
+
+[[package]]
 name = "thread_local"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2207,6 +2227,7 @@ dependencies = [
  "serde_json",
  "spectral",
  "test-env-log",
+ "thiserror",
  "tracing",
  "tracing-log",
  "tracing-subscriber",
@@ -2218,6 +2239,7 @@ dependencies = [
 name = "universe_database"
 version = "0.1.0"
 dependencies = [
+ "assert_matches",
  "glob",
  "postgres",
  "postgres-types",
@@ -2225,6 +2247,7 @@ dependencies = [
  "r2d2_postgres",
  "spectral",
  "test-env-log",
+ "thiserror",
  "tracing",
  "tracing-log",
  "tracing-subscriber",
@@ -2294,6 +2317,7 @@ dependencies = [
  "serde_json",
  "spectral",
  "test-env-log",
+ "thiserror",
  "tracing",
  "tracing-log",
  "tracing-subscriber",

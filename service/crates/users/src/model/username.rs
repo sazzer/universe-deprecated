@@ -57,18 +57,11 @@ impl ToSql for Username {
 }
 
 /// Errors that can happen when parsing a string into a username.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, thiserror::Error)]
 pub enum UsernameParseError {
+    #[error("Username was blank")]
     Blank,
 }
-
-impl std::fmt::Display for UsernameParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error parsing username")
-    }
-}
-
-impl std::error::Error for UsernameParseError {}
 
 #[cfg(test)]
 mod tests {

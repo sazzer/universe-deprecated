@@ -28,9 +28,7 @@ impl MigratableDatabase for Database {
 
         let mut applied = 0;
         if !files.is_empty() {
-            let mut client = self.client().ok_or(MigrationError {
-                message: "Failed to get database connection".to_owned(),
-            })?;
+            let mut client = self.client().ok_or(MigrationError::ConnectionError)?;
             let mut transaction = client.transaction()?;
 
             ensure_migrations_table(&mut transaction)?;
@@ -145,47 +143,23 @@ fn apply_migrations(
 }
 
 /// Error returned when migrating the database fails for some reason
-#[derive(Debug, PartialEq)]
-pub struct MigrationError {
-    message: String,
-}
-
-impl std::fmt::Display for MigrationError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl std::error::Error for MigrationError {}
-
-impl From<std::io::Error> for MigrationError {
-    fn from(e: std::io::Error) -> Self {
-        let message = format!("IO Error performing database migration: {}", e);
-        error!("{}", message);
-        MigrationError { message }
-    }
-}
-
-impl From<glob::PatternError> for MigrationError {
-    fn from(e: glob::PatternError) -> Self {
-        let message = format!("Invalid glob pattern listing files: {}", e);
-        error!("{}", message);
-        MigrationError { message }
-    }
-}
-
-impl From<postgres::Error> for MigrationError {
-    fn from(e: postgres::Error) -> Self {
-        let message = format!("Database Error performing database migration: {}", e);
-        error!("{}", message);
-        MigrationError { message }
-    }
+#[derive(Debug, thiserror::Error)]
+pub enum MigrationError {
+    #[error("IO Error performing database migration: {0}")]
+    IoError(#[from] std::io::Error),
+    #[error("Glob Error loading migrations: {0}")]
+    GlobError(#[from] glob::PatternError),
+    #[error("Database Error performing database migration: {0}")]
+    QueryError(#[from] postgres::Error),
+    #[error("Error getting database connection")]
+    ConnectionError,
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::Database;
+    use assert_matches::*;
     use spectral::prelude::*;
     use test_env_log::test;
     use universe_test_database_container::TestDatabase;
@@ -197,9 +171,7 @@ mod tests {
 
         let result = wrapper.migrate("****");
 
-        assert_that(&result).is_err_containing(MigrationError {
-            message: "Invalid glob pattern listing files: Pattern syntax error near position 2: wildcards are either regular `*` or recursive `**`".to_owned(),
-        });
+        assert_matches!(result.unwrap_err(), MigrationError::GlobError(_));
 
         let tables = wrapper
                         .client().unwrap()
@@ -398,9 +370,7 @@ mod tests {
 
         let result = wrapper.migrate("test_migrations/invalid/**/*.sql");
 
-        assert_that(&result).is_err_containing(MigrationError {
-                message: "Database Error performing database migration: db error: ERROR: syntax error at or near \"IM\"".to_owned(),
-            });
+        assert_matches!(result.unwrap_err(), MigrationError::QueryError(_));
 
         let tables = wrapper
                             .client().unwrap()

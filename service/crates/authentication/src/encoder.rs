@@ -96,43 +96,22 @@ impl AccessTokenEncoder {
 }
 
 /// Error caused by failing to encode an access token
-#[derive(Debug, PartialEq)]
-pub struct EncodeError {
-  message: String,
-}
-
-impl std::fmt::Display for EncodeError {
-  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-    write!(f, "Error encoding access token: {}", self.message)
-  }
-}
-
-impl std::error::Error for EncodeError {}
-
-impl From<frank_jwt::Error> for EncodeError {
-  fn from(e: frank_jwt::Error) -> Self {
-    warn!("Error encoding Access Token as JWT: {:?}", e);
-    Self {
-      message: format!("{}", e),
-    }
-  }
+#[derive(Debug, thiserror::Error)]
+pub enum EncodeError {
+  #[error("Error encoding Access Token as JWT: {0:?}")]
+  EncodeError(#[from] frank_jwt::Error),
 }
 
 /// Error caused by failing to decode an access token
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, thiserror::Error)]
 pub enum DecodeError {
+  #[error("Access token has expired")]
   ExpiredAccessToken,
+  #[error("Access token was malformed")]
   MalformedAccessToken,
+  #[error("Access token was missing a required field: {0}")]
   MissingAccessTokenField(&'static str),
 }
-
-impl std::fmt::Display for DecodeError {
-  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-    write!(f, "Error encoding access token: {:?}", self)
-  }
-}
-
-impl std::error::Error for DecodeError {}
 
 impl From<frank_jwt::Error> for DecodeError {
   fn from(e: frank_jwt::Error) -> Self {
@@ -151,6 +130,7 @@ impl From<universe_users::UserIDParseError> for DecodeError {
     DecodeError::MissingAccessTokenField("sub")
   }
 }
+
 #[cfg(test)]
 mod tests {
   use super::*;

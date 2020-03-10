@@ -57,18 +57,11 @@ impl ToSql for DisplayName {
 }
 
 /// Errors that can happen when parsing a string into a display name.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, thiserror::Error)]
 pub enum DisplayNameParseError {
+    #[error("Display name was blank")]
     Blank,
 }
-
-impl std::fmt::Display for DisplayNameParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error parsing display name")
-    }
-}
-
-impl std::error::Error for DisplayNameParseError {}
 
 #[cfg(test)]
 mod tests {

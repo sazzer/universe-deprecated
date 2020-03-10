@@ -8,25 +8,12 @@ use tracing::warn;
 pub struct Password(String);
 
 /// Enumeration of errors that can occur when hashing a password
-#[derive(Debug, PartialEq)]
+#[derive(Debug, thiserror::Error)]
 pub enum PasswordHashError {
+    #[error("Password was blank")]
     Blank,
-    HashError,
-}
-
-impl std::fmt::Display for PasswordHashError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error hashing password")
-    }
-}
-
-impl std::error::Error for PasswordHashError {}
-
-impl From<BcryptError> for PasswordHashError {
-    fn from(e: BcryptError) -> Self {
-        warn!("Failed to hash password: {}", e);
-        PasswordHashError::HashError
-    }
+    #[error("Failed to hash password: {0}")]
+    HashError(#[from] BcryptError),
 }
 
 impl Password {
@@ -108,6 +95,7 @@ impl ToSql for Password {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert_matches::*;
     use spectral::prelude::*;
     use test_env_log::test;
 
@@ -125,18 +113,14 @@ mod tests {
         let plaintext = std::str::from_utf8(&[65u8, 66u8, 0u8, 67u8, 68u8]).unwrap();
         let password = Password::from_plaintext(plaintext);
 
-        assert_that(&password)
-            .is_err()
-            .is_equal_to(PasswordHashError::HashError);
+        assert_matches!(password.unwrap_err(), PasswordHashError::HashError(_));
     }
 
     #[test]
     fn test_hashing_blank_password() {
         let password = Password::from_plaintext("");
 
-        assert_that(&password)
-            .is_err()
-            .is_equal_to(PasswordHashError::Blank);
+        assert_matches!(password.unwrap_err(), PasswordHashError::Blank);
     }
 
     #[test]
