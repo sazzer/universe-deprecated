@@ -3,11 +3,10 @@ use rocket::{
     response::{Responder, Response},
     Request,
 };
+use rocket_contrib::json::Json;
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::HashMap;
-use std::io::Cursor;
-use tracing::error;
 
 /// Struct representing an RFC-7807 problem returned by a REST API
 #[derive(Serialize, Debug, PartialEq)]
@@ -39,16 +38,11 @@ impl Default for Problem {
 
 impl<'a> Responder<'a> for Problem {
     /// Generate a Rocket response for the Problem
-    fn respond_to(self, _: &Request) -> Result<Response<'a>, Status> {
-        let json_string = serde_json::to_string(&self).map_err(|e| {
-            error!("JSON failed to serialize: {:?}", e);
-            Status::InternalServerError
-        })?;
-
+    fn respond_to(self, req: &Request) -> Result<Response<'a>, Status> {
         Response::build()
+            .merge(Json(&self).respond_to(req)?)
             .header(ContentType::new("application", "problem+json"))
             .raw_status(self.status, "")
-            .sized_body(Cursor::new(json_string))
             .ok()
     }
 }
