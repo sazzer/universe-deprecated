@@ -1,4 +1,4 @@
-use crate::{build_headers, build_json_body, ServiceWrapper};
+use crate::{build_headers, build_json_body, build_rewrite_headers, regex_replace, ServiceWrapper};
 use insta::{assert_json_snapshot, assert_snapshot};
 use rocket::http::{ContentType, Header, Status};
 use serde_json::json;
@@ -105,10 +105,13 @@ fn test_patch_known_user_no_differences() {
     .body(json!({}).to_string());
   let mut response = req.dispatch();
 
-  assert_snapshot!(build_headers(&response), @r###"
+  assert_snapshot!(build_rewrite_headers(&response, |h| {
+    regex_replace(h, r#"ETag: "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}""#, r#"ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0""#)
+  }), @r###"
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Server: Rocket
   "###);
   assert_json_snapshot!(build_json_body(&mut response), @r###"
@@ -146,10 +149,13 @@ fn test_patch_known_user_with_differences() {
     );
   let mut response = req.dispatch();
 
-  assert_snapshot!(build_headers(&response), @r###"
+  assert_snapshot!(build_rewrite_headers(&response, |h| {
+    regex_replace(h, r#"ETag: "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}""#, r#"ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0""#)
+  }), @r###"
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Server: Rocket
   "###);
   assert_json_snapshot!(build_json_body(&mut response), @r###"
@@ -187,10 +193,13 @@ fn test_patch_change_password() {
     );
   let response = req.dispatch();
 
-  assert_snapshot!(build_headers(&response), @r###"
+  assert_snapshot!(build_rewrite_headers(&response, |h| {
+    regex_replace(h, r#"ETag: "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}""#, r#"ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0""#)
+  }), @r###"
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Server: Rocket
   "###);
 

@@ -6,6 +6,7 @@ use rocket::{
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use universe_users::{DisplayName, EmailAddress, UserEntity, UserID, Username};
+use uuid::Uuid;
 
 /// Representation of a User to return over the API
 #[derive(Debug, Serialize)]
@@ -16,6 +17,8 @@ pub struct User {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<EmailAddress>,
     pub display_name: DisplayName,
+    #[serde(skip_serializing)]
+    version: Uuid,
 }
 
 impl<'a> Responder<'a> for User {
@@ -24,6 +27,7 @@ impl<'a> Responder<'a> for User {
         Response::build()
             .merge(Json(&self).respond_to(req)?)
             .raw_header("Link", format!("</users/{}>; rel=\"self\"", self.id))
+            .raw_header("ETag", format!("\"{}\"", self.version))
             .ok()
     }
 }
@@ -35,6 +39,7 @@ impl From<UserEntity> for User {
             username: user.data.username,
             email: Some(user.data.email),
             display_name: user.data.display_name,
+            version: user.identity.version,
         }
     }
 }
