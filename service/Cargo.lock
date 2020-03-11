@@ -2335,6 +2335,7 @@ dependencies = [
  "chrono",
  "http",
  "insta",
+ "regex",
  "rocket",
  "rocket_contrib",
  "rocket_cors",

@@ -21,7 +21,10 @@ pub struct User {
 impl<'a> Responder<'a> for User {
     /// Generate a Rocket response for the User
     fn respond_to(self, req: &Request) -> Result<Response<'a>, Status> {
-        Response::build().merge(Json(&self).respond_to(req)?).ok()
+        Response::build()
+            .merge(Json(&self).respond_to(req)?)
+            .raw_header("Link", format!("</users/{}>; rel=\"self\"", self.id))
+            .ok()
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::{build_headers, build_json_body, ServiceWrapper};
+use crate::{build_headers, build_json_body, build_rewrite_headers, regex_replace, ServiceWrapper};
 use insta::{assert_json_snapshot, assert_snapshot, dynamic_redaction};
 use rocket::http::ContentType;
 use serde_json::{json, Value};
@@ -88,11 +88,14 @@ fn test_successful_login() {
   );
   let mut response = req.dispatch();
 
-  assert_snapshot!(build_headers(&response), @r###"
-    HTTP/1.1 200 OK.
-    Content-Type: application/json
-    Server: Rocket
-    "###);
+  assert_snapshot!(build_rewrite_headers(&response, |h| {
+    regex_replace(h, r#"/users/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"#, "/users/d4ebcc15-ddf2-45e4-b263-892984b0e248")
+  }), @r###"
+  HTTP/1.1 200 OK.
+  Content-Type: application/json
+  Link: </users/d4ebcc15-ddf2-45e4-b263-892984b0e248>; rel="canonical"
+  Server: Rocket
+  "###);
   assert_json_snapshot!(build_json_body(&mut response), {
     ".id" => dynamic_redaction(move |value, _| {
       assert_that(&value.as_str()).is_some().is_equal_to(user.user_id.to_string().as_str());

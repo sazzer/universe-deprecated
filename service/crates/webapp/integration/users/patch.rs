@@ -108,6 +108,7 @@ fn test_patch_known_user_no_differences() {
   assert_snapshot!(build_headers(&response), @r###"
   HTTP/1.1 200 OK.
   Content-Type: application/json
+  Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
   Server: Rocket
   "###);
   assert_json_snapshot!(build_json_body(&mut response), @r###"
@@ -148,6 +149,7 @@ fn test_patch_known_user_with_differences() {
   assert_snapshot!(build_headers(&response), @r###"
   HTTP/1.1 200 OK.
   Content-Type: application/json
+  Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
   Server: Rocket
   "###);
   assert_json_snapshot!(build_json_body(&mut response), @r###"
@@ -188,6 +190,7 @@ fn test_patch_change_password() {
   assert_snapshot!(build_headers(&response), @r###"
   HTTP/1.1 200 OK.
   Content-Type: application/json
+  Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
   Server: Rocket
   "###);
 
