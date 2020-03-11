@@ -16,7 +16,7 @@ pub fn update_user(
     user_id: String,
     patch_data: Json<PatchData>,
     user_service: State<Box<dyn UserService>>,
-) -> Result<Json<User>, Problem> {
+) -> Result<User, Problem> {
     debug!("Patch Data: {:?}", patch_data);
 
     let user_id: UserID = user_id.parse().map_err(|e| {
@@ -70,7 +70,7 @@ pub fn update_user(
         }
     })?;
 
-    Ok(Json(user.into()))
+    Ok(user.into())
 }
 
 /// Struct representing the input data for updating a user

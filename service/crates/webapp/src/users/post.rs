@@ -17,7 +17,7 @@ pub fn register_user(
     user_service: State<Box<dyn UserService>>,
     access_token_factory: State<AccessTokenFactory>,
     access_token_encoder: State<AccessTokenEncoder>,
-) -> Result<Json<AuthenticatedUser>, Problem> {
+) -> Result<AuthenticatedUser, Problem> {
     debug!("Registration: {:?}", registration);
 
     let user: UserData = registration.into_inner().try_into()?;
@@ -32,13 +32,13 @@ pub fn register_user(
         result.identity.id, access_token
     );
 
-    Ok(Json(AuthenticatedUser {
+    Ok(AuthenticatedUser {
         user: result.into(),
         access_token: AccessToken {
             token: access_token_encoder.encode(&access_token).unwrap(),
             expiry: access_token.expires,
         },
-    }))
+    })
 }
 
 /// Struct representing the input data for registering a new user

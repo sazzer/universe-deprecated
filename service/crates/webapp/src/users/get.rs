@@ -2,7 +2,6 @@ use super::{model::User, problems::unknown_user_problem};
 use crate::problem::Problem;
 use crate::request_id::RequestId;
 use rocket::{get, http::Status, Response, State};
-use rocket_contrib::json::Json;
 use tracing::warn;
 use universe_users::{UserID, UserService, Username};
 
@@ -12,7 +11,7 @@ pub fn get_user_by_id(
     _request_id: RequestId,
     user_id: String,
     user_service: State<Box<dyn UserService>>,
-) -> Result<Json<User>, Problem> {
+) -> Result<User, Problem> {
     let user_id: UserID = user_id.parse().map_err(|e| {
         warn!("Invalid User ID: {}", e);
         unknown_user_problem()
@@ -22,7 +21,7 @@ pub fn get_user_by_id(
         .get_user_by_id(&user_id)
         .ok_or_else(unknown_user_problem)?;
 
-    Ok(Json(user.into()))
+    Ok(user.into())
 }
 
 #[get("/usernames/<username>")]

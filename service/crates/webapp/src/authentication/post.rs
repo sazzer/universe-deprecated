@@ -16,7 +16,7 @@ pub fn authenticate_user(
   user_service: State<Box<dyn UserService>>,
   access_token_factory: State<AccessTokenFactory>,
   access_token_encoder: State<AccessTokenEncoder>,
-) -> Result<Json<AuthenticatedUser>, Problem> {
+) -> Result<AuthenticatedUser, Problem> {
   debug!("Authentication: {:?}", authentication);
 
   let username: Result<Username, UsernameParseError> =
@@ -38,13 +38,13 @@ pub fn authenticate_user(
         "Access Token for user {:?}: {:?}",
         user.identity.id, access_token
       );
-      Ok(Json(AuthenticatedUser {
+      Ok(AuthenticatedUser {
         user: user.into(),
         access_token: AccessToken {
           token: access_token_encoder.encode(&access_token).unwrap(),
           expiry: access_token.expires,
         },
-      }))
+      })
     } else {
       Err(invalid_login_problem())
     }

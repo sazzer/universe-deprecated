@@ -1,3 +1,9 @@
+use rocket::{
+    http::Status,
+    response::{Responder, Response},
+    Request,
+};
+use rocket_contrib::json::Json;
 use serde::Serialize;
 use universe_users::{DisplayName, EmailAddress, UserEntity, UserID, Username};
 
@@ -10,6 +16,13 @@ pub struct User {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<EmailAddress>,
     pub display_name: DisplayName,
+}
+
+impl<'a> Responder<'a> for User {
+    /// Generate a Rocket response for the User
+    fn respond_to(self, req: &Request) -> Result<Response<'a>, Status> {
+        Response::build().merge(Json(&self).respond_to(req)?).ok()
+    }
 }
 
 impl From<UserEntity> for User {
