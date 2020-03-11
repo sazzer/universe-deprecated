@@ -191,6 +191,9 @@ async function patchUser(userId: string, details: UserPatch): Promise<User> {
       urlParams: {
         userId
       },
+      headers: {
+        "content-type": "application/merge-patch+json"
+      },
       data: details
     });
 

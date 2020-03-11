@@ -3,6 +3,7 @@ use insta::{assert_json_snapshot, assert_snapshot};
 use rocket::http::{ContentType, Header, Status};
 use serde_json::json;
 use spectral::prelude::*;
+use std::str::FromStr;
 use test_env_log::test;
 use universe_testdata::{seed, User};
 
@@ -41,7 +42,7 @@ fn test_patch_unauthorized() {
 
   let req = service
     .patch("/users/83C60AD3-2A4F-455B-B685-C16DA785BF6E")
-    .header(ContentType::JSON)
+    .header(ContentType::from_str("application/merge-patch+json").unwrap())
     .body(json!({}).to_string());
   let response = req.dispatch();
 
@@ -67,7 +68,7 @@ fn test_patch_wrong_user() {
 
   let req = service
     .patch("/users/83C60AD3-2A4F-455B-B685-C16DA785BF6E")
-    .header(ContentType::JSON)
+    .header(ContentType::from_str("application/merge-patch+json").unwrap())
     .header(authenticate_user(&service, &user).unwrap())
     .body(json!({}).to_string());
   let mut response = req.dispatch();
@@ -100,7 +101,7 @@ fn test_patch_known_user_no_differences() {
 
   let req = service
     .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
-    .header(ContentType::JSON)
+    .header(ContentType::from_str("application/merge-patch+json").unwrap())
     .header(authenticate_user(&service, &user).unwrap())
     .body(json!({}).to_string());
   let mut response = req.dispatch();
@@ -141,7 +142,7 @@ fn test_patch_known_user_with_differences() {
 
   let req = service
     .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
-    .header(ContentType::JSON)
+    .header(ContentType::from_str("application/merge-patch+json").unwrap())
     .header(authenticate_user(&service, &user).unwrap())
     .body(
       json!({
@@ -189,7 +190,7 @@ fn test_patch_change_password() {
 
   let req = service
     .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
-    .header(ContentType::JSON)
+    .header(ContentType::from_str("application/merge-patch+json").unwrap())
     .header(authenticate_user(&service, &user).unwrap())
     .body(
       json!({

@@ -8,7 +8,11 @@ use serde::Deserialize;
 use tracing::{debug, warn};
 use universe_users::*;
 
-#[patch("/users/<user_id>", data = "<patch_data>")]
+#[patch(
+    "/users/<user_id>",
+    format = "application/merge-patch+json",
+    data = "<patch_data>"
+)]
 #[tracing::instrument(skip(user_service, authorizer))]
 pub fn update_user(
     _request_id: RequestId,
