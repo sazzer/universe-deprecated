@@ -2343,6 +2343,7 @@ dependencies = [
  "serde_json",
  "spectral",
  "test-env-log",
+ "time",
  "tracing",
  "tracing-log",
  "tracing-subscriber",

@@ -23,6 +23,7 @@ universe_authentication = { path = "../authentication" }
 universe_database = { path = "../database" }
 universe_health = { path = "../health" }
 universe_users = { path = "../users" }
+time = "0.1.42"
 
 [dev-dependencies]
 insta = { version = "0.12.0", features = ["redactions"] }

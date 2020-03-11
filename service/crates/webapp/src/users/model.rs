@@ -1,6 +1,7 @@
+use chrono::{DateTime, Utc};
 use rocket::{
     http::{
-        hyper::header::{ETag, EntityTag},
+        hyper::header::{ETag, EntityTag, HttpDate, LastModified},
         Status,
     },
     response::{Responder, Response},
@@ -22,6 +23,8 @@ pub struct User {
     pub display_name: DisplayName,
     #[serde(skip_serializing)]
     version: Uuid,
+    #[serde(skip_serializing)]
+    updated: DateTime<Utc>,
 }
 
 impl<'a> Responder<'a> for User {
@@ -31,6 +34,10 @@ impl<'a> Responder<'a> for User {
             .merge(Json(&self).respond_to(req)?)
             .raw_header("Link", format!("</users/{}>; rel=\"self\"", self.id))
             .header(ETag(EntityTag::new(false, self.version.to_string())))
+            .header(LastModified(HttpDate(time::at_utc(time::Timespec::new(
+                self.updated.timestamp(),
+                0,
+            )))))
             .ok()
     }
 }
@@ -43,6 +50,7 @@ impl From<UserEntity> for User {
             email: Some(user.data.email),
             display_name: user.data.display_name,
             version: user.identity.version,
+            updated: user.identity.updated,
         }
     }
 }

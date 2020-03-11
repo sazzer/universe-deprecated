@@ -336,12 +336,14 @@ fn test_post_refetch() {
 
   assert_snapshot!(build_rewrite_headers(&response, |h| {
     let h = regex_replace(h, r#"/users/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"#, "/users/d4ebcc15-ddf2-45e4-b263-892984b0e248");
-    regex_replace(h, r#"ETag: "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}""#, r#"ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0""#)
+    let h = regex_replace(h, r#"ETag: "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}""#, r#"ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0""#);
+    regex_replace(h, r#"^Last-Modified: .*$"#, "Last-Modified: Wed, 11 Mar 2020 13:00:36 GMT")
   }), @r###"
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/d4ebcc15-ddf2-45e4-b263-892984b0e248>; rel="self"
   ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
+  Last-Modified: Wed, 11 Mar 2020 13:00:36 GMT
   Server: Rocket
   "###);
   assert_json_snapshot!(build_json_body(&mut response), {

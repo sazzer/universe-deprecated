@@ -31,6 +31,7 @@ fn test_get_known_user() {
   let user = User {
     user_id: uuid::Uuid::parse_str("2fcc3850-bb9b-405e-bbab-22978283fef8").unwrap(),
     version: uuid::Uuid::parse_str("301e8ef9-1077-43e1-abe1-6b8c743cdd1b").unwrap(),
+    updated: "2020-03-11T12:54:25Z".parse().unwrap(),
     username: "testuser".to_owned(),
     email: "testing@example.com".to_owned(),
     display_name: "Test User".to_owned(),
@@ -42,12 +43,13 @@ fn test_get_known_user() {
   let mut response = req.dispatch();
 
   assert_snapshot!(build_headers(&response), @r###"
-    HTTP/1.1 200 OK.
-    Content-Type: application/json
-    Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
-    ETag: "301e8ef9-1077-43e1-abe1-6b8c743cdd1b"
-    Server: Rocket
-    "###);
+  HTTP/1.1 200 OK.
+  Content-Type: application/json
+  Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  ETag: "301e8ef9-1077-43e1-abe1-6b8c743cdd1b"
+  Last-Modified: Wed, 11 Mar 2020 12:54:25 GMT
+  Server: Rocket
+  "###);
   assert_json_snapshot!(build_json_body(&mut response), @r###"
     {
       "displayName": "Test User",
