@@ -342,6 +342,7 @@ fn test_post_refetch() {
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/d4ebcc15-ddf2-45e4-b263-892984b0e248>; rel="self"
+  Accept-Patch: application/merge-patch+json
   ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Last-Modified: Wed, 11 Mar 2020 13:00:36 GMT
   Server: Rocket

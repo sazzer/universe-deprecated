@@ -46,6 +46,7 @@ fn test_get_known_user() {
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  Accept-Patch: application/merge-patch+json
   ETag: "301e8ef9-1077-43e1-abe1-6b8c743cdd1b"
   Last-Modified: Wed, 11 Mar 2020 12:54:25 GMT
   Server: Rocket

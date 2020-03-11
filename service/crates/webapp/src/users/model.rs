@@ -33,6 +33,7 @@ impl<'a> Responder<'a> for User {
         Response::build()
             .merge(Json(&self).respond_to(req)?)
             .raw_header("Link", format!("</users/{}>; rel=\"self\"", self.id))
+            .raw_header("Accept-Patch", "application/merge-patch+json")
             .header(ETag(EntityTag::new(false, self.version.to_string())))
             .header(LastModified(HttpDate(time::at_utc(time::Timespec::new(
                 self.updated.timestamp(),

@@ -112,6 +112,7 @@ fn test_patch_known_user_no_differences() {
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  Accept-Patch: application/merge-patch+json
   ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Last-Modified: Wed, 11 Mar 2020 13:00:36 GMT
   Server: Rocket
@@ -158,6 +159,7 @@ fn test_patch_known_user_with_differences() {
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  Accept-Patch: application/merge-patch+json
   ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Last-Modified: Wed, 11 Mar 2020 13:00:36 GMT
   Server: Rocket
@@ -204,6 +206,7 @@ fn test_patch_change_password() {
   HTTP/1.1 200 OK.
   Content-Type: application/json
   Link: </users/2fcc3850-bb9b-405e-bbab-22978283fef8>; rel="self"
+  Accept-Patch: application/merge-patch+json
   ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Last-Modified: Wed, 11 Mar 2020 13:00:36 GMT
   Server: Rocket
