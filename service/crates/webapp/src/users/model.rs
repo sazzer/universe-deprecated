@@ -1,5 +1,8 @@
 use rocket::{
-    http::Status,
+    http::{
+        hyper::header::{ETag, EntityTag},
+        Status,
+    },
     response::{Responder, Response},
     Request,
 };
@@ -27,7 +30,7 @@ impl<'a> Responder<'a> for User {
         Response::build()
             .merge(Json(&self).respond_to(req)?)
             .raw_header("Link", format!("</users/{}>; rel=\"self\"", self.id))
-            .raw_header("ETag", format!("\"{}\"", self.version))
+            .header(ETag(EntityTag::new(false, self.version.to_string())))
             .ok()
     }
 }
