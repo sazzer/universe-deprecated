@@ -1,4 +1,4 @@
-use crate::users::model::User;
+use crate::{headers::Link, users::model::User};
 use chrono::{DateTime, Utc};
 use rocket::{
   http::Status,
@@ -31,10 +31,7 @@ impl<'a> Responder<'a> for AuthenticatedUser {
   fn respond_to(self, req: &Request) -> Result<Response<'a>, Status> {
     Response::build()
       .merge(Json(&self).respond_to(req)?)
-      .raw_header(
-        "Link",
-        format!("</users/{}>; rel=\"canonical\"", self.user.id),
-      )
+      .header(Link::from_href(format!("/users/{}", self.user.id)).with_rel("canonical"))
       .ok()
   }
 }

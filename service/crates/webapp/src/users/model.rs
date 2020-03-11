@@ -1,3 +1,4 @@
+use crate::headers::*;
 use chrono::{DateTime, Utc};
 use rocket::{
     http::{
@@ -32,8 +33,8 @@ impl<'a> Responder<'a> for User {
     fn respond_to(self, req: &Request) -> Result<Response<'a>, Status> {
         Response::build()
             .merge(Json(&self).respond_to(req)?)
-            .raw_header("Link", format!("</users/{}>; rel=\"self\"", self.id))
-            .raw_header("Accept-Patch", "application/merge-patch+json")
+            .header(Link::from_href(format!("/users/{}", self.id)).with_rel("self"))
+            .header(AcceptPatch("application/merge-patch+json"))
             .header(ETag(EntityTag::new(false, self.version.to_string())))
             .header(LastModified(HttpDate(time::at_utc(time::Timespec::new(
                 self.updated.timestamp(),
