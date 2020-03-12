@@ -2353,6 +2353,33 @@ dependencies = [
  "universe_test_database_wrapper",
  "universe_testdata",
  "universe_users",
+ "universe_worlds",
+ "uuid",
+]
+
+[[package]]
+name = "universe_worlds"
+version = "0.1.0"
+dependencies = [
+ "assert_matches",
+ "chrono",
+ "mockall",
+ "postgres",
+ "postgres-types",
+ "regex",
+ "serde 1.0.104",
+ "serde_json",
+ "spectral",
+ "test-env-log",
+ "thiserror",
+ "tracing",
+ "tracing-log",
+ "tracing-subscriber",
+ "universe_database",
+ "universe_entity",
+ "universe_test_database_wrapper",
+ "universe_testdata",
+ "universe_users",
  "uuid",
 ]
 
