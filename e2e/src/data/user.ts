@@ -1,7 +1,9 @@
-import { Seed, extractData } from "./seed";
-import { Loadable } from "./load";
-import uuid from "uuid/v4";
 import * as bcrypt from "bcrypt";
+
+import { Seed, extractData } from "./seed";
+
+import { Loadable } from "./load";
+import { v4 as uuid } from "uuid";
 
 /**
  * Seed Data for a User
