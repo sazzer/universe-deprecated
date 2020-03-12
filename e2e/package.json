@@ -15,7 +15,7 @@
     "wip": "cucumber-js --require-module dotenv/config --require-module ts-node/register -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.ts' features/**/*.feature --tags @wip"
   },
   "dependencies": {
-    "bcrypt": "^3.0.8",
+    "bcrypt": "^4.0.1",
     "chai": "^4.2.0",
     "cucumber": "^6.0.5",
     "debug": "^4.1.1",
@@ -24,7 +24,7 @@
     "selenium-webdriver": "^4.0.0-alpha.5",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5",
-    "uuid": "^3.4.0"
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -34,7 +34,7 @@
     "@types/node": "^13.5.1",
     "@types/pg": "^7.14.1",
     "@types/selenium-webdriver": "^4.0.6",
-    "@types/uuid": "^3.4.7",
+    "@types/uuid": "^7.0.0",
     "cucumber-html-reporter": "^5.1.0",
     "cucumber-pretty": "^6.0.0",
     "mkdirp": "^1.0.3",
