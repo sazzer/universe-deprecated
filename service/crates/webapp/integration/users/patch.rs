@@ -216,3 +216,99 @@ fn test_patch_change_password() {
   assert_that(&authenticate(&service, "testuser", "password")).is_none();
   assert_that(&authenticate(&service, "testuser", "NewPa55word")).is_some();
 }
+
+#[test]
+fn test_patch_known_user_invalid_email() {
+  let service = ServiceWrapper::default();
+  let user = User {
+    user_id: uuid::Uuid::parse_str("2fcc3850-bb9b-405e-bbab-22978283fef8").unwrap(),
+    username: "testuser".to_owned(),
+    email: "testing@example.com".to_owned(),
+    display_name: "Test User".to_owned(),
+    ..Default::default()
+  };
+  seed(service.database(), vec![&user]);
+
+  let req = service
+    .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
+    .header(ContentType::from_str("application/merge-patch+json").unwrap())
+    .header(authenticate_user(&service, &user).unwrap())
+    .body(
+      json!({
+        "email": "testingexamplecom"
+      })
+      .to_string(),
+    );
+  let mut response = req.dispatch();
+
+  assert_snapshot!(build_headers(&response), @r###"
+  HTTP/1.1 422 .
+  Content-Type: application/problem+json
+  Server: Rocket
+  "###);
+  assert_json_snapshot!(build_json_body(&mut response), @r###"
+  {
+    "errors": [
+      {
+        "field": "email",
+        "title": "Email Address was malformed",
+        "type": "tag:universe,2020:users/validation-errors/email/malformed"
+      }
+    ],
+    "status": 422,
+    "title": "The input had validation errors",
+    "type": "tag:universe,2020:problems/validation-error"
+  }
+  "###);
+}
+
+#[test]
+fn test_patch_known_user_all_blank() {
+  let service = ServiceWrapper::default();
+  let user = User {
+    user_id: uuid::Uuid::parse_str("2fcc3850-bb9b-405e-bbab-22978283fef8").unwrap(),
+    username: "testuser".to_owned(),
+    email: "testing@example.com".to_owned(),
+    display_name: "Test User".to_owned(),
+    ..Default::default()
+  };
+  seed(service.database(), vec![&user]);
+
+  let req = service
+    .patch("/users/2fcc3850-bb9b-405e-bbab-22978283fef8")
+    .header(ContentType::from_str("application/merge-patch+json").unwrap())
+    .header(authenticate_user(&service, &user).unwrap())
+    .body(
+      json!({
+        "email": "",
+        "displayName": ""
+      })
+      .to_string(),
+    );
+  let mut response = req.dispatch();
+
+  assert_snapshot!(build_headers(&response), @r###"
+  HTTP/1.1 422 .
+  Content-Type: application/problem+json
+  Server: Rocket
+  "###);
+  assert_json_snapshot!(build_json_body(&mut response), @r###"
+  {
+    "errors": [
+      {
+        "field": "displayName",
+        "title": "Required field was missing a value",
+        "type": "tag:universe,2020:validation-errors/missing"
+      },
+      {
+        "field": "email",
+        "title": "Required field was missing a value",
+        "type": "tag:universe,2020:validation-errors/missing"
+      }
+    ],
+    "status": 422,
+    "title": "The input had validation errors",
+    "type": "tag:universe,2020:problems/validation-error"
+  }
+  "###);
+}

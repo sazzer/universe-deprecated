@@ -1,0 +1,425 @@
+openapi: 3.0.0
+info:
+  title: Universe
+  version: '1.0'
+  contact:
+    name: Graham Cox
+    email: graham@grahamcox.co.uk
+  description: Universe World Building Service
+servers:
+  - url: 'http://localhost:8000'
+    description: Dev
+  - url: 'https://universe-cd.herokuapp.com'
+    description: CD
+tags:
+  - name: users
+    description: Users
+  - name: authentication
+    description: Authentication
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+        description: The ID of the User to fetch
+    get:
+      summary: Get User by ID
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Full User:
+                  value:
+                    displayName: Test User
+                    email: testing@example.com
+                    id: 2fcc3850-bb9b-405e-bbab-22978283fef8
+                    username: testuser
+          headers: {}
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                Unknown User:
+                  value:
+                    status: 404
+                    title: The requested user could not be found
+                    type: 'tag:universe,2020:users/problems/unknown-user'
+      operationId: get-users-userId
+      description: Get the details of an existing user by ID
+    patch:
+      summary: Update User
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Full User:
+                  value:
+                    displayName: Test User
+                    email: testing@example.com
+                    id: 2fcc3850-bb9b-405e-bbab-22978283fef8
+                    username: testuser
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                Forbidden:
+                  value:
+                    status: 403
+                    title: You are not permitted to perform this request
+                    type: 'tag:universe,2020:problems/authentication/forbidden'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                Malformed Email Address:
+                  value:
+                    errors:
+                      - field: email
+                        title: Email Address was malformed
+                        type: 'tag:universe,2020:users/validation-errors/email/malformed'
+                    status: 422
+                    title: The input had validation errors
+                    type: 'tag:universe,2020:problems/validation-error'
+                All Blank:
+                  value:
+                    errors:
+                      - field: displayName
+                        title: Required field was missing a value
+                        type: 'tag:universe,2020:validation-errors/missing'
+                      - field: email
+                        title: Required field was missing a value
+                        type: 'tag:universe,2020:validation-errors/missing'
+                    status: 422
+                    title: The input had validation errors
+                    type: 'tag:universe,2020:problems/validation-error'
+      operationId: patch-users-userId
+      security:
+        - API Key: []
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/User-Patch'
+            examples:
+              Change Profile:
+                value:
+                  displayName: Test User
+                  email: testing@example.com
+              Change Password:
+                value:
+                  password: Pa55word
+              Change Everything:
+                value:
+                  displayName: Test User
+                  email: testing@example.com
+                  password: Pa55word
+      description: Update the details of an existing user
+  /users:
+    post:
+      summary: Register New User
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authenticated-User'
+              examples:
+                Authenticated User:
+                  value:
+                    accessToken:
+                      expiry: '2020-04-01T23:59:59Z'
+                      token: FCE20822-B007-4A22-8CEF-06D2D52B8216
+                    displayName: Test User
+                    email: testing@example.com
+                    id: d4ebcc15-ddf2-45e4-b263-892984b0e248
+                    username: testuser
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                Malformed Email Address:
+                  value:
+                    errors:
+                      - field: email
+                        title: Email Address was malformed
+                        type: 'tag:universe,2020:users/validation-errors/email/malformed'
+                    status: 422
+                    title: The input had validation errors
+                    type: 'tag:universe,2020:problems/validation-error'
+                All Blank:
+                  value:
+                    errors:
+                      - field: username
+                        title: Required field was missing a value
+                        type: 'tag:universe,2020:validation-errors/missing'
+                      - field: email
+                        title: Required field was missing a value
+                        type: 'tag:universe,2020:validation-errors/missing'
+                      - field: displayName
+                        title: Required field was missing a value
+                        type: 'tag:universe,2020:validation-errors/missing'
+                      - field: password
+                        title: Required field was missing a value
+                        type: 'tag:universe,2020:validation-errors/missing'
+                    status: 422
+                    title: The input had validation errors
+                    type: 'tag:universe,2020:problems/validation-error'
+                Duplicate Username:
+                  value:
+                    errors:
+                      - field: username
+                        title: The username is already registered
+                        type: 'tag:universe,2020:users/validation-errors/username/duplicate'
+                    status: 422
+                    title: The input had validation errors
+                    type: 'tag:universe,2020:problems/validation-error'
+                Duplicate Email:
+                  value:
+                    errors:
+                      - field: email
+                        title: The email address is already registered
+                        type: 'tag:universe,2020:users/validation-errors/email/duplicate'
+                    status: 422
+                    title: The input had validation errors
+                    type: 'tag:universe,2020:problems/validation-error'
+      operationId: post-users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User-Post'
+            examples:
+              User:
+                value:
+                  username: testuser
+                  displayName: Test User
+                  email: testing@example.com
+                  password: Pa55word
+        description: ''
+      description: Register a new user
+  '/usernames/{username}':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    get:
+      summary: Look up Username
+      tags:
+        - users
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                Username Not Found:
+                  value:
+                    status: 404
+                    title: The requested user could not be found
+                    type: 'tag:universe,2020:users/problems/unknown-user'
+      operationId: get-usernames-username
+      description: Determine if a user exists
+  /login:
+    post:
+      summary: Authenticate User
+      tags:
+        - users
+        - authentication
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authenticated-User'
+              examples:
+                Authenticated User:
+                  value:
+                    accessToken:
+                      expiry: '2020-04-01T23:59:59Z'
+                      token: FCE20822-B007-4A22-8CEF-06D2D52B8216
+                    displayName: Test User
+                    email: testing@example.com
+                    id: d4ebcc15-ddf2-45e4-b263-892984b0e248
+                    username: testuser
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                Invalid Username or Password:
+                  value:
+                    status: 400
+                    title: Invalid Username or Password
+                    type: 'tag:universe,2020:users/problems/login_failure'
+      operationId: post-login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+            examples:
+              Authenticate User:
+                value:
+                  username: testuser
+                  password: Pa55word
+        description: ''
+      description: Attempt to authenticate an existing user
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      x-examples:
+        Full User:
+          displayName: Test User
+          email: testing@example.com
+          id: 2fcc3850-bb9b-405e-bbab-22978283fef8
+          username: testuser
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+      required:
+        - id
+        - username
+        - displayName
+    Problem:
+      type: object
+      title: Problem
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 100
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+      required:
+        - type
+        - title
+        - status
+    User-Patch:
+      title: User-Patch
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+        password:
+          type: string
+    User-Post:
+      title: User-Post
+      type: object
+      properties:
+        username:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - username
+        - displayName
+        - email
+        - password
+      x-examples:
+        User:
+          username: testuser
+          displayName: Test User
+          email: testing@example.com
+          password: Pa55word
+    Authenticated-User:
+      title: Authenticated-User
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            token:
+              type: string
+            expiry:
+              type: string
+              format: date-time
+          required:
+            - token
+            - expiry
+      x-examples:
+        Authenticated User:
+          accessToken:
+            expiry: '2020-04-01T23:59:59Z'
+            token: FCE20822-B007-4A22-8CEF-06D2D52B8216
+          displayName: Test User
+          email: testing@example.com
+          id: d4ebcc15-ddf2-45e4-b263-892984b0e248
+          username: testuser
+  securitySchemes:
+    API Key:
+      name: API Key
+      type: apiKey
+      in: header
