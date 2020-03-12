@@ -10,7 +10,7 @@ pub struct UserData {
     pub password: Password,
 }
 
-/// Type to represnt the entity that is a persisted user record
+/// Type to represent the entity that is a persisted user record
 #[derive(Debug, PartialEq, Clone)]
 pub struct UserEntity {
     pub identity: Identity<UserID>,

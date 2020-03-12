@@ -2376,6 +2376,7 @@ name = "universe_worlds"
 version = "0.1.0"
 dependencies = [
  "assert_matches",
+ "bytes",
  "chrono",
  "mockall",
  "postgres",
