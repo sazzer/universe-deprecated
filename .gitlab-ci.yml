@@ -181,6 +181,29 @@ deploy-webapp:
     - |-
       netlify deploy --prod --dir=build --site=$NETLIFY_SITE_ID -m "CI Deploy: $CI_PIPELINE_ID"
 
+deploy-openapi:
+  stage: deploy
+  image: node:13.7.0
+
+  only:
+    refs:
+      - master
+
+  variables:
+    NETLIFY_SITE_ID: bac0a2a1-ab23-4262-976d-d58aaa3bb275
+
+  before_script:
+    - npm install -g netlify-cli redoc-cli
+    - cd api
+
+  script:
+    - |-
+      mkdir build
+      cp reference/universe.v1.yaml build
+      redoc-cli bundle ./reference/universe.v1.yaml
+      mv redoc-static.html build/index.html
+      netlify deploy --prod --dir=build --site=$NETLIFY_SITE_ID -m "CI Deploy: $CI_PIPELINE_ID"
+
 deploy-service:
   stage: deploy
   image: docker:stable
@@ -207,3 +230,4 @@ deploy-service:
     - docker inspect registry.heroku.com/$TARGET_APP/web:latest --format={{.Id}} > /tmp/imageid
     - |-
       curl -X PATCH https://api.heroku.com/apps/$TARGET_APP/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --user graham@grahamcox.co.uk:${HEROKU_API_KEY} --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat /tmp/imageid)'" } ] }'
+
