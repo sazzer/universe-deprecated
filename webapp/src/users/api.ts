@@ -48,7 +48,10 @@ export async function checkUsername(username: string): Promise<boolean> {
  * @param userId The User ID to load
  * @return The details of the user
  */
-export async function getUserById(userId: string): Promise<User> {
+export async function getUserById(
+  userId: string,
+  forceReload: boolean = false
+): Promise<User> {
   LOG("Loading user: %s", userId);
   try {
     const user = await request<User>({
@@ -56,7 +59,8 @@ export async function getUserById(userId: string): Promise<User> {
       urlParams: {
         userId
       },
-      method: "GET"
+      method: "GET",
+      forceReload
     });
 
     LOG("User details: %o", user);

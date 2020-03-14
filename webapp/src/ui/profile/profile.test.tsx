@@ -1,8 +1,8 @@
-import { getUserById, useUser, updateUserProfile } from "../../users";
-import { render, wait, fireEvent } from "@testing-library/react";
+import { fireEvent, render, wait } from "@testing-library/react";
+import { getUserById, updateUserProfile, useUser } from "../../users";
 
-import { UserProfileArea } from "./profile";
 import React from "react";
+import { UserProfileArea } from "./profile";
 import { ValidationErrors } from "../../api";
 
 jest.mock("../../users");
@@ -38,6 +38,11 @@ test("Rendering before user loaded", async () => {
   await wait(() => {});
 
   expect(container).toMatchSnapshot();
+  expect(getUserByIdMock).toBeCalledTimes(1);
+  expect(getUserByIdMock).toBeCalledWith(
+    "57c33107-b43e-4b53-a967-3ff89ccaaf16",
+    true
+  );
   expect(storeUser).toBeCalledTimes(0);
   expect(updateUserProfileMock).toBeCalledTimes(0);
 });
@@ -71,6 +76,11 @@ test("Rendering after user loaded", async () => {
 
   expect(container).toMatchSnapshot();
 
+  expect(getUserByIdMock).toBeCalledTimes(1);
+  expect(getUserByIdMock).toBeCalledWith(
+    "57c33107-b43e-4b53-a967-3ff89ccaaf16",
+    true
+  );
   expect(storeUser).toBeCalledTimes(1);
   // Called in response to loading the user
   expect(storeUser).toBeCalledWith({
@@ -118,6 +128,11 @@ test("Saving invalid email address", async () => {
 
   expect(container).toMatchSnapshot();
 
+  expect(getUserByIdMock).toBeCalledTimes(1);
+  expect(getUserByIdMock).toBeCalledWith(
+    "57c33107-b43e-4b53-a967-3ff89ccaaf16",
+    true
+  );
   expect(storeUser).toBeCalledTimes(1);
   // Called in response to loading the user
   expect(storeUser).toBeCalledWith({
@@ -168,6 +183,11 @@ test("Saving blank fields", async () => {
 
   expect(container).toMatchSnapshot();
 
+  expect(getUserByIdMock).toBeCalledTimes(1);
+  expect(getUserByIdMock).toBeCalledWith(
+    "57c33107-b43e-4b53-a967-3ff89ccaaf16",
+    true
+  );
   expect(storeUser).toBeCalledTimes(1);
   // Called in response to loading the user
   expect(storeUser).toBeCalledWith({
@@ -224,6 +244,12 @@ test("Saving successfully", async () => {
   });
 
   expect(container).toMatchSnapshot();
+
+  expect(getUserByIdMock).toBeCalledTimes(1);
+  expect(getUserByIdMock).toBeCalledWith(
+    "57c33107-b43e-4b53-a967-3ff89ccaaf16",
+    true
+  );
   expect(storeUser).toBeCalledTimes(2);
   // First is in response to loading the user
   expect(storeUser).toBeCalledWith({
@@ -294,6 +320,12 @@ test("Saving a duplicate email address", async () => {
   });
 
   expect(container).toMatchSnapshot();
+
+  expect(getUserByIdMock).toBeCalledTimes(1);
+  expect(getUserByIdMock).toBeCalledWith(
+    "57c33107-b43e-4b53-a967-3ff89ccaaf16",
+    true
+  );
   expect(storeUser).toBeCalledTimes(1);
   // Called in response to loading the user
   expect(storeUser).toBeCalledWith({
@@ -350,6 +382,12 @@ test("Saving with an unexpected error", async () => {
   });
 
   expect(container).toMatchSnapshot();
+
+  expect(getUserByIdMock).toBeCalledTimes(1);
+  expect(getUserByIdMock).toBeCalledWith(
+    "57c33107-b43e-4b53-a967-3ff89ccaaf16",
+    true
+  );
   expect(storeUser).toBeCalledTimes(1);
   // Called in response to loading the user
   expect(storeUser).toBeCalledWith({

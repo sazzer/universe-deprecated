@@ -190,7 +190,7 @@ export const UserProfileArea: React.FC = () => {
   useEffect(() => {
     if (userId) {
       setLoading(true);
-      getUserById(userId).then(loadedUser => {
+      getUserById(userId, true).then(loadedUser => {
         storeUser(loadedUser);
         setLoading(false);
       });
