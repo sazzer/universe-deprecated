@@ -1,9 +1,8 @@
 import * as rfc6570 from "rfc6570-expand";
 
-import { Problem, ProblemResponse } from "./problem";
-import axios, { AxiosResponse, Method } from "axios";
-
+import { ProblemResponse } from "./problem";
 import debug from "debug";
+import { is as typeIs } from "type-is";
 
 /** The logger to use */
 const LOG = debug("universe:api");
@@ -24,29 +23,43 @@ let _accessToken: string | undefined;
 /**
  * The shape of the request that we want to make
  */
-export interface Request {
+export interface ApiRequest {
   url: string;
   urlParams?: any;
-  method?: Method;
+  method?: string;
   headers?: any;
   data?: any;
+  forceReload?: boolean;
+}
+
+export interface ApiResponse<T> {
+  data: T;
+  status: number;
+  headers: any;
 }
 
 /**
- * The shape of a Response from a request
+ * Error thrown when something goes unexpectedly wrong on an API call
  */
-export type Response<T> = AxiosResponse<T>;
+export class ErrorResponse extends Error {
+  /** The API response */
+  readonly response: ApiResponse<any>;
 
+  constructor(response: ApiResponse<any>) {
+    super("Request failed with status code " + response.status);
+    this.response = response;
+  }
+}
 /**
  * Build an API requester to make API calls with
  */
-export async function request<T>(request: Request): Promise<Response<T>> {
+export async function request<T>(request: ApiRequest): Promise<ApiResponse<T>> {
   let serviceUrl = process.env.REACT_APP_SERVICE_URL;
   if (window && window._UNIVERSE_CONFIG && window._UNIVERSE_CONFIG.serviceUrl) {
     serviceUrl = window._UNIVERSE_CONFIG.serviceUrl;
   }
 
-  const template = rfc6570.init(request.url);
+  const template = rfc6570.init(serviceUrl + request.url);
   const expandedUri = template.expand(request.urlParams || {});
   LOG("Making request to: %s", expandedUri);
 
@@ -58,31 +71,40 @@ export async function request<T>(request: Request): Promise<Response<T>> {
     headers.Authorization = `Bearer ${_accessToken}`;
   }
 
-  try {
-    return await axios.request({
-      baseURL: serviceUrl,
-      timeout: 20000,
-      url: expandedUri,
-      method: request.method,
-      headers: headers,
-      data: request.data
-    });
-  } catch (e) {
-    if (e.response) {
-      const response = e.response as AxiosResponse<Problem>;
-      if (response.headers["content-type"] === "application/problem+json") {
-        LOG("Received an RFC-7807 Problem response: %o", response.data);
-        throw new ProblemResponse(
-          response.data,
-          response.status,
-          response.headers
-        );
-      }
-    }
+  const result = await fetch(expandedUri, {
+    method: request.method || "GET",
+    headers,
+    mode: "cors",
+    body: JSON.stringify(request.data),
+    cache: request.forceReload ? "no-cache" : "default"
+  });
 
-    ERROR_LOG("Unexpected error making API request", e);
-    throw e;
+  let data;
+  const contentType = result.headers.get("Content-Type") || "";
+  if (typeIs(contentType, ["application/json", "application/*+json"])) {
+    data = await result.json();
+  } else {
+    data = await result.text();
   }
+
+  if (result.status >= 400) {
+    if (typeIs(contentType, ["application/problem+json"])) {
+      LOG("Received an RFC-7807 Problem response: %o", data);
+      throw new ProblemResponse(data, result.status, result.headers);
+    } else {
+      ERROR_LOG("Unexpected error making API request: %o", result);
+      throw new ErrorResponse({
+        status: result.status,
+        headers: result.headers,
+        data
+      });
+    }
+  }
+  return {
+    status: result.status,
+    headers: result.headers,
+    data
+  };
 }
 
 /**

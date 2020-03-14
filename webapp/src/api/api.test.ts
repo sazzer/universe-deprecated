@@ -1,4 +1,4 @@
-import { ProblemResponse, Response, request } from ".";
+import { ApiResponse, ProblemResponse, request } from ".";
 
 import nock from "nock";
 
@@ -92,7 +92,10 @@ describe("Making API calls", () => {
     it("Allows a POST call to work", async () => {
       nock(URL_BASE)
         .defaultReplyHeaders({ "access-control-allow-origin": "*" })
-        .post("/a/b/c", "username=pgte&password=123456")
+        .post(
+          "/a/b/c",
+          JSON.stringify({ username: "pgte", password: "123456" })
+        )
         .reply(201, {
           hello: "world"
         });
@@ -100,7 +103,10 @@ describe("Making API calls", () => {
       const response = await request({
         url: "/a/b/c",
         method: "POST",
-        data: "username=pgte&password=123456"
+        data: {
+          username: "pgte",
+          password: "123456"
+        }
       });
 
       expect(response.status).toBe(201);
@@ -198,7 +204,7 @@ describe("Making API calls", () => {
         expect(e).toBeInstanceOf(Error);
         expect(e.response).toBeDefined();
 
-        const problemResponse = e.response as Response<any>;
+        const problemResponse = e.response as ApiResponse<any>;
 
         expect(problemResponse.status).toBe(500);
         expect(problemResponse.data).toEqual("Broken Service");
