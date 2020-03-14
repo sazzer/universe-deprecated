@@ -345,6 +345,7 @@ fn test_post_refetch() {
   Accept-Patch: application/merge-patch+json
   ETag: "a7fd01dc-dcf7-45dd-a932-0b6b263e17d0"
   Last-Modified: Wed, 11 Mar 2020 13:00:36 GMT
+  Cache-Control: public, max-age=3600
   Server: Rocket
   "###);
   assert_json_snapshot!(build_json_body(&mut response), {

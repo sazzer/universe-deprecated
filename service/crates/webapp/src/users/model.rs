@@ -2,7 +2,7 @@ use crate::headers::*;
 use chrono::{DateTime, Utc};
 use rocket::{
     http::{
-        hyper::header::{ETag, EntityTag, HttpDate, LastModified},
+        hyper::header::{CacheControl, CacheDirective, ETag, EntityTag, HttpDate, LastModified},
         Status,
     },
     response::{Responder, Response},
@@ -40,6 +40,10 @@ impl<'a> Responder<'a> for User {
                 self.updated.timestamp(),
                 0,
             )))))
+            .header(CacheControl(vec![
+                CacheDirective::Public,
+                CacheDirective::MaxAge(3600),
+            ]))
             .ok()
     }
 }

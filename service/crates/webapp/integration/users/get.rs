@@ -49,6 +49,7 @@ fn test_get_known_user() {
   Accept-Patch: application/merge-patch+json
   ETag: "301e8ef9-1077-43e1-abe1-6b8c743cdd1b"
   Last-Modified: Wed, 11 Mar 2020 12:54:25 GMT
+  Cache-Control: public, max-age=3600
   Server: Rocket
   "###);
   assert_json_snapshot!(build_json_body(&mut response), @r###"
