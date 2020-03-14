@@ -14,6 +14,8 @@ servers:
 tags:
   - name: users
     description: Users
+  - name: worlds
+    description: Worlds
   - name: authentication
     description: Authentication
 paths:
@@ -313,6 +315,73 @@ paths:
                   password: Pa55word
         description: ''
       description: Attempt to authenticate an existing user
+  /worlds:
+    get:
+      summary: Search Worlds
+      operationId: get-worlds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      entries:
+                        type: array
+                        uniqueItems: true
+                        items:
+                          $ref: '#/components/schemas/World'
+              examples:
+                No Worlds:
+                  value:
+                    total: 0
+                    entries: []
+                Found Worlds:
+                  value:
+                    total: 20
+                    entries:
+                      - id: fcc07c44-3fd3-4834-8f33-edf5e87779d8
+                        slug: testworld
+                        name: Test World
+                        description: This is a test world
+                        owner: 2fcc3850-bb9b-405e-bbab-22978283fef8
+      description: Perform a search for all matching worlds
+      tags:
+        - worlds
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: owner
+          description: The ID of the Owner of the worlds to return
+        - schema:
+            type: string
+          in: query
+          name: keyword
+          description: Keywords to search Worlds by
+        - schema:
+            type: integer
+            default: 0
+            minimum: 0
+          in: query
+          name: offset
+          description: The offset of the page to return
+        - schema:
+            type: integer
+            default: 10
+            minimum: 0
+            maximum: 100
+          in: query
+          name: limit
+          description: The number of Worlds to return
+        - schema:
+            type: string
+          in: query
+          name: sort
+          description: The means to sort Worlds by
 components:
   schemas:
     User:
@@ -418,6 +487,36 @@ components:
           email: testing@example.com
           id: d4ebcc15-ddf2-45e4-b263-892984b0e248
           username: testuser
+    World:
+      title: World
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        owner:
+          type: string
+          description: The ID of the User that owns this World
+      required:
+        - id
+        - slug
+        - name
+        - description
+        - owner
+    Pagination:
+      title: Pagination
+      type: object
+      properties:
+        total:
+          type: integer
+          minimum: 0
+      required:
+        - total
   securitySchemes:
     API Key:
       name: API Key
