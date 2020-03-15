@@ -1,9 +1,11 @@
 use crate::problem::Problem;
 use crate::request_id::RequestId;
 use rocket::get;
+use std::str::FromStr;
 use tracing::info;
 use universe_entity::{parse_sorts, Pagination, SortDirection, SortField};
-use universe_worlds::WorldSorts;
+use universe_users::UserID;
+use universe_worlds::{WorldFilters, WorldSorts};
 
 #[get("/worlds?<owner>&<keyword>&<offset>&<limit>&<sort>")]
 #[tracing::instrument(skip())]
@@ -33,6 +35,17 @@ pub fn search_worlds(
     direction: SortDirection::Natural,
   });
   info!("Parsed sorts: {:?}", _sorts);
+
+  let _filters = WorldFilters {
+    keyword,
+    owner: match owner {
+      None => None,
+      // Technically this is a bit iffy. If we have an invalid Owner ID then we replace it with a random valid one
+      // This *should* be OK because they are UUIDs and the chance of a random collision is about 1 in 10^18.4.
+      Some(owner) => Some(UserID::from_str(&owner).unwrap_or_default()),
+    },
+  };
+  info!("Parsed filters: {:?}", _filters);
 
   Ok("Hello".to_owned())
 }
