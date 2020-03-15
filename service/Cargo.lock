@@ -2437,6 +2437,8 @@ dependencies = [
  "serde 1.0.104",
  "serde_json",
  "spectral",
+ "strum",
+ "strum_macros",
  "test-env-log",
  "thiserror",
  "tracing",
