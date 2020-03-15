@@ -7,5 +7,6 @@ mod problem;
 mod request_id;
 mod service;
 mod users;
+mod worlds;
 
 pub use service::Service;

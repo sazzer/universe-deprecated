@@ -25,6 +25,7 @@ universe_database = { path = "../database" }
 universe_health = { path = "../health" }
 universe_users = { path = "../users" }
 universe_worlds = { path = "../worlds" }
+universe_entity = { path = "../entity" }
 
 [dev-dependencies]
 insta = { version = "0.15.0", features = ["redactions", "backtrace"] }

@@ -2414,6 +2414,7 @@ dependencies = [
  "tracing-subscriber",
  "universe_authentication",
  "universe_database",
+ "universe_entity",
  "universe_health",
  "universe_test_database_wrapper",
  "universe_testdata",

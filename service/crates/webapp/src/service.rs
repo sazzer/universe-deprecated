@@ -47,6 +47,7 @@ impl Service {
                 as Box<dyn universe_users::UserService>)
             .mount("/", crate::health::routes())
             .mount("/", crate::users::routes())
+            .mount("/", crate::worlds::routes())
             .mount("/", crate::authentication::routes());
 
         Service { rocket }
