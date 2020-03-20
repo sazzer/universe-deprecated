@@ -43,10 +43,13 @@ impl Service {
             .manage(universe_authentication::encoder::AccessTokenEncoder::new(
                 access_token_key,
             ))
-            .manage(Box::new(universe_users::new_user_service(database))
+            // TODO: Stop cloning the database wrapper
+            .manage(Box::new(universe_users::new_user_service(database.clone()))
                 as Box<dyn universe_users::UserService>)
-            .manage(Box::new(universe_worlds::new_world_service())
-                as Box<dyn universe_worlds::WorldService>)
+            .manage(
+                Box::new(universe_worlds::new_world_service(database.clone()))
+                    as Box<dyn universe_worlds::WorldService>,
+            )
             .mount("/", crate::health::routes())
             .mount("/", crate::users::routes())
             .mount("/", crate::worlds::routes())

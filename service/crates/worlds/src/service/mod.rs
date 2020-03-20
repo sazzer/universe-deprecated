@@ -1,4 +1,5 @@
 mod implementation;
+pub mod repository;
 mod search_filters;
 mod service;
 mod sorts;
