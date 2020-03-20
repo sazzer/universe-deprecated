@@ -3,6 +3,7 @@
 mod authentication;
 mod headers;
 mod health;
+mod page;
 mod problem;
 mod request_id;
 mod service;

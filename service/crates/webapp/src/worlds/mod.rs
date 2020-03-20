@@ -1,3 +1,4 @@
+mod model;
 mod routes;
 mod search;
 
