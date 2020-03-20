@@ -15,10 +15,7 @@ pub enum SortDirection {
 
 /// Representation of a single field that can be sorted on
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct SortField<T>
-where
-  T: Sized,
-{
+pub struct SortField<T> {
   pub field: T,
   pub direction: SortDirection,
 }
