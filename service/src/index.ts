@@ -1,16 +1,15 @@
 import "dotenv/config";
 
-import { buildService } from "./service";
+import { build } from "./loaders";
 import config from "config";
 import pino from "pino";
 
 /** The logger to use */
 const LOG = pino({
-  name: "universe",
-  prettyPrint: process.env.NODE_ENV === "development"
+  name: "universe"
 });
 
-const service = buildService();
+const service = build();
 
 LOG.info("Starting universe...", { port: config.get("http.port") });
 service.listen(config.get("http.port"));
