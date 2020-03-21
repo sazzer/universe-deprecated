@@ -1,5 +1,6 @@
 import Koa from "koa";
 import Router from "@koa/router";
+import cors from "@koa/cors";
 import koaLogger from "koa-pino-logger";
 import pino from "pino";
 
@@ -15,6 +16,8 @@ const LOG = pino({
 export function buildService() {
   LOG.debug("Building universe...");
   const app = new Koa();
+  app.use(cors());
+
   const router = new Router();
 
   app.use(
