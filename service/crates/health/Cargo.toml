@@ -1,9 +1,0 @@
-[package]
-name = "universe_health"
-version = "0.1.0"
-authors = ["Graham Cox <graham@grahamcox.co.uk>"]
-edition = "2018"
-
-[dependencies]
-
-[dev-dependencies]
