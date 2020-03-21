@@ -1,8 +1,10 @@
 import Koa from "koa";
 import Router from "@koa/router";
 import cors from "@koa/cors";
+import koaBody from "koa-body";
 import koaLogger from "koa-pino-logger";
 import pino from "pino";
+import responseTime from "koa-response-time";
 
 /** The logger to use */
 const LOG = pino({
@@ -16,7 +18,9 @@ const LOG = pino({
 export function buildService() {
   LOG.debug("Building universe...");
   const app = new Koa();
+  app.use(responseTime());
   app.use(cors());
+  app.use(koaBody());
 
   const router = new Router();
 
@@ -29,7 +33,8 @@ export function buildService() {
     })
   );
 
-  router.get("/", async ctx => {
+  router.post("/", async ctx => {
+    LOG.info("Request", ctx.request.query);
     ctx.body = "Hello World";
   });
 
