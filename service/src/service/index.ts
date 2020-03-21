@@ -1,4 +1,5 @@
 import Koa from "koa";
+import Router from "@koa/router";
 import koaLogger from "koa-pino-logger";
 import pino from "pino";
 
@@ -14,6 +15,8 @@ const LOG = pino({
 export function buildService() {
   LOG.debug("Building universe...");
   const app = new Koa();
+  const router = new Router();
+
   app.use(
     koaLogger({
       logger: pino({
@@ -23,9 +26,11 @@ export function buildService() {
     })
   );
 
-  app.use(async ctx => {
+  router.get("/", async ctx => {
     ctx.body = "Hello World";
   });
+
+  app.use(router.routes()).use(router.allowedMethods());
 
   return app;
 }
