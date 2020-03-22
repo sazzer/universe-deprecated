@@ -35,5 +35,5 @@ export function addHealthCheck<T extends HealthLoader>(
 export function build<T extends HealthLoader & ServerLoader>(loader: T) {
   const router = getRouter(loader);
 
-  router.get("/health", checkHealth);
+  router.get("/health", checkHealth());
 }
