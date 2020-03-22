@@ -27,7 +27,7 @@ export interface ServerLoader {
  * Get the router out of the loader
  * @param loader the loader
  */
-export function getRouter(loader: ServerLoader) {
+export function getRouter<T extends ServerLoader>(loader: T) {
   return loader[ROUTER_KEY];
 }
 
@@ -35,7 +35,7 @@ export function getRouter(loader: ServerLoader) {
  * Get the web server out of the loader
  * @param loader the loader
  */
-export function getServer(loader: ServerLoader) {
+export function getServer<T extends ServerLoader>(loader: T) {
   return loader[APP_KEY];
 }
 
@@ -43,7 +43,7 @@ export function getServer(loader: ServerLoader) {
  * Populate the loader with the details of the web server
  * @param loader the loader to populate
  */
-export function build(loader: ServerLoader) {
+export function build<T extends ServerLoader>(loader: T) {
   LOG.debug("Building web server...");
 
   const app = new Koa();

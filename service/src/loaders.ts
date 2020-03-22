@@ -1,3 +1,4 @@
+import * as health from "./infrastructure/health/loader";
 import * as server from "./infrastructure/server";
 
 import pino from "pino";
@@ -8,7 +9,7 @@ const LOG = pino({
 });
 
 /** The ordered list of loaders to use to construct the application */
-const loaders = [server.build];
+const loaders = [server.build, health.build];
 
 /**
  * Actually build the application
