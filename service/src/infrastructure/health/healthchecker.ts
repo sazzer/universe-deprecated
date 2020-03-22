@@ -42,6 +42,12 @@ export class Healthchecker {
     });
     await Promise.all(promises);
 
+    const failure = Object.values(result.components)
+      .map(result => result.status)
+      .some(status => status === HEALTH_FAIL);
+
+    result.status = failure ? HEALTH_FAIL : HEALTH_PASS;
+
     return result;
   }
 }

@@ -21,6 +21,7 @@ build-service:
 
   script:
     - yarn build
+    - yarn test
 
   cache:
     key: universe-service
