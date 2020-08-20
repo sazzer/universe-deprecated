@@ -15,7 +15,7 @@
     "wip": "cucumber-js --require-module dotenv/config --require-module ts-node/register -f node_modules/cucumber-pretty -f json:output/cucumber_report.json --require 'src/**/*.ts' features/**/*.feature --tags @wip"
   },
   "dependencies": {
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "chai": "^4.2.0",
     "cucumber": "^6.0.5",
     "debug": "^4.1.1",
